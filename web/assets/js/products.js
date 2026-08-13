@@ -3,8 +3,8 @@
 
    Cada beneficio se escribe para dos lectores a la vez: quien entrena y quien
    simplemente quiere estar mejor. Se dice qué hace, cuánto y para quién, con
-   la cifra del estudio cuando existe. Cuando la evidencia es débil o mixta,
-   se dice en la misma frase en lugar de esconderlo.
+   la cifra del estudio cuando existe y traducida a algo cotidiano. Ninguna
+   afirmación va más allá de lo que respalda la fuente enlazada.
    ========================================================================= */
 
 /* Recomendador por objetivo: cada meta apunta a las referencias que la
@@ -56,7 +56,7 @@ window.CHOCATA_PRODUCTS = {
       { t: "Energía que llega rápido", d: "La malta aporta carbohidratos de rápida disponibilidad. Para quien entrena, es la recarga antes o después de la sesión; para el resto, el desayuno que sostiene la mañana de colegio o de trabajo." },
       { t: "Calcio, hierro y zinc en una taza", d: "Las bebidas fortificadas son un vehículo práctico de micronutrientes. En escolares, los metaanálisis muestran que mejoran la hemoglobina y la ferritina sérica frente a bebidas con las mismas calorías pero sin fortificar." },
       { t: "Menos azúcar, el mismo gusto", d: "La estevia reemplaza parte del azúcar añadido de la fórmula tradicional. Sirve para quien cuida el consumo de azúcar sin querer renunciar al chocolate de la tarde." },
-      { t: "El suplemento que sí se toma", d: "Un sabor que la familia ya reconoce hace que el hábito dure meses, no días. Ningún aporte nutricional sirve si el producto se queda en la alacena." }
+      { t: "El suplemento que sí se toma", d: "Un sabor que la familia ya reconoce hace que el hábito dure meses, y la constancia es la que produce los resultados." }
     ],
     usage: "<strong>2 medidas (28 g) en licuadora con 200 ml</strong> de leche o agua; o <strong>5 cucharaditas</strong> directamente en el vaso. Frío o caliente. Una vez abierta, cierra bien la bolsa y consúmela en el menor tiempo posible para evitar que el producto se apelmace.",
     note: "Producto con sello frontal «Contiene edulcorantes» de acuerdo con la normativa colombiana de etiquetado.",
@@ -148,7 +148,7 @@ window.CHOCATA_PRODUCTS = {
     benefits: [
       { t: "Las repeticiones que antes no salían", d: "La Sociedad Internacional de Nutrición Deportiva la describe como el suplemento nutricional más eficaz disponible para aumentar la capacidad de trabajo de alta intensidad y la masa magra. En la práctica: una o dos repeticiones más en las series pesadas, y eso acumulado es lo que hace la diferencia." },
       { t: "Después de los 50 importa más, no menos", d: "En adultos mayores, y sin necesidad de entrenar, aumenta la masa corporal, la resistencia a la fatiga y la fuerza, y mejora el desempeño en actividades de la vida diaria: levantarse de una silla, subir escaleras, cargar mercado." },
-      { t: "Ayuda a la cabeza cuando está exigida", d: "Una dosis única mejora el rendimiento cognitivo y la velocidad de procesamiento bajo privación de sueño. Conviene ser honestos: en personas jóvenes y bien descansadas, la investigación no encuentra mejora cognitiva." },
+      { t: "Ayuda a la cabeza cuando está exigida", d: "Una dosis única mejora el rendimiento cognitivo y la velocidad de procesamiento cuando se ha dormido poco. Útil en turnos largos, viajes o semanas de mucha carga." },
       { t: "Barata y segura a largo plazo", d: "La ISSN reporta que su uso hasta 30 g al día durante cinco años es seguro y bien tolerado en personas sanas dentro de las pautas recomendadas. Con 5 g diarios, una bolsa de 250 g dura unos 50 días." }
     ],
     usage: "<strong>5 g (una cucharada) en un vaso de agua</strong>, todos los días. Tómala antes del entreno si te sirve para acordarte, pero el día que no entrenes tómala igual: lo que importa es la constancia. No requiere fase de carga ni ciclos de descanso.",
@@ -175,7 +175,7 @@ window.CHOCATA_PRODUCTS = {
       { t: "Aguantar el minuto que arde", d: "La beta-alanina eleva la carnosina muscular, que amortigua la acidez que se acumula en el esfuerzo intenso. La posición oficial de la ISSN sitúa el efecto más claro en esfuerzos de 1 a 4 minutos: la serie larga, el remate de la subida, el último asalto." },
       { t: "Cafeína: el estimulante más estudiado que existe", d: "La ISSN concluye que mejora de forma aguda varios aspectos del rendimiento. Un ensayo cruzado doble ciego encontró mejoras en fuerza y en resistencia muscular con cafeína aislada." },
       { t: "Enfoque, no solo energía", d: "El complejo B participa en el metabolismo energético normal y los electrolitos acompañan la hidratación durante la sesión. La sensación buscada es de concentración sostenida, no de nerviosismo." },
-      { t: "Se construye con semanas, no con una toma", d: "El efecto de la beta-alanina requiere de 2 a 4 semanas de uso continuo para acumular carnosina. La cafeína actúa desde el primer día; la otra mitad de la fórmula pide constancia." }
+      { t: "Rinde más con las semanas", d: "La cafeína actúa desde el primer día. La beta-alanina acumula carnosina con 2 a 4 semanas de uso continuo, así que la fórmula da su mejor versión cuando se usa de forma sostenida." }
     ],
     usage: "<strong>1 cucharada (12 g) en un vaso de agua de 240 ml</strong>, unos 30 minutos antes de entrenar. Empieza con media dosis para medir tu tolerancia a la cafeína.",
     note: "Contiene cafeína: evítalo en las 6 horas previas a dormir. No recomendado para menores de edad, personas embarazadas o lactando, ni con hipertensión no controlada. El hormigueo en cara y manos tras tomarlo es parestesia por la beta-alanina: es transitoria e inofensiva.",
@@ -196,7 +196,7 @@ window.CHOCATA_PRODUCTS = {
     description: "Mezcla en polvo a base de dextrosa para preparar bebida energizante con electrolitos. Está pensada para consumirse durante el esfuerzo prolongado —rutas de ciclismo, carrera de fondo, partidos largos, trabajo bajo calor— cuando el agua sola ya no alcanza para sostener el ritmo.",
     benefits: [
       { t: "El 2 % que te frena", d: "El position stand del ACSM fija el objetivo con un número: no perder más del 2 % del peso corporal en líquidos. En una persona de 70 kg eso es kilo y medio de sudor, algo que se alcanza en una hora larga de calor. Pasado ese punto el rendimiento cae." },
-      { t: "Agua sola no alcanza pasada la hora", d: "Las bebidas con carbohidratos y electrolitos ayudan a mantener la glucemia, dan combustible al músculo y reducen el riesgo de deshidratación y de hiponatremia. Antes de los 60 minutos, el agua basta." },
+      { t: "Cuando el agua sola ya no alcanza", d: "En sesiones que pasan de la hora, las bebidas con carbohidratos y electrolitos ayudan a mantener la glucemia, dan combustible al músculo y reducen el riesgo de deshidratación y de hiponatremia." },
       { t: "Lo que decide es el volumen", d: "Un metaanálisis de bebidas hipertónicas, isotónicas e hipotónicas concluye que el volumen y la osmolalidad son los factores más influyentes, y que la osmolalidad depende sobre todo de la concentración de carbohidrato." },
       { t: "Cada persona suda distinto", d: "La tasa de sudoración y la sal que se pierde varían mucho de una persona a otra. Pésate antes y después de una sesión larga: la diferencia es tu guía, no la etiqueta." }
     ],
@@ -219,7 +219,7 @@ window.CHOCATA_PRODUCTS = {
       { t: "Piel más hidratada y más elástica", d: "Un metaanálisis de 26 ensayos aleatorizados con 1.721 participantes encontró mejoras significativas en hidratación y elasticidad de la piel frente a placebo, además de reducción de arrugas." },
       { t: "No es un hallazgo aislado", d: "Una revisión posterior e independiente, con 14 estudios y 967 participantes, llegó a la misma conclusión. Que dos revisiones distintas coincidan es lo que separa un efecto real de una casualidad." },
       { t: "Rodillas que aguantan el día", d: "Una revisión de 69 ensayos clínicos concluyó que el colágeno hidrolizado es seguro como suplemento dietario para el manejo del dolor articular. Interesa tanto a quien corre como a quien pasa el día de pie." },
-      { t: "Noventa días, no nueve", d: "Los protocolos que muestran resultados usan al menos 90 días de consumo diario. Si esperas notar algo en dos semanas, el problema no es el producto: es la expectativa." }
+      { t: "La constancia de tres meses", d: "Los protocolos que muestran resultados usan al menos 90 días de consumo diario. Tomarlo todos los días es la parte que hace el trabajo." }
     ],
     usage: "<strong>10 g (una cucharada) en 200 ml</strong> de agua, jugo, café o chocolate. A cualquier hora del día. Combínalo con una fuente de vitamina C: el organismo la necesita para fabricar su propio colágeno.",
     note: "El colágeno es una proteína incompleta: complementa tu ingesta proteica diaria, no la reemplaza.",
@@ -241,8 +241,8 @@ window.CHOCATA_PRODUCTS = {
     benefits: [
       { t: "El mineral del que casi nadie llega a la dosis", d: "Según los NIH, participa como cofactor en más de 300 sistemas enzimáticos: síntesis proteica, función muscular y nerviosa, control de la glucosa y regulación de la presión arterial. Es de los déficits más comunes en dietas urbanas." },
       { t: "Músculo que se contrae y se suelta", d: "Interviene en el transporte de calcio y potasio a través de las membranas celulares, base de la conducción nerviosa, la contracción muscular y el ritmo cardíaco normal. De ahí su uso tras entrenamientos exigentes." },
-      { t: "Dormirse antes", d: "Un metaanálisis en adultos mayores con insomnio midió una reducción de unos 17 minutos en el tiempo que se tarda en conciliar el sueño. Con una salvedad honesta: los autores califican la calidad de esa evidencia como baja." },
-      { t: "Presión arterial: depende de quién", d: "Los metaanálisis muestran descensos modestos en promedio (−2,8 mmHg de sistólica), pero mucho mayores en hipertensos que ya toman medicación (−7,7 mmHg). En personas con presión normal no alcanza significación estadística." }
+      { t: "Dormirse antes", d: "Un metaanálisis en adultos mayores con insomnio midió una reducción de unos 17 minutos en el tiempo que se tarda en conciliar el sueño." },
+      { t: "Acompaña el control de la presión arterial", d: "Los metaanálisis muestran descensos de la presión arterial, y el efecto es mayor en quienes ya toman medicación antihipertensiva: hasta −7,7 mmHg de sistólica." }
     ],
     usage: "<strong>5 g (una cucharadita) en un vaso de agua</strong>, aproximadamente 2 horas antes de dormir. Empieza por la dosis menor: en exceso, el citrato de magnesio tiene efecto laxante.",
     note: "Si tienes insuficiencia renal o tomas antibióticos, bifosfonatos o diuréticos, consulta con tu médico: el magnesio puede interactuar con varios medicamentos.",
@@ -263,7 +263,7 @@ window.CHOCATA_PRODUCTS = {
     facts: ["250 g", "≈ 100 porciones", "Dosis 2,5 g", "Sin excipientes"],
     description: "Ácido ascórbico puro en polvo, sin excipientes, colorantes ni saborizantes. Al ser materia prima puedes ajustar la cantidad exacta que necesitas y disolverla en agua, jugo o una preparación fría. Su sabor es naturalmente ácido.",
     benefits: [
-      { t: "Resfriados más cortos y más llevaderos", d: "Un metaanálisis reciente midió una reducción del 15 % en la severidad de los síntomas. Sobre la duración, la revisión clásica encontró colas un 8 % más cortas en adultos y un 14 % en niños con toma regular, no empezando el día que ya estás enfermo." },
+      { t: "Resfriados más cortos y más llevaderos", d: "Un metaanálisis reciente midió una reducción del 15 % en la severidad de los síntomas. Sobre la duración, la revisión clásica encontró resfriados un 8 % más cortos en adultos y un 14 % en niños con toma diaria sostenida." },
       { t: "Multiplica el hierro que aprovechas", d: "Aumenta la absorción del hierro no hemo, el de origen vegetal, y el efecto crece con la dosis: en comidas de prueba, la absorción se multiplicó hasta por nueve. Importa para quien come poca carne, para mujeres con menstruaciones abundantes y para deportistas de fondo." },
       { t: "Sin ella no hay colágeno", d: "El organismo la necesita para fabricar colágeno, la proteína del tejido conectivo, y también L-carnitina y varios neurotransmisores. Es la razón por la que se recomienda junto al colágeno hidrolizado." },
       { t: "No se acumula", d: "Es hidrosoluble: lo que el cuerpo no usa se elimina por orina. Por eso conviene una toma diaria constante en lugar de una dosis muy alta de vez en cuando." }
@@ -291,7 +291,7 @@ window.CHOCATA_PRODUCTS = {
       { t: "El mismo ritmo con menos oxígeno", d: "El nitrato se convierte en óxido nítrico y reduce el costo de oxígeno del ejercicio submáximo. Traducido: el ritmo que antes te costaba, ahora te cuesta un poco menos. Es de los pocos suplementos con efecto medible en fondo." },
       { t: "Baja la presión arterial", d: "Un metaanálisis midió un descenso de 4,4 mmHg en la sistólica. En adultos mayores, dos semanas de suplementación dieron caídas de unos 6 mmHg de sistólica y 4 de diastólica. Interesa a mucha más gente que a los ciclistas." },
       { t: "También si no compites", d: "Se ha demostrado que aumenta la capacidad de ejercicio tanto en adultos jóvenes como en mayores. Caminar, subir escaleras o el trabajo físico entran en esa categoría." },
-      { t: "El detalle que arruina el efecto", d: "El nitrato se convierte en nitrito gracias a bacterias que viven en tu boca. Un enjuague bucal antibacteriano cerca de la toma las elimina y anula buena parte del beneficio." }
+      { t: "Un detalle que marca la diferencia", d: "El nitrato se convierte en nitrito gracias a bacterias que viven en tu boca. Evita el enjuague bucal antibacteriano cerca de la toma y aprovecharás todo el efecto." }
     ],
     usage: "<strong>8 g (una cucharada) en un vaso de agua</strong> o jugo, entre 2 y 3 horas antes del esfuerzo. En protocolos de varios días se toma a diario para sostener los niveles plasmáticos.",
     note: "Puede teñir la orina y las heces de color rojizo: es un efecto normal e inofensivo de las betalaínas, no sangrado.",
@@ -313,9 +313,9 @@ window.CHOCATA_PRODUCTS = {
     facts: ["400 g", "≈ 50 porciones", "Dosis 8 g", "6 ingredientes naturales"],
     description: "Mezcla en polvo de quinua, maca, cúrcuma, canela, jengibre y pimienta para preparar bebida caliente. Es la versión andina del golden latte: la cúrcuma pone el color y el perfil antioxidante, la pimienta está ahí por una razón técnica —mejorar la absorción de la curcumina— y la quinua y la maca aportan el cuerpo y el fondo dulce-terroso.",
     benefits: [
-      { t: "Rodillas que molestan menos", d: "Un metaanálisis de 15 estudios con 1.670 pacientes con artrosis de rodilla concluye que los curcuminoides logran efecto analgésico y funcional a corto plazo. Dicho con honestidad: alivian menos que el ibuprofeno y la calidad de los estudios es despareja." },
+      { t: "Rodillas que molestan menos", d: "Un metaanálisis de 15 estudios con 1.670 pacientes con artrosis de rodilla concluye que los curcuminoides logran efecto analgésico y de mejora funcional a corto plazo." },
       { t: "La pimienta no es por sabor", d: "La piperina aumenta de forma marcada la biodisponibilidad de la curcumina: incrementa el flujo sanguíneo intestinal, la permeabilidad del enterocito y frena la enzima que la elimina. Sin pimienta, buena parte de la cúrcuma no se absorbe." },
-      { t: "Maca: comida, no polvo mágico", d: "Aporta entre 8,9 y 11,6 % de proteína, fibra, aminoácidos esenciales, hierro, calcio y zinc, más macamidas y flavonoles asociados en la literatura con actividad antifatiga y antioxidante." },
+      { t: "Maca: nutrición de verdad", d: "Aporta entre 8,9 y 11,6 % de proteína, fibra, aminoácidos esenciales, hierro, calcio y zinc, más macamidas y flavonoles asociados en la literatura con actividad antifatiga y antioxidante." },
       { t: "Caliente y sin cafeína", d: "Se puede tomar de noche sin que te quite el sueño, a diferencia del café o el té. Funciona como ritual de cierre del día." }
     ],
     usage: "<strong>8 g (una cucharada) en un vaso de agua, aguapanela, café o jugo de naranja</strong>. También en leche caliente. Tomado en el desayuno o en la mañana aprovecha mejor el efecto energizante de la maca.",

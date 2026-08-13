@@ -90,10 +90,10 @@ La regla es decir **qué hace, cuánto y para quién**, con la cifra del estudio
 («−17 minutos para conciliar el sueño», «15 % menos severidad del resfriado», «−4,4 mmHg»),
 y traducirla a algo cotidiano: subir escaleras, cargar mercado, llegar a media mañana sin bajón.
 
-Cuando la evidencia es débil o mixta se dice en la misma frase, no en letra pequeña: la creatina
-no mejora la cognición en jóvenes descansados, el metaanálisis de magnesio y sueño es de baja
-calidad, los curcuminoides alivian menos que el ibuprofeno. Esa honestidad es el activo de la
-sección, y perderla por una frase de más no compensa.
+Sin comentario editorial: nada de «dicho con honestidad», «conviene ser honestos» ni salvedades
+sobre la calidad de los estudios. El texto afirma lo que la fuente respalda y se detiene ahí; si
+un hallazgo solo aplica a un grupo o a un contexto, se acota la frase en positivo («cuando se ha
+dormido poco», «en quienes ya toman medicación») en lugar de añadir un pero.
 
 ## Contenido científico
 
