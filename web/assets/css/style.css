@@ -541,8 +541,9 @@ ul { margin: 0; padding: 0; list-style: none; }
   filter: blur(34px) brightness(.52) saturate(1.15);
   transform: scale(1.14);
 }
-/* Primer plano: la composición completa, sin recorte ni ampliación. */
-.modal__visual-main { object-fit: contain; object-position: center; }
+/* Primer plano: la composición completa, sin recorte ni ampliación, pegada a
+   la izquierda para que no invada la columna de texto. */
+.modal__visual-main { object-fit: contain; object-position: left center; }
 
 .modal__content {
   position: relative; z-index: 1;
