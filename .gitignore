@@ -1,0 +1,12 @@
+# Material fuente sin optimizar (~80 MB de PNG).
+# El sitio no los usa: consume los .webp ya generados en web/assets/img/.
+# Para versionarlos igualmente, comenta estas dos líneas y vuelve a hacer commit.
+/composiciones/
+/productos_sin_fondo/
+
+# Sistema operativo / editores
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+*.swp
