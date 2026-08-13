@@ -83,6 +83,37 @@ el perímetro y conservando la mancha conectada más grande.
   filtros, modal con `role="dialog"`, cierre con Escape, trampa de foco y devolución del foco al
   disparador. Todos los objetivos táctiles miden 44 px o más.
 
+## Medición
+
+Toda la analítica sale por una sola función, `medir()` en `main.js`. Reconoce Vercel
+(`window.va`), Umami y Google Analytics si están cargados, y no hace nada si no hay ninguno.
+Cambiar de proveedor es tocar ese único punto.
+
+> Cuidado con el nombre: el carrusel de rituales ya usa `var track` para su elemento del DOM.
+> Una función `track()` en el mismo ámbito queda sobrescrita por esa variable. Por eso se
+> llama `medir()`.
+
+**Eventos que emite:**
+
+| Evento | Datos | Para qué |
+|---|---|---|
+| `Ficha de producto` | producto, origen | Ranking de productos y qué zona los abre |
+| `WhatsApp` | origen | La conversión real: cuántos escriben y desde dónde |
+| `Instagram` | origen | Tráfico hacia la red |
+| `Filtro de catalogo` | categoria | Qué línea buscan |
+| `Recomendador` | objetivo | Qué necesidad declara la gente |
+| `Ciencia` | ingrediente | Si el contenido de evidencia se lee |
+| `Fuente cientifica` | origen | Si alguien verifica las fuentes |
+| `Profundidad de lectura` | porcentaje | Hasta dónde llegan en una página larga |
+
+**Proveedores.** Vercel Web Analytics ya está enlazado en `index.html` y hay que activarlo una
+vez en el panel; da visitas, dispositivo, país, navegador y origen del tráfico, pero sus eventos
+personalizados exigen plan Pro. Para el ranking de productos en plan gratuito, el `index.html`
+trae la línea de Umami comentada: basta pegar el `website-id` y descomentarla.
+
+Ambos son sin cookies y no recogen datos personales, así que el sitio no necesita banner de
+consentimiento. Eso cambiaría si se pasa a Google Analytics.
+
 ## Cómo se redactan los beneficios
 
 Cada beneficio habla a dos lectores a la vez: quien entrena y quien solo quiere estar mejor.

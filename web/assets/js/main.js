@@ -15,6 +15,65 @@
 
   document.getElementById('year').textContent = new Date().getFullYear();
 
+  /* ---------- Analítica de interacción ----------
+     Un único punto de salida: si se cambia de proveedor, solo se toca aquí.
+     Reconoce Vercel (window.va), Umami y Google Analytics si están cargados,
+     y no hace nada si no hay ninguno. Nunca debe romper la página. */
+  function medir(nombre, datos) {
+    try {
+      if (typeof window.va === 'function') window.va('event', { name: nombre, data: datos || {} });
+      if (window.umami && typeof window.umami.track === 'function') window.umami.track(nombre, datos || {});
+      if (typeof window.gtag === 'function') window.gtag('event', nombre, datos || {});
+    } catch (e) { /* la medición no puede afectar al usuario */ }
+  }
+
+  /* De dónde salió el clic, para saber qué zona de la página convierte. */
+  function origenDe(el) {
+    if (!el || !el.closest) return 'desconocido';
+    if (el.closest('#grid')) return 'catalogo';
+    if (el.closest('.hero__benefits')) return 'banda-beneficios';
+    if (el.closest('.goal-results')) return 'recomendador';
+    if (el.closest('.modal')) return 'ficha';
+    if (el.closest('.nav__drawer')) return 'menu-movil';
+    if (el.closest('.nav')) return 'nav';
+    if (el.closest('.hero')) return 'hero';
+    if (el.closest('.foodservice')) return 'food-service';
+    if (el.closest('.social')) return 'galeria-instagram';
+    if (el.closest('.finale')) return 'cierre';
+    if (el.closest('.footer')) return 'pie';
+    if (el.classList && el.classList.contains('wa')) return 'boton-flotante';
+    return 'otro';
+  }
+
+  /* Salidas hacia WhatsApp e Instagram: es la conversión real del sitio. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (href.indexOf('wa.me') > -1) {
+      medir('WhatsApp', { origen: origenDe(a) });
+    } else if (href.indexOf('instagram.com') > -1) {
+      medir('Instagram', { origen: origenDe(a) });
+    } else if (a.closest('.sources')) {
+      medir('Fuente cientifica', { origen: origenDe(a) });
+    }
+  }, true);
+
+  /* Profundidad de lectura: dice hasta dónde llega la gente en una página larga. */
+  var hitos = [25, 50, 75, 100], hitosVistos = {};
+  window.addEventListener('scroll', function () {
+    if (document.body.classList.contains('is-locked')) return;
+    var alto = document.documentElement.scrollHeight - window.innerHeight;
+    if (alto <= 0) return;
+    var pct = Math.min(100, Math.round((window.scrollY / alto) * 100));
+    for (var i = 0; i < hitos.length; i++) {
+      if (pct >= hitos[i] && !hitosVistos[hitos[i]]) {
+        hitosVistos[hitos[i]] = true;
+        medir('Profundidad de lectura', { porcentaje: hitos[i] });
+      }
+    }
+  }, { passive: true });
+
   /* ---------- Preloader ---------- */
   var preloader = document.getElementById('preloader');
   var fill = document.getElementById('preloaderFill');
@@ -176,6 +235,7 @@
     btn.addEventListener('click', function () {
       filters.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
       var f = btn.getAttribute('data-filter');
+      medir('Filtro de catalogo', { categoria: f });
       cards.forEach(function (card) {
         var show = f === 'all' || card.getAttribute('data-cat') === f;
         card.classList.toggle('is-hidden', !show);
@@ -279,6 +339,7 @@
     var visual = modal.querySelector('.modal__visual-main');
     fadeVisual();
     if (!visual.complete) visual.addEventListener('load', fadeVisual);
+    medir('Ficha de producto', { producto: key, origen: origenDe(trigger) });
     if (animate) {
       gsap.fromTo(modalPanel, { opacity: 0, y: 26, scale: .985 }, { opacity: 1, y: 0, scale: 1, duration: .45, ease: 'power3.out' });
     }
@@ -334,6 +395,7 @@
   goalBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {
       goalBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+      medir('Recomendador', { objetivo: btn.getAttribute('data-goal') });
       renderGoal(btn.getAttribute('data-goal'));
     });
   });
@@ -377,6 +439,7 @@
         item.classList.add('is-open');
         btn.setAttribute('aria-expanded', 'true');
         setPanel(item, true);
+        medir('Ciencia', { ingrediente: btn.querySelector('h3').textContent.trim() });
       }
       if (hasGSAP && window.ScrollTrigger) setTimeout(ScrollTrigger.refresh, 460);
     });
