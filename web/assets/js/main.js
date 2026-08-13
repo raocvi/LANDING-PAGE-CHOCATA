@@ -222,9 +222,12 @@
     }
 
     modalGrid.innerHTML =
+      /* Dos capas: el fondo desenfocado llena el recuadro y la foto se ve
+         completa encima, sin recorte ni ampliación. */
       '<div class="modal__visual">' +
-        '<img src="' + p.life + '" alt="' + p.lifeAlt + '"' +
+        '<img class="modal__visual-bg" src="' + p.life + '" alt="" aria-hidden="true"' +
           (p.focus ? ' style="object-position:' + p.focus + '"' : '') + '>' +
+        '<img class="modal__visual-main" src="' + p.life + '" alt="' + p.lifeAlt + '">' +
       '</div>' +
       '<div class="modal__content">' +
         '<div>' +

@@ -525,18 +525,24 @@ ul { margin: 0; padding: 0; list-style: none; }
 
 /* La foto llena el panel entero y se queda fija mientras se lee la ficha.
    El degradado arranca justo donde empieza la columna de texto (46 %). */
+/* El degradado va en el contenedor para que afecte por igual a las dos capas. */
 .modal__visual {
   position: sticky; top: 0; z-index: 0;
   align-self: start; justify-self: stretch;
   width: 100%; height: 92svh; max-height: 100%;
   overflow: hidden; pointer-events: none;
-}
-.modal__visual img {
-  display: block; width: 100%; height: 100%;
-  object-fit: cover; object-position: 26% 58%;
   -webkit-mask-image: linear-gradient(to right, #000 0%, #000 48%, rgba(0,0,0,.72) 62%, rgba(0,0,0,.34) 78%, transparent 96%);
           mask-image: linear-gradient(to right, #000 0%, #000 48%, rgba(0,0,0,.72) 62%, rgba(0,0,0,.34) 78%, transparent 96%);
 }
+.modal__visual img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+/* Fondo: rellena el recuadro, desenfocado y oscurecido para no competir. */
+.modal__visual-bg {
+  object-fit: cover; object-position: 26% 58%;
+  filter: blur(34px) brightness(.52) saturate(1.15);
+  transform: scale(1.14);
+}
+/* Primer plano: la composición completa, sin recorte ni ampliación. */
+.modal__visual-main { object-fit: contain; object-position: center; }
 
 .modal__content {
   position: relative; z-index: 1;
@@ -842,16 +848,13 @@ html.motion .reveal-fade { opacity: 0; }
 @media (max-width: 1080px) {
   /* Sin ancho para montar el texto: foto arriba, contenido debajo. */
   .modal__grid { grid-template-rows: auto auto; }
-  /* Sin ancho para montar el texto: foto completa arriba, contenido debajo. */
-  .modal__grid { grid-template-rows: auto auto; }
-  .modal__visual { grid-area: 1 / 1; position: static; height: min(46svh, 380px); }
-  .modal__content { grid-area: 2 / 1; padding-left: clamp(1.6rem, 3.2vw, 2.8rem); }
-  .modal__content::before { display: none; }
-  .modal__visual img {
-    object-position: 50% 52%;
+  .modal__visual {
+    grid-area: 1 / 1; position: static; height: min(46svh, 380px);
     -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
             mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
   }
+  .modal__content { grid-area: 2 / 1; padding-left: clamp(1.6rem, 3.2vw, 2.8rem); }
+  .modal__content::before { display: none; }
   .science__grid, .nutrition__grid { grid-template-columns: minmax(0, 1fr); }
   /* Sin ancho para montar el texto: foto arriba, contenido debajo. */
   .manifesto__grid { grid-template-rows: auto auto; gap: clamp(1.5rem, 4vw, 2.5rem); }
