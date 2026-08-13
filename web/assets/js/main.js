@@ -246,6 +246,23 @@
     return true;
   }
 
+  /* Con `contain`, la foto ocupa solo parte del recuadro y su borde derecho
+     queda a media panorámica, donde el degradado del contenedor todavía es
+     opaco: se ve un corte recto contra el fondo desenfocado. El ancho real
+     depende de la proporción de cada imagen, así que se calcula y se le pone
+     su propio degradado en píxeles. */
+  function fadeVisual() {
+    var img = modal.querySelector('.modal__visual-main');
+    if (!img) return;
+    if (window.innerWidth <= 1080 || !img.naturalWidth) { img.style.maskImage = ''; img.style.webkitMaskImage = ''; return; }
+    var box = img.getBoundingClientRect();
+    var w = Math.min(box.width, box.height * (img.naturalWidth / img.naturalHeight));
+    var g = 'linear-gradient(to right, #000 ' + Math.round(w * 0.46) + 'px, rgba(0,0,0,.6) '
+          + Math.round(w * 0.74) + 'px, transparent ' + Math.round(w) + 'px)';
+    img.style.webkitMaskImage = g;
+    img.style.maskImage = g;
+  }
+
   function openModal(key, trigger) {
     if (!buildModal(key)) return;
     lastFocused = trigger || document.activeElement;
@@ -254,6 +271,10 @@
     if (lenis) lenis.stop();
     modalPanel.scrollTop = 0;
     modal.querySelector('.modal__close').focus();
+    /* Después de mostrarlo: con el modal oculto el recuadro mide cero. */
+    var visual = modal.querySelector('.modal__visual-main');
+    fadeVisual();
+    if (!visual.complete) visual.addEventListener('load', fadeVisual);
     if (animate) {
       gsap.fromTo(modalPanel, { opacity: 0, y: 26, scale: .985 }, { opacity: 1, y: 0, scale: 1, duration: .45, ease: 'power3.out' });
     }
@@ -358,6 +379,7 @@
   window.addEventListener('resize', function () {
     var open = document.querySelector('.acc.is-open');
     if (open) setPanel(open, true);
+    if (modal.classList.contains('is-open')) fadeVisual();
   });
 
   /* ---------- Rituales: scroll horizontal ---------- */

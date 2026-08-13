@@ -854,6 +854,8 @@ html.motion .reveal-fade { opacity: 0; }
     -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
             mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
   }
+  /* Apilado: la foto se centra y el desenfoque rellena a ambos lados. */
+  .modal__visual-main { object-position: center; }
   .modal__content { grid-area: 2 / 1; padding-left: clamp(1.6rem, 3.2vw, 2.8rem); }
   .modal__content::before { display: none; }
   .science__grid, .nutrition__grid { grid-template-columns: minmax(0, 1fr); }
