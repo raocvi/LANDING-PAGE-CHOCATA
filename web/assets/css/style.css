@@ -588,6 +588,20 @@ ul { margin: 0; padding: 0; list-style: none; }
   padding: 1.2rem 1.35rem; font-size: .93rem; color: var(--muted);
 }
 .usage strong { color: var(--cream); font-weight: 500; }
+/* La advertencia iba suelta contra el borde: ahora tiene su propia caja, con
+   una guía ámbar a la izquierda que la distingue del modo de uso. */
+.note {
+  position: relative;
+  padding: 1.05rem 1.25rem 1.05rem 1.5rem;
+  border: 1px solid rgba(242, 176, 30, .22);
+  border-radius: var(--r-md);
+  background: rgba(242, 176, 30, .05);
+  font-size: .89rem; line-height: 1.6; color: var(--muted);
+}
+.note::before {
+  content: ""; position: absolute; left: 0; top: .9rem; bottom: .9rem;
+  width: 3px; border-radius: 3px; background: var(--gold);
+}
 .sources { display: grid; gap: .5rem; }
 /* `align-items: start` y una sola columna de texto: cualquier nodo suelto
    dentro del enlace se convertiría en otro ítem de la retícula. */

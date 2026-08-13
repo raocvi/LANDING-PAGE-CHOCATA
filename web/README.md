@@ -83,6 +83,18 @@ el perímetro y conservando la mancha conectada más grande.
   filtros, modal con `role="dialog"`, cierre con Escape, trampa de foco y devolución del foco al
   disparador. Todos los objetivos táctiles miden 44 px o más.
 
+## Cómo se redactan los beneficios
+
+Cada beneficio habla a dos lectores a la vez: quien entrena y quien solo quiere estar mejor.
+La regla es decir **qué hace, cuánto y para quién**, con la cifra del estudio cuando existe
+(«−17 minutos para conciliar el sueño», «15 % menos severidad del resfriado», «−4,4 mmHg»),
+y traducirla a algo cotidiano: subir escaleras, cargar mercado, llegar a media mañana sin bajón.
+
+Cuando la evidencia es débil o mixta se dice en la misma frase, no en letra pequeña: la creatina
+no mejora la cognición en jóvenes descansados, el metaanálisis de magnesio y sueño es de baja
+calidad, los curcuminoides alivian menos que el ibuprofeno. Esa honestidad es el activo de la
+sección, y perderla por una frase de más no compensa.
+
 ## Contenido científico
 
 Las afirmaciones de beneficio están redactadas sobre el ingrediente, no sobre el producto, y cada

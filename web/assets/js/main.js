@@ -239,7 +239,7 @@
         '<div class="modal__block"><h3>Beneficios respaldados</h3><ul class="benefits">' + benefits + '</ul></div>' +
         prices +
         '<div class="modal__block"><h3>Modo de uso</h3><p class="usage">' + p.usage + '</p></div>' +
-        (p.note ? '<div class="modal__block"><h3>Ten en cuenta</h3><p style="font-size:.9rem;color:var(--muted)">' + p.note + '</p></div>' : '') +
+        (p.note ? '<div class="modal__block"><h3>Ten en cuenta</h3><p class="note">' + p.note + '</p></div>' : '') +
         '<div class="modal__block"><h3>Fuentes consultadas</h3><div class="sources">' + sources + '</div></div>' +
         '<a class="btn" style="justify-self:start" href="https://wa.me/573176685235?text=' + encodeURIComponent('Hola CHOCATA, quiero informacion de ' + p.name) + '" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a>' +
       '</div>';
