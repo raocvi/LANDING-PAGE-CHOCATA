@@ -223,7 +223,8 @@
 
     modalGrid.innerHTML =
       '<div class="modal__visual">' +
-        '<img src="' + p.life + '" alt="' + p.lifeAlt + '">' +
+        '<img src="' + p.life + '" alt="' + p.lifeAlt + '"' +
+          (p.focus ? ' style="object-position:' + p.focus + '"' : '') + '>' +
       '</div>' +
       '<div class="modal__content">' +
         '<div>' +
