@@ -193,6 +193,7 @@
   var modalGrid = document.getElementById('modalGrid');
   var modalPanel = document.getElementById('modalPanel');
   var lastFocused = null;
+  var scrollLocked = 0;
 
   var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>';
   var LINK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>';
@@ -267,6 +268,9 @@
     if (!buildModal(key)) return;
     lastFocused = trigger || document.activeElement;
     modal.classList.add('is-open');
+    /* Al fijar el cuerpo se pierde la posición: se guarda y se compensa. */
+    scrollLocked = window.scrollY || window.pageYOffset || 0;
+    document.body.style.top = -scrollLocked + 'px';
     document.body.classList.add('is-locked');
     if (lenis) lenis.stop();
     modalPanel.scrollTop = 0;
@@ -283,7 +287,9 @@
   function closeModal() {
     modal.classList.remove('is-open');
     document.body.classList.remove('is-locked');
-    if (lenis) lenis.start();
+    document.body.style.top = '';
+    window.scrollTo(0, scrollLocked);
+    if (lenis) { lenis.start(); lenis.scrollTo(scrollLocked, { immediate: true }); }
     if (lastFocused) lastFocused.focus();
   }
 

@@ -65,7 +65,9 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
-body.is-locked { overflow: hidden; }
+/* En móvil no basta con `overflow: hidden`: el navegador sigue desplazando la
+   página detrás del modal. Se fija el cuerpo y el JS repone la posición. */
+body.is-locked { position: fixed; width: 100%; overflow: hidden; }
 /* height:auto neutraliza el hint de presentación de los atributos width/height,
    que de lo contrario fija la altura en píxeles y rompe la proporción. */
 img { max-width: 100%; height: auto; display: block; }
@@ -502,6 +504,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .modal__panel {
   position: relative; z-index: 2; width: min(1060px, 100%); max-height: 92svh;
   overflow-y: auto; overflow-x: hidden;
+  overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
   background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--r-lg);
   scrollbar-width: thin;
 }
@@ -863,8 +866,11 @@ html.motion .reveal-fade { opacity: 0; }
 @media (max-width: 1080px) {
   /* Sin ancho para montar el texto: foto arriba, contenido debajo. */
   .modal__grid { grid-template-rows: auto auto; }
+  /* `relative`, no `static`: las dos capas van en `position: absolute` y sin
+     un ancestro posicionado se estiraban contra el panel entero, tapando el
+     texto y desbordando el recuadro. */
   .modal__visual {
-    grid-area: 1 / 1; position: static; height: min(46svh, 380px);
+    grid-area: 1 / 1; position: relative; height: min(46svh, 380px);
     -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
             mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
   }
