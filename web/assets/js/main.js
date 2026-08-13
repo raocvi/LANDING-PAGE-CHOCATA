@@ -213,6 +213,14 @@
       return '<a href="' + s.u + '" target="_blank" rel="noopener noreferrer">' + LINK + '<span>' + s.l + '</span></a>';
     }).join('');
 
+    var prices = '';
+    if (p.prices && p.prices.length) {
+      prices = '<div class="modal__block"><h3>Presentaciones y precios</h3>' +
+        '<ul class="prices">' + p.prices.map(function (row) {
+          return '<li><span>' + row.s + '</span><b>' + (row.p || 'Consultar') + '</b></li>';
+        }).join('') + '</ul></div>';
+    }
+
     modalGrid.innerHTML =
       '<div class="modal__visual">' +
         '<img src="' + p.life + '" alt="' + p.lifeAlt + '">' +
@@ -225,6 +233,7 @@
         '<div class="modal__facts">' + facts + '</div>' +
         '<p class="lede">' + p.description + '</p>' +
         '<div class="modal__block"><h3>Beneficios respaldados</h3><ul class="benefits">' + benefits + '</ul></div>' +
+        prices +
         '<div class="modal__block"><h3>Modo de uso</h3><p class="usage">' + p.usage + '</p></div>' +
         (p.note ? '<div class="modal__block"><h3>Ten en cuenta</h3><p style="font-size:.9rem;color:var(--muted)">' + p.note + '</p></div>' : '') +
         '<div class="modal__block"><h3>Fuentes consultadas</h3><div class="sources">' + sources + '</div></div>' +

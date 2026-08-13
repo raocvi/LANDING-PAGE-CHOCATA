@@ -94,7 +94,10 @@ El pie de página incluye el aviso de que son alimentos y materias primas alimen
 
 - El logotipo viene de `LOGO2.png` (1536×1024). Si existe el vectorial original (AI/SVG/EPS),
   reemplazarlo: rinde mejor en pantallas de alta densidad y pesa menos.
-- Confirmar precios, disponibilidad y el enlace de compra/catálogo si se abre canal de e-commerce.
+- **Faltan dos precios.** El colágeno hidrolizado no tiene pieza gráfica y la de remolacha no
+  declara precio: esa ficha muestra «Consultar». La pieza de Hidratec tampoco declara el peso neto.
+- La pieza de CHOCATA Premium trae otro WhatsApp (320 761 9086); el sitio usa 317 668 5235 en todo.
+- Confirmar disponibilidad y el enlace de compra/catálogo si se abre canal de e-commerce.
 - El WhatsApp de contacto es +57 317 668 5235 (confirmado por el cliente). Algunos empaques traen
   impreso 317 680 5255; conviene unificarlo en la próxima tirada.
 - Añadir favicon, imagen `og:image` y `sitemap.xml` al publicar en dominio propio.

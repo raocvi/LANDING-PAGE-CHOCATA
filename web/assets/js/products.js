@@ -19,7 +19,7 @@ window.CHOCATA_GOALS = {
   energia: [
     { p: "chocata-premium",  w: "Malta y cacao endulzados con estevia: energía del desayuno con menos azúcar añadido." },
     { p: "latte-dorato",     w: "Bebida caliente sin cafeína, con cúrcuma, maca, canela y jengibre." },
-    { p: "chocata-tradicional", w: "El chocolate de la mesa familiar, rinde 25 tazas." }
+    { p: "chocata-tradicional", w: "El chocolate de la mesa familiar: 25 g por taza, desde 200 g hasta 3.500 g." }
   ],
   defensas: [
     { p: "vitamina-c",       w: "Función inmune, síntesis de colágeno y mejor absorción del hierro no hemo. Tómala con comida." },
@@ -44,7 +44,8 @@ window.CHOCATA_PRODUCTS = {
     kicker: "Bebida de malta y cacao",
     life: "assets/img/life/premium.webp",
     lifeAlt: "Pareja deportista disfrutando CHOCATA Premium frío al aire libre",
-    facts: ["200 g", "10 porciones", "Con estevia", "Contiene edulcorantes · MinSalud"],
+    prices: [{ s: "200 g", p: "$16.000" }, { s: "500 g", p: "$32.000" }],
+    facts: ["200 g y 500 g", "Dosis 25 g", "Con estevia", "Contiene edulcorantes · MinSalud"],
     description: "Alimento en polvo a base de malta para preparar bebida, endulzado con estevia. Es la versión ligera del chocolate de siempre: mismo cuerpo y mismo sabor a cacao, con menos azúcar añadido que la referencia tradicional. Se prepara frío o caliente y funciona igual de bien en licuadora con leche que a cucharaditas en un vaso de agua.",
     benefits: [
       { t: "Carbohidrato disponible", d: "La malta aporta carbohidratos de rápida disponibilidad, útiles como desayuno o como recarga antes o después de una sesión de ejercicio." },
@@ -65,12 +66,13 @@ window.CHOCATA_PRODUCTS = {
     kicker: "Chocolate granulado, sabor natural",
     life: "assets/img/life/desayuno.webp",
     lifeAlt: "Taza de chocolate CHOCATA caliente en la mesa del desayuno",
-    facts: ["350 g", "Rinde 25 tazas", "Sabor chocolate natural", "Exceso en azúcares · MinSalud"],
+    prices: [{ s: "200 g", p: "$9.000" }, { s: "500 g", p: "$22.000" }, { s: "1.500 g", p: "$45.000" }, { s: "3.500 g", p: "$95.000" }],
+    facts: ["200 g a 3.500 g", "Dosis 25 g", "Sabor chocolate natural", "Exceso en azúcares · MinSalud"],
     description: "El chocolate granulado de toda la vida: se disuelve rápido, no deja grumos y conserva el sabor a cacao natural que reconoce cualquier hogar colombiano. Pensado para la taza de la mañana, el algo de la tarde y la sobremesa. Es la referencia con la que nació la marca.",
     benefits: [
       { t: "Energía para arrancar", d: "Aporta carbohidratos que el cuerpo usa como combustible inmediato, ideal como parte de un desayuno completo antes del colegio, el trabajo o la ruta." },
       { t: "Disolución instantánea", d: "El formato granulado se integra en frío o caliente sin necesidad de licuadora ni molinillo." },
-      { t: "Ritual compartido", d: "Rinde 25 porciones por bolsa, pensado para la mesa familiar y no para la porción individual." }
+      { t: "Ritual compartido", d: "Cuatro presentaciones, de 200 g a 3.500 g, con dosificación de 25 g por taza: desde la despensa de casa hasta la cafetería." }
     ],
     usage: "Disuelve <strong>una porción en 200 ml</strong> de leche o agua caliente y revuelve. También funciona frío. Consérvalo en un lugar fresco y seco.",
     note: "Producto con sello frontal «Exceso en azúcares». Modera su consumo dentro de una alimentación equilibrada.",
@@ -84,6 +86,7 @@ window.CHOCATA_PRODUCTS = {
     kicker: "Formato institucional y repostería",
     life: "assets/img/life/reposteria.webp",
     lifeAlt: "Chef pastelero cubriendo una torta con chocolate CHOCATA",
+    prices: [{ s: "3.500 g", p: "$95.000" }],
     facts: ["3.500 g", "175 porciones", "Mayor ahorro", "NSA-0013557-2024"],
     description: "La misma fórmula de malta y cacao en presentación metalizada de 3.500 g, con tabla nutricional completa impresa y 175 porciones por bolsa. Es el formato para cafeterías, panaderías, hoteles, colegios y reposterías: reduce el costo por porción y permite estandarizar la receta en cocinas de alto volumen.",
     benefits: [
@@ -104,7 +107,8 @@ window.CHOCATA_PRODUCTS = {
     kicker: "Whey protein concentrate",
     life: "assets/img/life/proteina-2.webp",
     lifeAlt: "Deportista con shaker y empaque de 100 % Proteína CHOCATA en el gimnasio",
-    facts: ["400 g", "Materia prima", "Sin saborizantes", "Un solo ingrediente"],
+    prices: [{ s: "400 g", p: "$70.000" }],
+    facts: ["400 g", "≈ 16 porciones", "Dosis 25 g", "Un solo ingrediente"],
     description: "Concentrado de proteína de suero de leche puro, sin saborizantes ni mezclas. Es materia prima: lo que ves en la etiqueta es literalmente lo único que hay en la bolsa. Se puede tomar solo, mezclado con CHOCATA para darle sabor, o incorporarlo a preparaciones como avena y batidos de fruta.",
     benefits: [
       { t: "Estimula la síntesis proteica muscular", d: "El whey es una proteína de alta calidad rica en aminoácidos esenciales que potencia la síntesis proteica muscular tras el ejercicio, de forma superior a fuentes proteicas de menor calidad." },
@@ -126,7 +130,8 @@ window.CHOCATA_PRODUCTS = {
     kicker: "100 % monohidrato",
     life: "assets/img/life/creatina-2.webp",
     lifeAlt: "Entrenamiento de fuerza con Creatina CHOCATA",
-    facts: ["250 g", "Materia prima", "Sin sabor", "≈ 50 dosis de 5 g"],
+    prices: [{ s: "250 g", p: "$50.000" }],
+    facts: ["250 g", "≈ 50 porciones", "Dosis 5 g", "Sin sabor"],
     description: "Creatina monohidratada pura, la forma más estudiada y de mejor relación evidencia-precio del mercado. Sin sabor, sin colorantes, sin mezcla. Se disuelve en agua, jugo, la bebida de CHOCATA o el batido de proteína, y se toma todos los días —entrenes o no—, porque el efecto depende de saturar el músculo, no del momento de la toma.",
     benefits: [
       { t: "El ergogénico con más respaldo", d: "La ISSN la describe como el suplemento nutricional ergogénico más eficaz disponible para aumentar la capacidad de ejercicio de alta intensidad y la masa magra durante el entrenamiento." },
@@ -147,7 +152,8 @@ window.CHOCATA_PRODUCTS = {
     kicker: "Fórmula pre-entrenamiento",
     life: "assets/img/life/pre-workout.webp",
     lifeAlt: "Pareja deportista con shakers CHOCATA antes de entrenar al amanecer",
-    facts: ["Dosis 12 g", "Con cafeína anhidra", "Sabor uva-mora", "Beta-alanina · Citrulina"],
+    prices: [{ s: "200 g", p: "$30.000" }],
+    facts: ["200 g", "Dosis 12 g", "Con cafeína anhidra", "Sabor uva-mora"],
     description: "Mezcla pre-entrenamiento con beta-alanina, L-arginina, L-citrulina, L-tirosina, taurina, cafeína anhidra, inositol, electrolitos (sodio, potasio, fosfato monopotásico, citrato de magnesio) y complejo vitamínico A, C, B1, B2, B5, B6, B9 y B12. Diseñada para la sesión que exige concentración y trabajo repetido de alta intensidad.",
     benefits: [
       { t: "Beta-alanina y amortiguación del pH", d: "La posición oficial de la ISSN indica que 4–6 g diarios durante al menos 2 a 4 semanas aumentan la carnosina muscular, que actúa como amortiguador intracelular de pH, con mejoras de rendimiento más marcadas en esfuerzos de 1 a 4 minutos." },
@@ -169,7 +175,8 @@ window.CHOCATA_PRODUCTS = {
     kicker: "Bebida de hidratación y energía",
     life: "assets/img/life/hidratante-2.webp",
     lifeAlt: "Ciclista con Hidratec CHOCATA durante la ruta",
-    facts: ["Base dextrosa", "Con electrolitos", "Durante el esfuerzo", "Sellos frontales MinSalud"],
+    prices: [{ s: "Presentación única", p: "$30.000" }],
+    facts: ["Dosis 7 g en 750 ml", "≈ 50 porciones", "Con taurina y guaraná", "9 vitaminas y 6 minerales"],
     description: "Mezcla en polvo a base de dextrosa para preparar bebida energizante con electrolitos. Está pensada para consumirse durante el esfuerzo prolongado —rutas de ciclismo, carrera de fondo, trabajo bajo calor— cuando el agua sola ya no alcanza para sostener el ritmo.",
     benefits: [
       { t: "Objetivo: evitar la deshidratación excesiva", d: "El position stand del ACSM plantea que la meta de beber durante el ejercicio es prevenir una deshidratación mayor al 2 % del peso corporal y cambios excesivos del balance de electrolitos que comprometan el rendimiento." },
@@ -212,7 +219,8 @@ window.CHOCATA_PRODUCTS = {
     kicker: "100 % citrato de magnesio",
     life: "assets/img/life/magnesio-2.webp",
     lifeAlt: "Empaque de Citrato de Magnesio CHOCATA sobre la mesa de noche",
-    facts: ["250 g", "Materia prima", "Alta biodisponibilidad", "Un solo ingrediente"],
+    prices: [{ s: "250 g", p: "$21.000" }],
+    facts: ["250 g", "≈ 50 porciones", "Dosis 5 g", "Alta biodisponibilidad"],
     description: "Citrato de magnesio puro, la sal orgánica que mejor equilibra absorción y tolerancia digestiva. Se disuelve en agua y suele ubicarse al final del día, dentro de la rutina de descanso y recuperación muscular.",
     benefits: [
       { t: "Cofactor de más de 300 enzimas", d: "Según los NIH, el magnesio participa como cofactor en más de 300 sistemas enzimáticos que regulan la síntesis proteica, la función muscular y nerviosa, el control de la glucosa en sangre y la regulación de la presión arterial." },
@@ -234,7 +242,8 @@ window.CHOCATA_PRODUCTS = {
     kicker: "100 % ácido ascórbico",
     life: "assets/img/life/vitamina-c-2.webp",
     lifeAlt: "Preparación de Vitamina C CHOCATA en la cocina de casa",
-    facts: ["250 g", "Materia prima", "Sin excipientes", "Ácido ascórbico"],
+    prices: [{ s: "250 g", p: "$15.000" }],
+    facts: ["250 g", "≈ 100 porciones", "Dosis 2,5 g", "Sin excipientes"],
     description: "Ácido ascórbico puro en polvo, sin excipientes, colorantes ni saborizantes. Al ser materia prima puedes ajustar la cantidad exacta que necesitas y disolverla en agua, jugo o una preparación fría. Su sabor es naturalmente ácido.",
     benefits: [
       { t: "Síntesis de colágeno", d: "La vitamina C es requerida para la biosíntesis de colágeno, L-carnitina y ciertos neurotransmisores. El colágeno es componente esencial del tejido conectivo y cumple un papel central en la cicatrización de heridas." },
@@ -255,7 +264,8 @@ window.CHOCATA_PRODUCTS = {
     kicker: "100 % pura y natural",
     life: "assets/img/life/remolacha.webp",
     lifeAlt: "Dos ciclistas tomando bebida de remolacha CHOCATA antes de una ruta",
-    facts: ["200 g", "Extracto de remolacha", "Fuente de nitratos", "Materia prima"],
+    prices: [{ s: "200 g", p: null }],
+    facts: ["200 g", "≈ 25 porciones", "Dosis 8 g", "100 % pura y natural"],
     description: "Extracto de remolacha en polvo, 100 % puro. Es el aliado clásico del deporte de resistencia por su contenido de nitratos dietarios, y el color intenso que le da a la bebida es exactamente el de la betalaína natural de la raíz.",
     benefits: [
       { t: "La ruta nitrato–nitrito–óxido nítrico", d: "Tras la ingesta, el nitrato se convierte en nitrito y, en condiciones de baja disponibilidad de oxígeno, en óxido nítrico, molécula con un papel importante en el control vascular y metabólico." },
@@ -277,7 +287,8 @@ window.CHOCATA_PRODUCTS = {
     kicker: "Bebida caliente funcional",
     life: "assets/img/life/latte-2.webp",
     lifeAlt: "Taza de Latte Dorato CHOCATA junto al empaque",
-    facts: ["400 g", "67 porciones", "6 ingredientes", "Ingredientes naturales"],
+    prices: [{ s: "400 g", p: "$35.000" }],
+    facts: ["400 g", "≈ 50 porciones", "Dosis 8 g", "6 ingredientes naturales"],
     description: "Mezcla en polvo de quinua, maca, cúrcuma, canela, jengibre y pimienta para preparar bebida caliente. Es la versión andina del golden latte: la cúrcuma pone el color y el perfil antioxidante, la pimienta está ahí por una razón técnica —mejorar la absorción de la curcumina— y la quinua y la maca aportan el cuerpo y el fondo dulce-terroso.",
     benefits: [
       { t: "Curcumina: antiinflamatoria y antioxidante", d: "La curcumina, extraída del rizoma de Curcuma longa, es reconocida por sus actividades antiinflamatoria y antioxidante. La FDA la considera GRAS (generalmente reconocida como segura)." },
