@@ -64,7 +64,7 @@
   }
 
   function pesos(valor) {
-    return '$' + valor.toLocaleString('es-CO');
+    return typeof valor === 'number' ? '$' + valor.toLocaleString('es-CO') : '—';
   }
 
   /* ---------- Operaciones ---------- */
@@ -142,6 +142,14 @@
     if (!lista) return;
     contador.textContent = totalUnidades();
     disparador.classList.toggle('tiene', items.length > 0);
+
+    /* El catálogo llega por fetch. Hasta entonces no se puede poner precio a
+       nada: se muestra un estado de espera en vez de calcular con nulos. */
+    if (!catalogo && items.length) {
+      lista.innerHTML = '<p class="carrito__vacio">Cargando tu pedido…</p>';
+      resumen.innerHTML = '';
+      return;
+    }
 
     if (!items.length) {
       lista.innerHTML =
