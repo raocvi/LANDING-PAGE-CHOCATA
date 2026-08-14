@@ -12,6 +12,18 @@
  *   WOMPI_SECRETO_EVENTOS   secreto de eventos del panel de Wompi
  */
 const { firmaEventoValida } = require('./_pedido');
+const almacen = require('./_almacen');
+
+/** Solo lo necesario de la transacción, sin arrastrar datos de más. */
+function resumenTx(tx) {
+  return {
+    id: tx.id,
+    estado: tx.status,
+    montoCentavos: tx.amount_in_cents,
+    metodo: tx.payment_method_type,
+    finalizado: tx.finalized_at || null
+  };
+}
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -48,10 +60,26 @@ module.exports = async function handler(req, res) {
     id: tx.id
   }));
 
-  if (tx.status === 'APPROVED') {
-    /* TODO: marcar el pedido como pagado, avisar por correo y descontar
-       inventario. Requiere base de datos; hoy solo queda registrado. */
-    console.log('[webhook] PAGADO', tx.reference);
+  try {
+    const guardado = await almacen.leer(tx.reference);
+
+    /* Se compara con lo que quedó escrito al crear el pedido: si el monto
+       aprobado no coincide, no se da por bueno aunque la firma sea válida. */
+    if (guardado && !guardado.huerfano && guardado.total * 100 !== tx.amount_in_cents) {
+      console.error('[webhook] MONTO NO COINCIDE', tx.reference,
+        `esperado=${guardado.total * 100}`, `recibido=${tx.amount_in_cents}`);
+      await almacen.marcarEstado(tx.reference, 'REVISAR_MONTO', resumenTx(tx));
+      return res.status(200).json({ recibido: true, revisar: true });
+    }
+
+    const r = await almacen.marcarEstado(tx.reference, tx.status, resumenTx(tx));
+    if (r.huerfano) console.error('[webhook] pago de un pedido que no teníamos', tx.reference);
+    else if (!r.cambio) console.log('[webhook] evento repetido, ya estaba en', tx.status);
+    else if (tx.status === 'APPROVED') console.log('[webhook] PAGADO', tx.reference, `total=${r.pedido.total}`);
+  } catch (e) {
+    /* El guardado no puede tumbar la respuesta: si devolvemos error, Wompi
+       reintenta y se corre el riesgo de procesar el pedido dos veces. */
+    console.error('[webhook] fallo al guardar', tx.reference, e && e.message);
   }
 
   /* Wompi reintenta si no recibe 200: siempre se responde 200 tras validar. */

@@ -122,8 +122,10 @@
           '<div class="checkout__resumen" id="checkoutResumen"></div>' +
           '<p class="checkout__aviso" id="checkoutAviso" role="alert"></p>' +
           '<button class="btn checkout__pagar" type="submit">Ir a pagar</button>' +
-          '<p class="checkout__legal">Al continuar aceptas los términos y la política de tratamiento de datos. ' +
-            'El pago se procesa en la plataforma segura de la pasarela; CHOCATA no almacena datos de tu tarjeta.</p>' +
+          '<p class="checkout__legal">Al continuar aceptas los ' +
+            '<a href="legal.html" target="_blank" rel="noopener">términos de venta, la política de datos y el ' +
+            'derecho de retracto</a>. El pago se procesa en la plataforma segura de la pasarela; ' +
+            'CHOCATA no almacena datos de tu tarjeta.</p>' +
         '</form>' +
       '</div>';
 

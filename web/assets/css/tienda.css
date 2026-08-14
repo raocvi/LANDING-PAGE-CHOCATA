@@ -189,6 +189,8 @@
 .checkout__pagar { grid-column: 1 / -1; width: 100%; }
 .checkout__pagar:disabled { opacity: .55; cursor: progress; }
 .checkout__legal { grid-column: 1 / -1; font-size: .74rem; line-height: 1.6; color: var(--faint); }
+.checkout__legal a { color: var(--muted); text-decoration: underline; }
+.checkout__legal a:hover { color: var(--gold); }
 
 @media (max-width: 600px) {
   .checkout { padding: 0; }

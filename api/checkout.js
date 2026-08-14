@@ -10,6 +10,7 @@
  *   SITIO_URL               https://tu-dominio       (para el retorno del pago)
  */
 const { calcular, referencia, firmaIntegridad, validarCliente } = require('./_pedido');
+const almacen = require('./_almacen');
 
 const MONEDA = 'COP';
 
@@ -65,15 +66,37 @@ module.exports = async function handler(req, res) {
   });
   if (sitio) parametros.set('redirect-url', `${sitio}/gracias.html?ref=${ref}`);
 
-  /* El pedido queda pendiente hasta que el webhook confirme el pago.
-     TODO: persistirlo cuando haya base de datos; hoy solo queda en el registro. */
-  console.log('[pedido] creado', JSON.stringify({
-    ref, subtotal: cuenta.subtotal, envio: cuenta.envio, total: cuenta.total,
-    unidades: cuenta.unidades, gramos: cuenta.gramos,
-    lineas: cuenta.lineas.map((l) => `${l.cant}x ${l.slug} ${l.talla}`),
-    ciudad: cuerpo.cliente.ciudad.trim(),
-    departamento: cuerpo.cliente.departamento.trim()
-  }));
+  /* Se escribe antes de mandar a pagar. Si el guardado falla, no se cobra:
+     preferimos un pedido perdido a un pago sin pedido que respaldarlo. */
+  const c = cuerpo.cliente;
+  try {
+    await almacen.crear({
+      referencia: ref,
+      lineas: cuenta.lineas,
+      subtotal: cuenta.subtotal,
+      envio: cuenta.envio,
+      total: cuenta.total,
+      unidades: cuenta.unidades,
+      gramos: cuenta.gramos,
+      cliente: {
+        nombre: c.nombre.trim(),
+        documento: c.documento.replace(/\D/g, ''),
+        correo: c.correo.trim().toLowerCase(),
+        celular: c.celular.replace(/\D/g, ''),
+        departamento: c.departamento.trim(),
+        ciudad: c.ciudad.trim(),
+        direccion: c.direccion.trim(),
+        notas: String(c.notas || '').trim().slice(0, 500)
+      }
+    });
+  } catch (e) {
+    console.error('[pedido] no se pudo guardar', ref, e && e.message);
+    return res.status(500).json({
+      mensaje: 'No pudimos registrar tu pedido. Vuelve a intentarlo en un momento.'
+    });
+  }
+
+  console.log('[pedido] creado', ref, `total=${cuenta.total}`, `unidades=${cuenta.unidades}`);
 
   return res.status(200).json({
     referencia: ref,

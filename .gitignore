@@ -10,3 +10,6 @@ ehthumbs.db
 Desktop.ini
 .DS_Store
 *.swp
+
+# Pedidos guardados en desarrollo: contienen datos personales de prueba
+/.pedidos/
