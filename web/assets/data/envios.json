@@ -1,6 +1,6 @@
 {
   "_nota": "pedidoMinimo: por debajo de ese subtotal no se puede pagar, porque despachar un producto de $9.000 cuesta más que el producto. Envío gratis desde gratisDesde (inclusive), cubriendo hasta gratisHastaKilos; los kilos por encima se cobran a tarifa aunque el pedido sea 'gratis'. Por debajo del umbral se cobra tarifaPorKilo por cada kilo o fracción, mínimo kiloMinimo, y el cliente paga el costo completo: no hay tope ni subsidio. gramosPorDefecto es el peso que se asume, por unidad, para una presentación que no declara gramos; conservador a propósito para no cobrar envío de menos.",
-  "_tarifa": "tarifaPorKilo = 10.500, la más alta observada en el mercado colombiano en agosto de 2026 (Interrapidísimo urbano hasta 0,5 kg). Referentes del sector suplementos: Zona FIT cobra $8.000 por cada 8 unidades y regala el envío desde $100.000; Vitanas cobra $9.000 plano nacional sin umbral. Nuestro umbral coincide con Zona FIT. Al contratar tarifa corporativa conviene bajar la tarifa.",
+  "_tarifa": "tarifaPorKilo = 10.500 es la tarifa real de la transportadora y no es negociable: se traslada al cliente sin recargo y sin subsidio. Referentes del sector suplementos: Zona FIT cobra $8.000 por cada 8 unidades y regala el envío desde $100.000; Vitanas cobra $9.000 plano nacional sin umbral. Nuestro umbral coincide con Zona FIT.",
   "moneda": "COP",
   "pedidoMinimo": 40000,
   "gratisDesde": 100000,

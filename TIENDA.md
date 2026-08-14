@@ -136,7 +136,8 @@ Auditada en agosto de 2026 contra el sector de suplementos deportivos con despac
 
 El umbral coincide con el líder. La tarifa va por peso y no plana porque el catálogo mezcla
 suplementos livianos con chocolate pesado (bultos de 3,5 kg), cosa que las tiendas de referencia
-no tienen. El cliente paga el costo completo del despacho: sin topes ni subsidios.
+no tienen. **$10.500 es la tarifa real de la transportadora y no es negociable**: se traslada al
+cliente completa, sin recargo y sin subsidio.
 
 Cuatro reglas, en este orden:
 
@@ -219,5 +220,3 @@ Hallazgos corregidos, del más grave al menor:
 - **Cuotas (Addi / Sistecredito).** Varias tiendas del sector financian; Wompi no lo trae.
 - **Tarifa por zona.** `envios.json` lista los 33 departamentos y no se usan; la mensajería urbana
   en Cali cuesta menos que el envío nacional.
-- **La tarifa de $10.500 es la más cara del rango.** Zona FIT cobra ~$8.000 y Vitanas $9.000.
-  Con tarifa corporativa de transportadora se puede bajar sin perder plata.
