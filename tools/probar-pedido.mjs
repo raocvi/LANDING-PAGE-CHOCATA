@@ -67,11 +67,13 @@ for (const [nombre, items] of invalidas) {
   comprobar('cobra un solo kilo', r.kilosCobrados === 1, `kilos=${r.kilosCobrados}`);
 }
 {
-  /* 1 bolsa de 3.500 g = $95.000 → 4 kilos → $60.000. */
+  /* 1 bolsa de 3.500 g = $95.000. Por peso serían 4 kilos = $60.000, pero solo
+     faltan $5.000 para el envío gratis, así que el tope los deja en $5.000. */
   const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '3.500 g', cant: 1 }]);
   comprobar('3,5 kg se redondean a 4 kilos', r.kilosCobrados === 4, `kilos=${r.kilosCobrados}`);
-  comprobar('4 kilos cuestan 60.000', r.envio === 60000, `envio=${r.envio}`);
-  comprobar('el envío se suma al total', r.total === 155000, `total=${r.total}`);
+  comprobar('el tope recorta el envío a lo que falta', r.envio === 5000, `envio=${r.envio}`);
+  comprobar('y queda marcado como topado', r.envioTopado === true);
+  comprobar('el total no supera el umbral', r.total === 100000, `total=${r.total}`);
 }
 {
   /* Exactamente $100.000: 2 × 50.000. Al ser inclusive, ya viaja gratis. */
@@ -80,10 +82,35 @@ for (const [nombre, items] of invalidas) {
   comprobar('en el umbral exacto no se suma nada al total', r.total === 100000, `total=${r.total}`);
 }
 {
-  /* El caso que motivó la regla: 10 bolsas de 200 g = $90.000 y 2 kilos. */
+  /* El caso que motivó la regla: 10 bolsas de 200 g = $90.000 y 2 kilos.
+     Por peso serían $30.000, pero solo faltan $10.000 para el envío gratis. */
   const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: 10 }]);
   comprobar('diez bolsas suman 2 kilos', r.gramos === 2000, `gramos=${r.gramos}`);
-  comprobar('y pagan 30.000 de envío, no 15.000', r.envio === 30000, `envio=${r.envio}`);
+  comprobar('el tope las deja en 10.000 de envío', r.envio === 10000, `envio=${r.envio}`);
+  comprobar('y el total queda en el umbral', r.total === 100000, `total=${r.total}`);
+}
+{
+  /* Lo que motivó el tope: sin él, once bolsas costaban $144.000 y doce
+     $108.000. Agregar producto jamás puede abaratar el total. */
+  let anterior = 0;
+  let rompe = null;
+  for (let n = 1; n <= 40; n++) {
+    const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: n }]);
+    if (r.total < anterior) { rompe = `${n} bolsas cuestan ${r.total} y ${n - 1} costaban ${anterior}`; break; }
+    anterior = r.total;
+  }
+  comprobar('el total nunca baja al agregar producto', rompe === null, rompe);
+}
+{
+  /* Ningún pedido por debajo del umbral puede costar más que el umbral. */
+  let excede = null;
+  for (const [slug, talla] of [['chocata-tradicional', '3.500 g'], ['chocata-tradicional', '200 g'], ['creatina', '250 g']]) {
+    for (let n = 1; n <= 20; n++) {
+      const r = pedido.calcular([{ slug, talla, cant: n }]);
+      if (r.subtotal < 100000 && r.total > 100000) { excede = `${n} × ${slug} ${talla} → ${r.total}`; break; }
+    }
+  }
+  comprobar('bajo el umbral el total nunca lo supera', excede === null, excede);
 }
 {
   /* Exactamente 1.000 g no debe redondear a 2 kilos. */
@@ -96,9 +123,17 @@ for (const [nombre, items] of invalidas) {
   comprobar('una presentación sin peso cobra el kilo mínimo', r.envio === 15000, `envio=${r.envio}`);
   comprobar('y queda señalada para revisión', r.sinPeso.length === 1, JSON.stringify(r.sinPeso));
 }
-comprobar('un peso por debajo del umbral todavía paga', pedido.envioDe(99999, 500) === 15000);
+comprobar('a un peso del umbral el envío cuesta un peso', pedido.envioDe(99999, 500) === 1);
 comprobar('el umbral exacto es gratis', pedido.envioDe(100000, 5000) === 0);
-comprobar('2.001 g se cobran como 3 kilos', pedido.envioDe(10000, 2001) === 45000);
+comprobar('lejos del umbral manda el peso: 2.001 g son 3 kilos', pedido.envioDe(10000, 2001) === 45000);
+comprobar('el tope nunca deja el envío en negativo', pedido.envioDe(99999, 50000) >= 0);
+{
+  const d = pedido.desgloseEnvio(90000, 2000);
+  comprobar('el desglose conserva el precio por peso', d.porPeso === 30000, `porPeso=${d.porPeso}`);
+  comprobar('el desglose avisa que hubo tope', d.topado === true);
+  const sinTope = pedido.desgloseEnvio(10000, 2000);
+  comprobar('sin tope no se marca', sinTope.topado === false && sinTope.envio === 30000, `envio=${sinTope.envio}`);
+}
 
 /* ---------- Peso declarado ---------- */
 comprobar('lee gramos de "1.500 g"', pedido.gramosDe('1.500 g') === 1500);

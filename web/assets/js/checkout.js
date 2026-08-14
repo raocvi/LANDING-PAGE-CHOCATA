@@ -170,22 +170,32 @@
              '<b>' + carrito.pesos(pres.cop * it.cant) + '</b></div>';
     }).join('');
 
+    var umbral = envios && typeof envios.gratisDesde === 'number' ? envios.gratisDesde : null;
     var gramos = items.reduce(function (n, it) { return n + (gramosDe(it.talla) || 0) * it.cant; }, 0);
-    var gratis = envios && typeof envios.gratisDesde === 'number' && subtotal >= envios.gratisDesde;
+    var gratis = umbral !== null && subtotal >= umbral;
     var kilos = Math.max((envios && envios.kiloMinimo) || 1, Math.ceil(gramos / 1000));
-    var envio = gratis ? 0 : kilos * ((envios && envios.tarifaPorKilo) || 0);
-    var falta = envios && typeof envios.gratisDesde === 'number' ? envios.gratisDesde - subtotal : 0;
+    var porPeso = kilos * ((envios && envios.tarifaPorKilo) || 0);
+    var falta = umbral !== null ? umbral - subtotal : 0;
+
+    /* Mismo tope que aplica el servidor en api/_pedido.js: el envío nunca
+       cobra más de lo que falta para el envío gratis. */
+    var topeActivo = envios && envios.topeHastaGratis === true && umbral !== null;
+    var envio = gratis ? 0 : (topeActivo ? Math.min(porPeso, falta) : porPeso);
+    var topado = !gratis && envio < porPeso;
 
     caja.innerHTML = filas +
       '<div class="checkout__linea"><span>Subtotal</span><b>' + carrito.pesos(subtotal) + '</b></div>' +
       '<div class="checkout__linea"><span>Envío' +
-        (gratis ? '' : ' <em>(' + kilos + (kilos === 1 ? ' kilo' : ' kilos') + ')</em>') +
+        (gratis || topado ? '' : ' <em>(' + kilos + (kilos === 1 ? ' kilo' : ' kilos') + ')</em>') +
       '</span><b>' +
         (gratis ? '<span class="envio-gratis">Gratis</span>' : carrito.pesos(envio)) +
       '</b></div>' +
-      (!gratis && falta > 0
-        ? '<p class="checkout__falta">Te faltan <b>' + carrito.pesos(falta) + '</b> para el envío gratis.</p>'
-        : '') +
+      (topado
+        ? '<p class="checkout__falta">Tu envío costaba ' + carrito.pesos(porPeso) +
+          ', pero nunca cobramos más de lo que te falta para el envío gratis.</p>'
+        : !gratis && falta > 0
+          ? '<p class="checkout__falta">Te faltan <b>' + carrito.pesos(falta) + '</b> para el envío gratis.</p>'
+          : '') +
       '<div class="checkout__total"><span>Total a pagar</span><b>' + carrito.pesos(subtotal + envio) + '</b></div>';
   }
 

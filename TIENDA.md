@@ -30,7 +30,7 @@ arma la URL de Wompi y la firma, pero no cobra.
 
 ```bash
 node tools/verificar-precios.mjs   # ficha y catálogo numérico coinciden
-node tools/probar-pedido.mjs       # 50 pruebas del núcleo
+node tools/probar-pedido.mjs       # 58 pruebas del núcleo
 node tools/probar-flujo.mjs        # 23 comprobaciones de extremo a extremo (con el servidor arriba)
 ```
 
@@ -98,23 +98,36 @@ en un historial; sin `ADMIN_TOKEN` solo devuelve estado, total y fecha.
 
 ## Regla de envío
 
-Gratis desde $100.000 **inclusive**. Por debajo, **$15.000 por kilo o fracción**, con un mínimo de
-un kilo, sin importar la cantidad de artículos.
+Tres reglas, en este orden:
 
-| Pedido | Peso | Envío | Total |
-|---|---|---|---|
-| 1 × 200 g ($9.000) | 200 g | $15.000 (1 kilo) | $24.000 |
-| 10 × 200 g ($90.000) | 2 kg | $30.000 (2 kilos) | $120.000 |
-| 1 × 3.500 g ($95.000) | 3,5 kg | $60.000 (4 kilos) | $155.000 |
-| 2 × creatina ($100.000) | 500 g | Gratis | $100.000 |
+1. Gratis desde $100.000 **inclusive**.
+2. Por debajo, **$15.000 por kilo o fracción**, mínimo un kilo, sin importar la cantidad de artículos.
+3. **Tope:** el envío nunca cobra más de lo que falta para el envío gratis.
 
-El checkout muestra los kilos que se están cobrando, para que el número no parezca arbitrario.
+| Pedido | Peso | Por peso | Se cobra | Total |
+|---|---|---|---|---|
+| 1 × 200 g ($9.000) | 200 g | $15.000 (1 kilo) | $15.000 | $24.000 |
+| 10 × 200 g ($90.000) | 2 kg | $30.000 (2 kilos) | **$10.000** | $100.000 |
+| 1 × 3.500 g ($95.000) | 3,5 kg | $60.000 (4 kilos) | **$5.000** | $100.000 |
+| 2 × creatina ($100.000) | 500 g | — | Gratis | $100.000 |
+
+**Por qué existe el tope.** Sin él el total no era monótono: once bolsas costaban $144.000 y doce
+costaban $108.000. Un comprador que descubre que agregar producto le abarata el pedido deja de creer
+en el precio. Con el tope, ningún pedido por debajo del umbral supera los $100.000 y el total nunca
+baja al agregar producto. Hay dos pruebas que recorren el catálogo comprobando justo eso.
+
+**No abre un hueco nuevo de costo.** Un bulto de 3,5 kg a $100.001 ya viajaba gratis; el tope
+solo extiende ese mismo trato unos pesos hacia abajo, de forma continua en vez de a saltos.
+
+El checkout muestra los kilos cuando manda el peso, y cuando manda el tope lo dice:
+«tu envío costaba $60.000, pero nunca cobramos más de lo que te falta para el envío gratis».
 
 ## Pendiente de definir
 
 - **Hidratec no declara gramos.** Su presentación se llama «Presentación única», así que aporta cero
   al peso. Hoy lo salva el mínimo de un kilo, pero **dos o más unidades se cobrarían de menos**.
   Hace falta el peso neto real; el pedido lo marca en `sinPeso` para poder detectarlo.
-- **El salto en el borde.** Una bolsa de 3.500 g cuesta $95.000 y paga $60.000 de envío, pero
-  agregando $5.000 más el envío queda gratis. El cliente lo va a notar. Conviene decidir si el
-  formato institucional lleva otra regla.
+- **El escalón de los 1.001 g.** Con el tope el total ya no baja nunca, pero sigue habiendo un
+  salto visible al cruzar cada kilo: la sexta bolsa de 200 g vale $9.000 y sube el total $24.000,
+  porque el pedido pasa de 1 a 2 kilos. Es peso real, no un error, pero se puede suavizar bajando
+  el umbral de envío gratis o cobrando por gramo.

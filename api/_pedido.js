@@ -29,13 +29,34 @@ function precioDe(slug, talla) {
  * gratis). Por debajo se cobra por kilo o fracción, sin importar cuántos
  * artículos sean. Nunca menos de un kilo: un solo sobre pequeño tampoco viaja
  * gratis, y un peso mal declarado no puede dejar el envío en cero.
+ *
+ * Y encima va un tope: el envío nunca cobra más de lo que falta para el envío
+ * gratis. Sin ese tope el total no es monótono —once bolsas costaban $144.000
+ * y doce costaban $108.000—, y un comprador que descubre que agregar producto
+ * le abarata el pedido deja de confiar en el precio.
+ *
+ * Devuelve { envio, kilos, porPeso, gratis, topado }.
  */
-function envioDe(subtotal, gramos) {
-  if (typeof envios.gratisDesde === 'number' && subtotal >= envios.gratisDesde) return 0;
-  if (typeof envios.tarifaPorKilo !== 'number') return null;
+function desgloseEnvio(subtotal, gramos) {
+  const umbral = typeof envios.gratisDesde === 'number' ? envios.gratisDesde : null;
+  if (umbral !== null && subtotal >= umbral) {
+    return { envio: 0, kilos: 0, porPeso: 0, gratis: true, topado: false };
+  }
+  if (typeof envios.tarifaPorKilo !== 'number') {
+    return { envio: null, kilos: 0, porPeso: null, gratis: false, topado: false };
+  }
   const minimo = typeof envios.kiloMinimo === 'number' ? envios.kiloMinimo : 1;
   const kilos = Math.max(minimo, Math.ceil((gramos || 0) / 1000));
-  return kilos * envios.tarifaPorKilo;
+  const porPeso = kilos * envios.tarifaPorKilo;
+
+  const topeActivo = envios.topeHastaGratis === true && umbral !== null;
+  const envio = topeActivo ? Math.min(porPeso, umbral - subtotal) : porPeso;
+  return { envio, kilos, porPeso, gratis: false, topado: envio < porPeso };
+}
+
+/** Solo el monto del envío. */
+function envioDe(subtotal, gramos) {
+  return desgloseEnvio(subtotal, gramos).envio;
 }
 
 /** Gramos de una presentación: "1.500 g" → 1500. Null si no los declara. */
@@ -82,11 +103,12 @@ function calcular(items) {
      gramos declarados es un riesgo: se marca para poder detectarlo. */
   const gramos = lineas.reduce((n, l) => n + (l.gramos || 0) * l.cant, 0);
   const sinPeso = lineas.filter((l) => l.gramos === null).map((l) => `${l.slug} ${l.talla}`);
-  const envio = envioDe(subtotal, gramos);
+  const { envio, kilos, topado } = desgloseEnvio(subtotal, gramos);
 
   return {
     ok: true, lineas, subtotal, envio, gramos, sinPeso,
-    kilosCobrados: envio === 0 ? 0 : Math.max(1, Math.ceil(gramos / 1000)),
+    kilosCobrados: kilos,
+    envioTopado: topado,
     unidades: lineas.reduce((n, l) => n + l.cant, 0),
     total: subtotal + (envio || 0)
   };
@@ -143,6 +165,6 @@ function validarCliente(c) {
 }
 
 module.exports = {
-  catalogo, envios, calcular, referencia, envioDe, gramosDe,
+  catalogo, envios, calcular, referencia, envioDe, desgloseEnvio, gramosDe,
   firmaIntegridad, firmaEventoValida, validarCliente
 };

@@ -1,9 +1,10 @@
 {
-  "_nota": "Envío gratis desde gratisDesde (inclusive). Por debajo se cobra tarifaPorKilo por cada kilo o fracción del peso del pedido, sin importar la cantidad de artículos. Siempre se cobra al menos un kilo.",
+  "_nota": "Envío gratis desde gratisDesde (inclusive). Por debajo se cobra tarifaPorKilo por cada kilo o fracción del peso del pedido, sin importar la cantidad de artículos, con un mínimo de kiloMinimo. Con topeHastaGratis el envío nunca cobra más de lo que falta para llegar al envío gratis: así ningún pedido por debajo del umbral supera gratisDesde en total, y agregar producto nunca abarata el total.",
   "moneda": "COP",
   "gratisDesde": 100000,
   "tarifaPorKilo": 15000,
   "kiloMinimo": 1,
+  "topeHastaGratis": true,
   "departamentos": [
     "Amazonas", "Antioquia", "Arauca", "Atlántico", "Bogotá D.C.", "Bolívar",
     "Boyacá", "Caldas", "Caquetá", "Casanare", "Cauca", "Cesar", "Chocó",
