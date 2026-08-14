@@ -24,17 +24,29 @@ function precioDe(slug, talla) {
   return fila && typeof fila.cop === 'number' ? fila.cop : null;
 }
 
-function envioDe(departamento) {
-  const t = envios.tarifas || {};
-  const valor = departamento in t ? t[departamento] : t['*'];
-  return typeof valor === 'number' ? valor : null;
+/**
+ * Envío gratis por encima del umbral, tarifa única por debajo.
+ * El umbral es estrictamente mayor: un pedido de exactamente $100.000 paga
+ * envío, tal como se definió la regla.
+ */
+function envioDe(subtotal) {
+  if (typeof envios.gratisDesde === 'number' && subtotal > envios.gratisDesde) return 0;
+  return typeof envios.tarifaUnica === 'number' ? envios.tarifaUnica : null;
+}
+
+/** Gramos de una presentación: "1.500 g" → 1500. Null si no los declara. */
+function gramosDe(talla) {
+  const m = String(talla).match(/^([\d.]+)\s*g$/i);
+  if (!m) return null;
+  const n = Number(m[1].replace(/\./g, ''));
+  return Number.isFinite(n) ? n : null;
 }
 
 /**
  * Recalcula el pedido desde cero. Devuelve { ok, error, lineas, subtotal,
  * envio, total }. `envio` en null significa "por confirmar": no se cobra.
  */
-function calcular(items, departamento) {
+function calcular(items) {
   if (!Array.isArray(items) || !items.length) return { ok: false, error: 'El pedido llegó vacío.' };
   if (items.length > MAX_LINEAS) return { ok: false, error: 'El pedido tiene demasiadas líneas.' };
 
@@ -54,17 +66,24 @@ function calcular(items, departamento) {
       talla: it.talla,
       cant,
       unitario,
-      total: unitario * cant
+      total: unitario * cant,
+      gramos: gramosDe(it.talla)
     });
   }
 
   const subtotal = lineas.reduce((n, l) => n + l.total, 0);
   if (subtotal <= 0) return { ok: false, error: 'El total del pedido no es válido.' };
 
-  let envio = envioDe(departamento);
-  if (envio !== null && typeof envios.gratisDesde === 'number' && subtotal >= envios.gratisDesde) envio = 0;
+  const envio = envioDe(subtotal);
+  /* Peso declarado del pedido. Hidratec no declara gramos, así que puede
+     quedar corto; sirve como referencia para logística, no para cobrar. */
+  const gramos = lineas.reduce((n, l) => n + (l.gramos || 0) * l.cant, 0);
 
-  return { ok: true, lineas, subtotal, envio, total: subtotal + (envio || 0) };
+  return {
+    ok: true, lineas, subtotal, envio, gramos,
+    unidades: lineas.reduce((n, l) => n + l.cant, 0),
+    total: subtotal + (envio || 0)
+  };
 }
 
 /** Referencia única e irrepetible del pedido. */
@@ -118,6 +137,6 @@ function validarCliente(c) {
 }
 
 module.exports = {
-  catalogo, envios, calcular, referencia,
+  catalogo, envios, calcular, referencia, envioDe, gramosDe,
   firmaIntegridad, firmaEventoValida, validarCliente
 };

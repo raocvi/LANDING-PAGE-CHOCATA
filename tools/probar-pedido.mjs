@@ -26,7 +26,7 @@ function comprobar(nombre, condicion, detalle) {
 
 /* ---------- El precio lo pone el servidor ---------- */
 {
-  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '1.500 g', cant: 2 }], 'Valle del Cauca');
+  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '1.500 g', cant: 2 }]);
   comprobar('dos bolsas de 1.500 g suman 90.000', r.ok && r.subtotal === 90000, `subtotal=${r.subtotal}`);
 }
 {
@@ -38,7 +38,7 @@ function comprobar(nombre, condicion, detalle) {
   comprobar('un precio enviado por el cliente se ignora', r.ok && r.subtotal === 50000, `subtotal=${r.subtotal}`);
 }
 {
-  const r = pedido.calcular([{ slug: 'remolacha', talla: '200 g', cant: 1 }], 'Bogotá D.C.');
+  const r = pedido.calcular([{ slug: 'remolacha', talla: '200 g', cant: 1 }]);
   comprobar('remolacha ya tiene precio y se puede vender', r.ok && r.subtotal === 40000, `subtotal=${r.subtotal}`);
 }
 
@@ -54,7 +54,39 @@ const invalidas = [
   ['cantidad como texto', [{ slug: 'creatina', talla: '250 g', cant: '2; DROP TABLE' }]]
 ];
 for (const [nombre, items] of invalidas) {
-  comprobar('se rechaza: ' + nombre, pedido.calcular(items, 'Antioquia').ok === false);
+  comprobar('se rechaza: ' + nombre, pedido.calcular(items).ok === false);
+}
+
+/* ---------- Regla de envío ----------
+   Gratis por encima de $100.000 (estrictamente mayor), $15.000 por debajo. */
+{
+  /* $95.000 → paga envío. Total 110.000. */
+  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '3.500 g', cant: 1 }]);
+  comprobar('bajo el umbral se cobra el envío', r.envio === 15000, `envio=${r.envio}`);
+  comprobar('el envío se suma al total', r.total === 110000, `total=${r.total}`);
+}
+{
+  /* Exactamente $100.000: 2 × 50.000. La regla dice «mayores a», así que paga. */
+  const r = pedido.calcular([{ slug: 'creatina', talla: '250 g', cant: 2 }]);
+  comprobar('en el umbral exacto todavía se cobra envío', r.subtotal === 100000 && r.envio === 15000, `subtotal=${r.subtotal} envio=${r.envio}`);
+}
+{
+  /* $105.000 → gratis. */
+  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '3.500 g', cant: 1 },
+                             { slug: 'chocata-tradicional', talla: '200 g', cant: 1 }]);
+  comprobar('por encima del umbral el envío es gratis', r.subtotal === 104000 && r.envio === 0, `subtotal=${r.subtotal} envio=${r.envio}`);
+  comprobar('con envío gratis el total es el subtotal', r.total === r.subtotal);
+}
+comprobar('envioDe respeta el umbral', pedido.envioDe(100000) === 15000 && pedido.envioDe(100001) === 0);
+
+/* ---------- Peso declarado ---------- */
+comprobar('lee gramos de "1.500 g"', pedido.gramosDe('1.500 g') === 1500);
+comprobar('lee gramos de "200 g"', pedido.gramosDe('200 g') === 200);
+comprobar('una presentación sin gramos devuelve null', pedido.gramosDe('Presentación única') === null);
+{
+  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: 4 }]);
+  comprobar('suma el peso del pedido', r.gramos === 800, `gramos=${r.gramos}`);
+  comprobar('cuenta las unidades', r.unidades === 4, `unidades=${r.unidades}`);
 }
 
 /* ---------- Datos del comprador ---------- */

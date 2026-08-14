@@ -38,7 +38,7 @@ module.exports = async function handler(req, res) {
   const errorCliente = validarCliente(cuerpo.cliente);
   if (errorCliente) return res.status(400).json({ mensaje: errorCliente });
 
-  const cuenta = calcular(cuerpo.items, String(cuerpo.cliente.departamento || '').trim());
+  const cuenta = calcular(cuerpo.items);
   if (!cuenta.ok) return res.status(400).json({ mensaje: cuenta.error });
 
   const ref = referencia();
@@ -68,7 +68,8 @@ module.exports = async function handler(req, res) {
   /* El pedido queda pendiente hasta que el webhook confirme el pago.
      TODO: persistirlo cuando haya base de datos; hoy solo queda en el registro. */
   console.log('[pedido] creado', JSON.stringify({
-    ref, total: cuenta.total, envio: cuenta.envio,
+    ref, subtotal: cuenta.subtotal, envio: cuenta.envio, total: cuenta.total,
+    unidades: cuenta.unidades, gramos: cuenta.gramos,
     lineas: cuenta.lineas.map((l) => `${l.cant}x ${l.slug} ${l.talla}`),
     ciudad: cuerpo.cliente.ciudad.trim(),
     departamento: cuerpo.cliente.departamento.trim()

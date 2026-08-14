@@ -1,11 +1,8 @@
 {
-  "_nota": "Tarifas de envío en pesos. Mientras esten en null el pedido se cierra con el envío por confirmar y no se cobra de más. Hay que definirlas antes de salir a producción.",
+  "_nota": "Envío gratis por encima de gratisDesde (estrictamente mayor). Por debajo se cobra tarifaUnica, sin importar la ciudad ni la cantidad de artículos.",
   "moneda": "COP",
-  "gratisDesde": null,
-  "tarifas": {
-    "Valle del Cauca": null,
-    "*": null
-  },
+  "gratisDesde": 100000,
+  "tarifaUnica": 15000,
   "departamentos": [
     "Amazonas", "Antioquia", "Arauca", "Atlántico", "Bogotá D.C.", "Bolívar",
     "Boyacá", "Caldas", "Caquetá", "Casanare", "Cauca", "Cesar", "Chocó",

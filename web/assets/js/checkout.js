@@ -145,21 +145,33 @@
     });
   }
 
+  /* Este cálculo es solo para que el comprador vea el total antes de pagar.
+     El que manda es el del servidor, que se rehace en /api/checkout. */
   function resumir(items) {
     var carrito = window.CHOCATA_CARRITO;
     var caja = document.getElementById('checkoutResumen');
-    var total = 0;
+    var subtotal = 0;
     var filas = items.map(function (it) {
       var pres = carrito.presentaciones(it.slug).filter(function (p) { return p.talla === it.talla; })[0];
       if (!pres) return '';
-      total += pres.cop * it.cant;
+      subtotal += pres.cop * it.cant;
       return '<div class="checkout__linea"><span>' + it.cant + ' × ' + it.talla + '</span>' +
              '<b>' + carrito.pesos(pres.cop * it.cant) + '</b></div>';
     }).join('');
 
+    var gratis = envios && typeof envios.gratisDesde === 'number' && subtotal > envios.gratisDesde;
+    var envio = gratis ? 0 : ((envios && envios.tarifaUnica) || 0);
+    var falta = envios && typeof envios.gratisDesde === 'number' ? (envios.gratisDesde + 1) - subtotal : 0;
+
     caja.innerHTML = filas +
-      '<div class="checkout__linea checkout__linea--envio"><span>Envío</span><b>Por confirmar</b></div>' +
-      '<div class="checkout__total"><span>Total productos</span><b>' + carrito.pesos(total) + '</b></div>';
+      '<div class="checkout__linea"><span>Subtotal</span><b>' + carrito.pesos(subtotal) + '</b></div>' +
+      '<div class="checkout__linea"><span>Envío</span><b>' +
+        (gratis ? '<span class="envio-gratis">Gratis</span>' : carrito.pesos(envio)) +
+      '</b></div>' +
+      (!gratis && falta > 0
+        ? '<p class="checkout__falta">Te faltan <b>' + carrito.pesos(falta) + '</b> para el envío gratis.</p>'
+        : '') +
+      '<div class="checkout__total"><span>Total a pagar</span><b>' + carrito.pesos(subtotal + envio) + '</b></div>';
   }
 
   function enviar(items) {
