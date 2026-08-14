@@ -12,16 +12,88 @@ const path = require('node:path');
 const RAIZ = path.join(__dirname, '..', 'web', 'assets', 'data');
 const catalogo = JSON.parse(fs.readFileSync(path.join(RAIZ, 'precios.json'), 'utf8'));
 const envios = JSON.parse(fs.readFileSync(path.join(RAIZ, 'envios.json'), 'utf8'));
+const combos = JSON.parse(fs.readFileSync(path.join(RAIZ, 'combos.json'), 'utf8'));
 
 const MAX_UNIDADES_LINEA = 99;
 const MAX_LINEAS = 30;
 
-/** Precio vigente, o null si esa presentación no está a la venta. */
-function precioDe(slug, talla) {
+/** Un combo no tiene presentaciones: ocupa esta talla única en el carrito. */
+const TALLA_COMBO = 'Combo';
+
+/** Precio suelto de una presentación, o null si no está a la venta. */
+function precioSuelto(slug, talla) {
   const p = catalogo[slug];
   if (!p) return null;
   const fila = p.presentaciones.find((x) => x.talla === talla);
   return fila && typeof fila.cop === 'number' ? fila.cop : null;
+}
+
+/**
+ * Un combo declara solo su precio y qué trae. Lo que vale suelto, cuánto pesa
+ * y cuánto se ahorra se calculan aquí sumando los componentes, así que no
+ * pueden quedar desfasados de precios.json. Si un componente sale del
+ * catálogo, el combo devuelve null y deja de venderse por sí solo.
+ */
+function detalleCombo(slug) {
+  const c = combos[slug];
+  if (!c || !Array.isArray(c.componentes) || !c.componentes.length) return null;
+
+  let sueltos = 0;
+  let gramos = 0;
+  let sinPeso = false;
+  for (const comp of c.componentes) {
+    const precio = precioSuelto(comp.slug, comp.talla);
+    if (precio === null) return null;
+    sueltos += precio * comp.cant;
+    const g = gramosDe(comp.talla);
+    if (g === null) sinPeso = true;
+    else gramos += g * comp.cant;
+  }
+
+  return {
+    slug,
+    nombre: c.nombre,
+    kicker: c.kicker,
+    descripcion: c.descripcion,
+    publico: c.publico,
+    componentes: c.componentes,
+    cop: c.cop,
+    sueltos,
+    ahorro: sueltos - c.cop,
+    /* Un combo con un componente sin gramos no puede cobrar bien el envío. */
+    gramos: sinPeso ? null : gramos
+  };
+}
+
+/** Todos los combos vendibles, con su ahorro ya resuelto. */
+function combosVigentes() {
+  return Object.keys(combos)
+    .filter((k) => !k.startsWith('_'))
+    .map(detalleCombo)
+    .filter((c) => c && typeof c.cop === 'number');
+}
+
+/** Precio vigente de cualquier cosa comprable: presentación suelta o combo. */
+function precioDe(slug, talla) {
+  if (talla === TALLA_COMBO) {
+    const c = detalleCombo(slug);
+    return c ? c.cop : null;
+  }
+  return precioSuelto(slug, talla);
+}
+
+/** Nombre para mostrar, venga de donde venga. */
+function nombreDe(slug) {
+  return (catalogo[slug] && catalogo[slug].nombre) || (combos[slug] && combos[slug].nombre) || slug;
+}
+
+/** Peso de una línea del pedido: el de la presentación o el del combo entero. */
+function gramosLinea(slug, talla) {
+  if (talla === TALLA_COMBO) {
+    const c = detalleCombo(slug);
+    return c ? c.gramos : null;
+  }
+  return gramosDe(talla);
 }
 
 /**
@@ -87,17 +159,32 @@ function calcular(items) {
     }
     lineas.push({
       slug: it.slug,
-      nombre: catalogo[it.slug].nombre,
+      nombre: nombreDe(it.slug),
       talla: it.talla,
       cant,
       unitario,
       total: unitario * cant,
-      gramos: gramosDe(it.talla)
+      gramos: gramosLinea(it.slug, it.talla),
+      esCombo: it.talla === TALLA_COMBO
     });
   }
 
   const subtotal = lineas.reduce((n, l) => n + l.total, 0);
   if (subtotal <= 0) return { ok: false, error: 'El total del pedido no es válido.' };
+
+  /* Pedido mínimo: despachar una bolsa de $9.000 cuesta más que la bolsa.
+     Se comprueba aquí y no solo en el navegador, que es donde importa. */
+  const minimo = typeof envios.pedidoMinimo === 'number' ? envios.pedidoMinimo : 0;
+  if (subtotal < minimo) {
+    return {
+      ok: false,
+      minimo,
+      subtotal,
+      falta: minimo - subtotal,
+      error: `El pedido mínimo es $${minimo.toLocaleString('es-CO')}. ` +
+             `Te faltan $${(minimo - subtotal).toLocaleString('es-CO')}.`
+    };
+  }
 
   /* El peso ahora decide el precio del envío, así que una presentación sin
      gramos declarados es un riesgo: se marca para poder detectarlo. */
@@ -165,6 +252,8 @@ function validarCliente(c) {
 }
 
 module.exports = {
-  catalogo, envios, calcular, referencia, envioDe, desgloseEnvio, gramosDe,
+  catalogo, envios, combos, TALLA_COMBO,
+  calcular, referencia, envioDe, desgloseEnvio, gramosDe,
+  precioDe, detalleCombo, combosVigentes,
   firmaIntegridad, firmaEventoValida, validarCliente
 };

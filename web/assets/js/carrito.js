@@ -12,7 +12,10 @@
   'use strict';
 
   var LLAVE = 'chocata.carrito.v1';
+  var TALLA_COMBO = 'Combo';
   var catalogo = null;
+  var combos = null;
+  var reglas = null;
   var items = [];
 
   /* ---------- Estado ---------- */
@@ -34,15 +37,48 @@
     pintar();
   }
 
-  /* Precio vigente de una presentación, o null si no está a la venta. */
-  function precioDe(slug, talla) {
+  /* Un combo declara solo su precio y sus componentes: lo que vale suelto y
+     lo que ahorra se calcula aquí, igual que en el servidor. Si un componente
+     ya no está en el catálogo, el combo devuelve null y sale del carrito. */
+  function detalleCombo(slug) {
+    if (!catalogo || !combos || !combos[slug] || !combos[slug].componentes) return null;
+    var c = combos[slug];
+    var sueltos = 0;
+    for (var i = 0; i < c.componentes.length; i++) {
+      var comp = c.componentes[i];
+      var precio = precioSuelto(comp.slug, comp.talla);
+      if (precio === null) return null;
+      sueltos += precio * comp.cant;
+    }
+    return { slug: slug, nombre: c.nombre, kicker: c.kicker, descripcion: c.descripcion,
+             publico: c.publico, componentes: c.componentes, cop: c.cop,
+             sueltos: sueltos, ahorro: sueltos - c.cop };
+  }
+
+  function precioSuelto(slug, talla) {
     if (!catalogo || !catalogo[slug]) return null;
     var fila = catalogo[slug].presentaciones.filter(function (p) { return p.talla === talla; })[0];
     return fila && typeof fila.cop === 'number' ? fila.cop : null;
   }
 
+  /* Precio vigente de lo que sea comprable: presentación suelta o combo. */
+  function precioDe(slug, talla) {
+    if (talla === TALLA_COMBO) {
+      var c = detalleCombo(slug);
+      return c ? c.cop : null;
+    }
+    return precioSuelto(slug, talla);
+  }
+
   function nombreDe(slug) {
-    return (catalogo && catalogo[slug] && catalogo[slug].nombre) || slug;
+    return (catalogo && catalogo[slug] && catalogo[slug].nombre) ||
+           (combos && combos[slug] && combos[slug].nombre) || slug;
+  }
+
+  /* Lo que falta para poder pagar. Cero si el pedido ya alcanza el mínimo. */
+  function faltaParaMinimo() {
+    var minimo = reglas && typeof reglas.pedidoMinimo === 'number' ? reglas.pedidoMinimo : 0;
+    return Math.max(0, minimo - subtotal());
   }
 
   /* Descarta líneas cuyo producto o presentación ya no existan en el catálogo. */
@@ -161,10 +197,14 @@
 
     lista.innerHTML = items.map(function (it, i) {
       var precio = precioDe(it.slug, it.talla);
+      var combo = it.talla === TALLA_COMBO ? detalleCombo(it.slug) : null;
       return '<article class="linea">' +
         '<div class="linea__txt">' +
-          '<b>' + nombreDe(it.slug) + '</b>' +
-          '<span>' + it.talla + ' · ' + pesos(precio) + ' c/u</span>' +
+          '<b>' + nombreDe(it.slug) + (combo ? ' <i class="linea__sello">Combo</i>' : '') + '</b>' +
+          '<span>' + (combo ? combo.kicker : it.talla) + ' · ' + pesos(precio) + ' c/u</span>' +
+          (combo && combo.ahorro > 0
+            ? '<span class="linea__ahorro">Ahorras ' + pesos(combo.ahorro * it.cant) + '</span>'
+            : '') +
         '</div>' +
         '<div class="linea__cant">' +
           '<button data-menos="' + i + '" aria-label="Quitar una unidad">−</button>' +
@@ -188,14 +228,33 @@
       b.addEventListener('click', function () { quitar(+b.dataset.quitar); });
     });
 
+    var falta = faltaParaMinimo();
+
     resumen.innerHTML =
       '<div class="carrito__fila"><span>Subtotal</span><b>' + pesos(subtotal()) + '</b></div>' +
-      '<p class="carrito__envio">El costo de envío se confirma antes de pagar, según tu ciudad.</p>' +
-      '<button class="btn carrito__pagar" id="carritoPagar">Continuar con el pedido</button>';
+      (falta > 0
+        ? '<div class="carrito__minimo">' +
+            '<b>Te faltan ' + pesos(falta) + ' para el pedido mínimo.</b>' +
+            '<span>Despachar por debajo de ' + pesos(reglas.pedidoMinimo) +
+              ' cuesta más que el producto. Los combos ya salen por encima y ahorran hasta un 17%.</span>' +
+            '<button class="carrito__vercombos" id="carritoCombos">Ver los combos</button>' +
+          '</div>'
+        : '<p class="carrito__envio">El costo de envío se confirma antes de pagar, según tu ciudad.</p>') +
+      '<button class="btn carrito__pagar" id="carritoPagar"' + (falta > 0 ? ' disabled' : '') + '>' +
+        (falta > 0 ? 'Pedido mínimo ' + pesos(reglas.pedidoMinimo) : 'Continuar con el pedido') +
+      '</button>';
 
-    document.getElementById('carritoPagar').addEventListener('click', function () {
-      document.dispatchEvent(new CustomEvent('chocata:checkout', { detail: { items: items.slice() } }));
-    });
+    if (falta > 0) {
+      document.getElementById('carritoCombos').addEventListener('click', function () {
+        cerrar();
+        var destino = document.getElementById('combos');
+        if (destino) destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    } else {
+      document.getElementById('carritoPagar').addEventListener('click', function () {
+        document.dispatchEvent(new CustomEvent('chocata:checkout', { detail: { items: items.slice() } }));
+      });
+    }
   }
 
   function abrir() {
@@ -216,10 +275,15 @@
   construir();
   pintar();
 
-  fetch('assets/data/precios.json')
-    .then(function (r) { return r.json(); })
+  Promise.all(
+    ['precios.json', 'combos.json', 'envios.json'].map(function (archivo) {
+      return fetch('assets/data/' + archivo).then(function (r) { return r.json(); });
+    })
+  )
     .then(function (datos) {
-      catalogo = datos;
+      catalogo = datos[0];
+      combos = datos[1];
+      reglas = datos[2];
       depurar();
       pintar();
       document.dispatchEvent(new CustomEvent('chocata:catalogo-listo'));
@@ -235,6 +299,17 @@
         return typeof p.cop === 'number';
       })) || [];
     },
-    pesos: pesos
+    combos: function () {
+      if (!combos) return [];
+      return Object.keys(combos)
+        .filter(function (k) { return k.indexOf('_') !== 0; })
+        .map(detalleCombo)
+        .filter(function (c) { return c && typeof c.cop === 'number'; });
+    },
+    detalleCombo: detalleCombo,
+    nombreDe: nombreDe,
+    reglas: function () { return reglas; },
+    pesos: pesos,
+    TALLA_COMBO: TALLA_COMBO
   };
 })();

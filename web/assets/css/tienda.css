@@ -200,3 +200,83 @@
   .carrito-btn { width: 50px; height: 50px; bottom: calc(clamp(1rem, 3vw, 2rem) + 56px + .6rem); }
   .linea { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'txt quitar' 'cant total'; }
 }
+
+/* ---------- Combos ---------- */
+.combos__grid {
+  display: grid; gap: 1rem; margin-top: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.combos__cargando { color: var(--faint); font-size: .9rem; grid-column: 1 / -1; text-align: center; }
+
+.combo {
+  position: relative; display: grid; gap: .9rem; align-content: start;
+  padding: 1.6rem 1.5rem 1.5rem; border: 1px solid var(--line); border-radius: 18px;
+  background: linear-gradient(160deg, rgba(248,243,235,.045), rgba(248,243,235,.012));
+  transition: border-color .25s ease, transform .25s ease;
+}
+@media (hover: hover) {
+  .combo:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+}
+.combo--destacado { border-color: rgba(242,176,30,.34); }
+
+.combo__ahorro {
+  position: absolute; top: -.7rem; right: 1.2rem;
+  padding: .3rem .7rem; border-radius: 999px;
+  background: var(--gold); color: #17110D;
+  font-size: .7rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+}
+.combo__kicker {
+  font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold);
+}
+.combo__nombre {
+  font-family: var(--display); font-size: 1.5rem; font-weight: 500; color: var(--cream); line-height: 1.15;
+}
+.combo__desc { font-size: .88rem; line-height: 1.65; color: var(--muted); }
+
+.combo__trae { display: grid; gap: .45rem; padding-top: .2rem; }
+.combo__trae li { display: grid; grid-template-columns: 16px 1fr; gap: .55rem; align-items: start; }
+.combo__trae svg { width: 16px; height: 16px; color: var(--gold); margin-top: .18rem; }
+.combo__trae span { font-size: .84rem; line-height: 1.5; color: var(--muted); }
+
+.combo__precios {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: .6rem;
+  margin-top: auto; padding-top: .9rem; border-top: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+}
+.combo__cop { font-family: var(--display); font-size: 1.75rem; font-weight: 500; color: var(--gold-soft); }
+.combo__antes { font-size: .92rem; color: var(--faint); text-decoration: line-through; }
+.combo__peso { font-size: .74rem; color: var(--faint); letter-spacing: .06em; }
+.combo__btn { width: 100%; justify-content: center; min-height: 46px; }
+.combo__btn.is-listo { background: rgba(242,176,30,.14); color: var(--gold-soft); }
+
+/* ---------- Sello de combo dentro del carrito ---------- */
+.linea__sello {
+  display: inline-block; margin-left: .35rem; padding: .1rem .38rem; border-radius: 5px;
+  background: rgba(242,176,30,.16); color: var(--gold-soft);
+  font-size: .62rem; font-style: normal; letter-spacing: .1em; text-transform: uppercase;
+}
+.linea__ahorro { display: block; font-size: .76rem; color: var(--gold); }
+
+/* ---------- Pedido mínimo ---------- */
+.carrito__minimo {
+  display: grid; gap: .5rem; padding: .9rem 1rem; border-radius: 12px;
+  border: 1px solid rgba(242,176,30,.28); background: rgba(242,176,30,.06);
+}
+.carrito__minimo b { font-size: .88rem; color: var(--gold-soft); font-weight: 500; }
+.carrito__minimo span { font-size: .78rem; line-height: 1.55; color: var(--muted); }
+.carrito__vercombos {
+  justify-self: start; min-height: 44px; padding: 0 .2rem;
+  background: none; border: 0; color: var(--gold); cursor: pointer;
+  font: inherit; font-size: .82rem; text-decoration: underline; text-underline-offset: 3px;
+}
+.carrito__pagar[disabled] { opacity: .45; cursor: not-allowed; }
+
+.checkout__ahorro {
+  margin-top: .6rem; font-size: .8rem; line-height: 1.6; color: var(--muted);
+}
+.checkout__ahorro b { color: var(--gold-soft); font-weight: 500; }
+
+.combos__nota {
+  margin-top: 2rem; text-align: center; font-size: .82rem; line-height: 1.7; color: var(--faint);
+}
+.combos__nota b { color: var(--muted); font-weight: 500; }

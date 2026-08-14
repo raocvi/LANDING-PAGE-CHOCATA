@@ -42,6 +42,56 @@ function comprobar(nombre, condicion, detalle) {
   comprobar('remolacha ya tiene precio y se puede vender', r.ok && r.subtotal === 40000, `subtotal=${r.subtotal}`);
 }
 
+/* ---------- Combos ----------
+   Un combo declara su precio y sus componentes; lo demás se deriva. */
+{
+  const vigentes = pedido.combosVigentes();
+  comprobar('hay combos a la venta', vigentes.length === 7, `n=${vigentes.length}`);
+
+  for (const c of vigentes) {
+    comprobar(`«${c.nombre}» ahorra plata`, c.ahorro > 0, `ahorro=${c.ahorro}`);
+    comprobar(`«${c.nombre}» no regala el producto`, c.ahorro < c.sueltos * 0.4, `ahorro=${c.ahorro} de ${c.sueltos}`);
+    comprobar(`«${c.nombre}» declara su peso`, typeof c.gramos === 'number' && c.gramos > 0, `gramos=${c.gramos}`);
+    comprobar(`«${c.nombre}» supera el pedido mínimo`, c.cop >= pedido.envios.pedidoMinimo, `cop=${c.cop}`);
+  }
+}
+{
+  /* El precio del combo se cobra como combo, no como suma de componentes. */
+  const r = pedido.calcular([{ slug: 'combo-fuerza', talla: 'Combo', cant: 1 }]);
+  comprobar('el kit fuerza cobra 102.000, no 120.000', r.ok && r.subtotal === 102000, `subtotal=${r.subtotal}`);
+  comprobar('y hereda el peso de sus componentes', r.gramos === 650, `gramos=${r.gramos}`);
+  comprobar('el combo no deja presentaciones sin peso', r.sinPeso.length === 0, JSON.stringify(r.sinPeso));
+}
+{
+  /* Cinco bolsas pesan un kilo exacto: ese es el punto del combo. */
+  const r = pedido.calcular([{ slug: 'combo-despensa', talla: 'Combo', cant: 1 }]);
+  comprobar('la despensa pesa un kilo exacto', r.gramos === 1000, `gramos=${r.gramos}`);
+  comprobar('y cobra un solo kilo de envío', r.kilosCobrados === 1, `kilos=${r.kilosCobrados}`);
+}
+{
+  /* Un combo siempre debe salir más barato que comprar suelto lo mismo. */
+  for (const c of pedido.combosVigentes()) {
+    const enCombo = pedido.calcular([{ slug: c.slug, talla: 'Combo', cant: 1 }]);
+    const sueltos = pedido.calcular(c.componentes.map((x) => ({ slug: x.slug, talla: x.talla, cant: x.cant })));
+    if (!sueltos.ok) continue; /* los componentes sueltos pueden no llegar al mínimo */
+    comprobar(`«${c.nombre}» cuesta menos que sus partes`, enCombo.total <= sueltos.total,
+      `combo=${enCombo.total} sueltos=${sueltos.total}`);
+  }
+}
+comprobar('un combo inventado se rechaza', pedido.calcular([{ slug: 'combo-fantasma', talla: 'Combo', cant: 1 }]).ok === false);
+comprobar('un producto normal con talla Combo se rechaza', pedido.calcular([{ slug: 'creatina', talla: 'Combo', cant: 1 }]).ok === false);
+
+/* ---------- Pedido mínimo ---------- */
+{
+  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: 1 }]);
+  comprobar('una bolsa de 9.000 no se puede despachar sola', r.ok === false);
+  comprobar('y se dice cuánto falta', r.falta === 31000, `falta=${r.falta}`);
+}
+comprobar('justo en el mínimo sí se puede pagar',
+  pedido.calcular([{ slug: 'remolacha', talla: '200 g', cant: 1 }]).ok === true);
+comprobar('un peso por debajo del mínimo no',
+  pedido.calcular([{ slug: 'latte-dorato', talla: '400 g', cant: 1 }]).ok === false);
+
 /* ---------- Entradas inválidas ---------- */
 const invalidas = [
   ['pedido vacío', []],
@@ -61,9 +111,9 @@ for (const [nombre, items] of invalidas) {
    Gratis desde $100.000 (inclusive). Por debajo, $15.000 por kilo o fracción,
    con un mínimo de un kilo. */
 {
-  /* 1 bolsa de 200 g = $9.000 → 1 kilo mínimo → $15.000. */
-  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: 1 }]);
-  comprobar('un pedido liviano paga el kilo mínimo', r.envio === 15000, `envio=${r.envio}`);
+  /* 5 bolsas de 200 g = $45.000 y 1.000 g exactos → 1 kilo → $10.500. */
+  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: 5 }]);
+  comprobar('un pedido liviano paga el kilo mínimo', r.envio === 10500, `envio=${r.envio}`);
   comprobar('cobra un solo kilo', r.kilosCobrados === 1, `kilos=${r.kilosCobrados}`);
 }
 {
@@ -96,6 +146,7 @@ for (const [nombre, items] of invalidas) {
   let rompe = null;
   for (let n = 1; n <= 40; n++) {
     const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: n }]);
+    if (!r.ok) continue; /* por debajo del pedido mínimo no hay total que comparar */
     if (r.total < anterior) { rompe = `${n} bolsas cuestan ${r.total} y ${n - 1} costaban ${anterior}`; break; }
     anterior = r.total;
   }
@@ -107,6 +158,7 @@ for (const [nombre, items] of invalidas) {
   for (const [slug, talla] of [['chocata-tradicional', '3.500 g'], ['chocata-tradicional', '200 g'], ['creatina', '250 g']]) {
     for (let n = 1; n <= 20; n++) {
       const r = pedido.calcular([{ slug, talla, cant: n }]);
+      if (!r.ok) continue;
       if (r.subtotal < 100000 && r.total > 100000) { excede = `${n} × ${slug} ${talla} → ${r.total}`; break; }
     }
   }
@@ -118,21 +170,22 @@ for (const [nombre, items] of invalidas) {
   comprobar('un kilo exacto cobra un kilo', r.gramos === 1000 && r.kilosCobrados === 1, `gramos=${r.gramos} kilos=${r.kilosCobrados}`);
 }
 {
-  /* Hidratec no declara gramos: no puede dejar el envío en cero. */
-  const r = pedido.calcular([{ slug: 'hidratec', talla: 'Presentación única', cant: 1 }]);
-  comprobar('una presentación sin peso cobra el kilo mínimo', r.envio === 15000, `envio=${r.envio}`);
+  /* Hidratec no declara gramos: no puede dejar el envío en cero. Sola no
+     alcanza el pedido mínimo, así que se prueba con dos unidades. */
+  const r = pedido.calcular([{ slug: 'hidratec', talla: 'Presentación única', cant: 2 }]);
+  comprobar('una presentación sin peso cobra el kilo mínimo', r.envio === 10500, `envio=${r.envio}`);
   comprobar('y queda señalada para revisión', r.sinPeso.length === 1, JSON.stringify(r.sinPeso));
 }
 comprobar('a un peso del umbral el envío cuesta un peso', pedido.envioDe(99999, 500) === 1);
 comprobar('el umbral exacto es gratis', pedido.envioDe(100000, 5000) === 0);
-comprobar('lejos del umbral manda el peso: 2.001 g son 3 kilos', pedido.envioDe(10000, 2001) === 45000);
+comprobar('lejos del umbral manda el peso: 2.001 g son 3 kilos', pedido.envioDe(10000, 2001) === 31500);
 comprobar('el tope nunca deja el envío en negativo', pedido.envioDe(99999, 50000) >= 0);
 {
-  const d = pedido.desgloseEnvio(90000, 2000);
-  comprobar('el desglose conserva el precio por peso', d.porPeso === 30000, `porPeso=${d.porPeso}`);
+  const d = pedido.desgloseEnvio(95000, 2000);
+  comprobar('el desglose conserva el precio por peso', d.porPeso === 21000, `porPeso=${d.porPeso}`);
   comprobar('el desglose avisa que hubo tope', d.topado === true);
   const sinTope = pedido.desgloseEnvio(10000, 2000);
-  comprobar('sin tope no se marca', sinTope.topado === false && sinTope.envio === 30000, `envio=${sinTope.envio}`);
+  comprobar('sin tope no se marca', sinTope.topado === false && sinTope.envio === 21000, `envio=${sinTope.envio}`);
 }
 
 /* ---------- Peso declarado ---------- */
@@ -140,9 +193,9 @@ comprobar('lee gramos de "1.500 g"', pedido.gramosDe('1.500 g') === 1500);
 comprobar('lee gramos de "200 g"', pedido.gramosDe('200 g') === 200);
 comprobar('una presentación sin gramos devuelve null', pedido.gramosDe('Presentación única') === null);
 {
-  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: 4 }]);
-  comprobar('suma el peso del pedido', r.gramos === 800, `gramos=${r.gramos}`);
-  comprobar('cuenta las unidades', r.unidades === 4, `unidades=${r.unidades}`);
+  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: 5 }]);
+  comprobar('suma el peso del pedido', r.gramos === 1000, `gramos=${r.gramos}`);
+  comprobar('cuenta las unidades', r.unidades === 5, `unidades=${r.unidades}`);
 }
 
 /* ---------- Datos del comprador ---------- */

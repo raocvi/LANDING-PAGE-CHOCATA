@@ -24,11 +24,11 @@ async function pedir(cuerpo) {
 console.log('\nCheckout');
 const bajo = await pedir({ items: [{ slug: 'creatina', talla: '250 g', cant: 1 }], cliente });
 ok('responde 200', bajo.estado === 200, bajo.estado);
-ok('cobra envío bajo el umbral', bajo.cuerpo.total === 65000, bajo.cuerpo.total);
+ok('cobra envío bajo el umbral', bajo.cuerpo.total === 60500, bajo.cuerpo.total);
 ok('la URL apunta al checkout de Wompi', String(bajo.cuerpo.url).startsWith('https://checkout.wompi.co/p/?'));
 
 const url = new URL(bajo.cuerpo.url);
-ok('el monto va en centavos', url.searchParams.get('amount-in-cents') === '6500000');
+ok('el monto va en centavos', url.searchParams.get('amount-in-cents') === '6050000');
 ok('lleva firma de integridad', /^[a-f0-9]{64}$/.test(url.searchParams.get('signature:integrity')));
 ok('conserva las tildes del nombre', url.searchParams.get('customer-data:full-name') === 'Ana María Rodríguez',
    url.searchParams.get('customer-data:full-name'));
@@ -47,7 +47,7 @@ for (const [nombre, cuerpo] of [
   ['producto inexistente', { items: [{ slug: 'oro', talla: '1 kg', cant: 1 }], cliente }]
 ]) {
   const r = await pedir(cuerpo);
-  if (nombre === 'precio inyectado por el cliente') ok('el precio inyectado se ignora', r.cuerpo.total === 65000, r.cuerpo.total);
+  if (nombre === 'precio inyectado por el cliente') ok('el precio inyectado se ignora', r.cuerpo.total === 60500, r.cuerpo.total);
   else ok('rechaza ' + nombre, r.estado === 400, r.estado);
 }
 
@@ -64,8 +64,8 @@ const enviarEvento = (e) => fetch(`${BASE}/api/wompi-webhook`, {
 });
 
 const ref = bajo.cuerpo.referencia;
-ok('rechaza firma inválida', (await enviarEvento({ ...evento(ref, 'APPROVED', 6500000), timestamp: 1 })).status === 401);
-ok('acepta el evento legítimo', (await enviarEvento(evento(ref, 'APPROVED', 6500000))).status === 200);
+ok('rechaza firma inválida', (await enviarEvento({ ...evento(ref, 'APPROVED', 6050000), timestamp: 1 })).status === 401);
+ok('acepta el evento legítimo', (await enviarEvento(evento(ref, 'APPROVED', 6050000))).status === 200);
 
 const leer = async (r) => (await fetch(`${BASE}/api/pedido?ref=${r}`, { headers: { 'x-admin-token': 'admin_desarrollo' } })).json();
 const leerPublico = async (r) => (await fetch(`${BASE}/api/pedido?ref=${r}`)).json();
@@ -77,16 +77,33 @@ ok('normaliza el correo a minúsculas', guardado.cliente.correo === 'ana@correo.
 /* Wompi reintenta: el segundo evento no puede volver a "cambiar" el pedido. */
 const publico = await leerPublico(ref);
 ok('la vista pública no expone datos personales', publico.cliente === undefined && publico.estado === 'APPROVED', JSON.stringify(publico));
-ok('la vista pública sí da el estado y el total', publico.total === 65000);
+ok('la vista pública sí da el estado y el total', publico.total === 60500);
 ok('rechaza una referencia inventada', (await (await fetch(`${BASE}/api/pedido?ref=hola`)).json()).mensaje === 'Referencia inválida.');
 
-ok('el reintento se acepta sin duplicar', (await enviarEvento(evento(ref, 'APPROVED', 6500000))).status === 200);
+ok('el reintento se acepta sin duplicar', (await enviarEvento(evento(ref, 'APPROVED', 6050000))).status === 200);
 
 /* Pago por menos de lo debido, con firma válida: no puede darse por bueno. */
 const ref2 = (await pedir({ items: [{ slug: 'creatina', talla: '250 g', cant: 1 }], cliente })).cuerpo.referencia;
 await enviarEvento(evento(ref2, 'APPROVED', 100));
 guardado = await leer(ref2);
 ok('un monto que no cuadra queda marcado para revisar', guardado.estado === 'REVISAR_MONTO', guardado.estado);
+
+console.log('\nCombos y pedido mínimo');
+
+const chico = await pedir({ items: [{ slug: 'chocata-tradicional', talla: '200 g', cant: 1 }], cliente });
+ok('el servidor rechaza por debajo del mínimo', chico.estado === 400, chico.estado);
+ok('y dice cuánto falta', /faltan \$31\.000/.test(chico.cuerpo.mensaje || ''), chico.cuerpo.mensaje);
+
+const kit = await pedir({ items: [{ slug: 'combo-fuerza', talla: 'Combo', cant: 1 }], cliente });
+ok('un combo se puede pagar', kit.estado === 200, kit.estado);
+ok('cobra el precio del combo, no el de sus partes', kit.cuerpo.total === 102000, kit.cuerpo.total);
+ok('el combo pesa 650 g y viaja gratis', kit.cuerpo.envio === 0, kit.cuerpo.envio);
+
+const despensa = await pedir({ items: [{ slug: 'combo-despensa', talla: 'Combo', cant: 1 }], cliente });
+ok('la despensa cobra un solo kilo', despensa.cuerpo.total === 50500, despensa.cuerpo.total);
+
+const fantasma = await pedir({ items: [{ slug: 'combo-fantasma', talla: 'Combo', cant: 1 }], cliente });
+ok('un combo inventado se rechaza', fantasma.estado === 400, fantasma.estado);
 
 console.log(fallos ? `\n${fallos} fallo(s).` : '\nTodo correcto.');
 process.exit(fallos ? 1 : 0);

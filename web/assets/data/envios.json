@@ -1,8 +1,10 @@
 {
-  "_nota": "Envío gratis desde gratisDesde (inclusive). Por debajo se cobra tarifaPorKilo por cada kilo o fracción del peso del pedido, sin importar la cantidad de artículos, con un mínimo de kiloMinimo. Con topeHastaGratis el envío nunca cobra más de lo que falta para llegar al envío gratis: así ningún pedido por debajo del umbral supera gratisDesde en total, y agregar producto nunca abarata el total.",
+  "_nota": "pedidoMinimo: por debajo de ese subtotal no se puede pagar, porque despachar un producto de $9.000 cuesta más que el producto. Envío gratis desde gratisDesde (inclusive). Por debajo se cobra tarifaPorKilo por cada kilo o fracción del peso del pedido, sin importar la cantidad de artículos, con un mínimo de kiloMinimo. Con topeHastaGratis el envío nunca cobra más de lo que falta para llegar al envío gratis: así ningún pedido por debajo del umbral supera gratisDesde en total, y agregar producto nunca abarata el total.",
+  "_tarifa": "tarifaPorKilo = 10.500, la más alta observada en el mercado colombiano en agosto de 2026 (Interrapidísimo urbano hasta 0,5 kg). Servientrega ronda 8.500 el kilo nacional e Interrapidísimo arranca en 4.970 vía agregador, así que este número cubre el peor caso y deja margen. Al contratar tarifa corporativa conviene bajarlo.",
   "moneda": "COP",
+  "pedidoMinimo": 40000,
   "gratisDesde": 100000,
-  "tarifaPorKilo": 15000,
+  "tarifaPorKilo": 10500,
   "kiloMinimo": 1,
   "topeHastaGratis": true,
   "departamentos": [

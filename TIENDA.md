@@ -11,6 +11,8 @@ Rama `feat/pedidos-y-pagos`. No toca `main`: la página publicada sigue igual ha
 | Checkout con validación colombiana | Listo |
 | Cálculo del pedido en el servidor | Listo |
 | Regla de envío | Listo |
+| Combos | Listo (7 combos, precio derivado de sus componentes) |
+| Pedido mínimo | Listo ($40.000, validado en servidor) |
 | Firma de integridad de Wompi | Listo |
 | Webhook con validación de firma | Listo |
 | Guardado de pedidos | Listo (archivo local; en producción necesita Vercel Blob) |
@@ -30,8 +32,8 @@ arma la URL de Wompi y la firma, pero no cobra.
 
 ```bash
 node tools/verificar-precios.mjs   # ficha y catálogo numérico coinciden
-node tools/probar-pedido.mjs       # 58 pruebas del núcleo
-node tools/probar-flujo.mjs        # 23 comprobaciones de extremo a extremo (con el servidor arriba)
+node tools/probar-pedido.mjs       # 105 pruebas del núcleo
+node tools/probar-flujo.mjs        # 30 comprobaciones de extremo a extremo (con el servidor arriba)
 ```
 
 ## Salir a producción
@@ -98,18 +100,54 @@ en un historial; sin `ADMIN_TOKEN` solo devuelve estado, total y fecha.
 
 ## Regla de envío
 
-Tres reglas, en este orden:
+Cuatro reglas, en este orden:
 
+0. **Pedido mínimo $40.000.** Por debajo no se puede pagar.
 1. Gratis desde $100.000 **inclusive**.
-2. Por debajo, **$15.000 por kilo o fracción**, mínimo un kilo, sin importar la cantidad de artículos.
+2. Por debajo, **$10.500 por kilo o fracción**, mínimo un kilo, sin importar la cantidad de artículos.
 3. **Tope:** el envío nunca cobra más de lo que falta para el envío gratis.
+
+**De dónde sale $10.500.** Es la tarifa más alta observada en el mercado colombiano en
+agosto de 2026: Interrapidísimo urbano hasta 0,5 kg. Servientrega ronda $8.500 el kilo nacional e
+Interrapidísimo arranca en $4.970 vía agregador. Cubre el peor caso; al contratar tarifa corporativa
+conviene bajarla en `envios.json`.
+
+**Por qué hay pedido mínimo.** Una bolsa de $9.000 costaba $15.000 de envío: 167%. Nadie completa
+esa compra y despacharla pierde plata. Es lo que hace el mercado — o mínimo, o el producto barato
+solo se lista en pack.
 
 | Pedido | Peso | Por peso | Se cobra | Total |
 |---|---|---|---|---|
-| 1 × 200 g ($9.000) | 200 g | $15.000 (1 kilo) | $15.000 | $24.000 |
-| 10 × 200 g ($90.000) | 2 kg | $30.000 (2 kilos) | **$10.000** | $100.000 |
-| 1 × 3.500 g ($95.000) | 3,5 kg | $60.000 (4 kilos) | **$5.000** | $100.000 |
-| 2 × creatina ($100.000) | 500 g | — | Gratis | $100.000 |
+| 1 × 200 g ($9.000) | — | — | — | **Rechazado**: bajo el mínimo |
+| Despensa ($40.000) | 1 kg | $10.500 | $10.500 | $50.500 |
+| 10 × 200 g ($90.000) | 2 kg | $21.000 (2 kilos) | **$10.000** | $100.000 |
+| 1 × 3.500 g ($95.000) | 3,5 kg | $42.000 (4 kilos) | **$5.000** | $100.000 |
+| Kit Fuerza ($102.000) | 650 g | — | Gratis | $102.000 |
+
+## Combos
+
+Siete combos en `web/assets/data/combos.json`. Cada uno declara **solo su precio y qué trae**;
+el precio suelto, el peso y el ahorro los deriva el servidor sumando los componentes contra
+`precios.json`. No pueden quedar desfasados, y un combo cuyo componente salga del catálogo deja de
+venderse solo. Una prueba comprueba que todos ahorran plata, declaran peso y superan el mínimo.
+
+| Combo | Trae | Precio | Suelto | Ahorro | Peso |
+|---|---|---|---|---|---|
+| Despensa de la casa | 5 × Tradicional 200 g | $40.000 | $45.000 | 11% | 1 kg |
+| Mes completo | 2 × Tradicional 1.500 g | $76.000 | $90.000 | 16% | 3 kg |
+| Cata CHOCATA | Tradicional + Premium 500 g | $46.000 | $54.000 | 15% | 1 kg |
+| Kit Fuerza | Proteína + Creatina | $102.000 | $120.000 | 15% | 650 g |
+| Kit Rendimiento | Pre-workout + Creatina + 200 g | $76.000 | $89.000 | 15% | 650 g |
+| Bienestar diario | Colágeno + Magnesio + Vitamina C | $56.000 | $66.000 | 15% | 700 g |
+| Recuperación | Remolacha + Magnesio | $52.000 | $61.000 | 15% | 450 g |
+
+**Los pesos están calculados contra el borde del kilo.** La despensa lleva cinco bolsas y no seis
+a propósito: cinco pesan 1.000 g exactos y cobran un kilo; la sexta cuesta $9.000 pero empujaría el
+pedido a dos kilos y subiría el envío $10.500. Al comprador le sale mejor así.
+
+**No hay combo de granel.** Dos bultos de 3,5 kg suman $190.000 y pasarían el umbral, o sea 7 kilos
+despachados gratis: unos $73.500 de transporte regalado. Falta ponerle techo de peso al envío
+gratis antes de vender ese combo.
 
 **Por qué existe el tope.** Sin él el total no era monótono: once bolsas costaban $144.000 y doce
 costaban $108.000. Un comprador que descubre que agregar producto le abarata el pedido deja de creer
@@ -127,7 +165,13 @@ El checkout muestra los kilos cuando manda el peso, y cuando manda el tope lo di
 - **Hidratec no declara gramos.** Su presentación se llama «Presentación única», así que aporta cero
   al peso. Hoy lo salva el mínimo de un kilo, pero **dos o más unidades se cobrarían de menos**.
   Hace falta el peso neto real; el pedido lo marca en `sinPeso` para poder detectarlo.
-- **El escalón de los 1.001 g.** Con el tope el total ya no baja nunca, pero sigue habiendo un
-  salto visible al cruzar cada kilo: la sexta bolsa de 200 g vale $9.000 y sube el total $24.000,
-  porque el pedido pasa de 1 a 2 kilos. Es peso real, no un error, pero se puede suavizar bajando
-  el umbral de envío gratis o cobrando por gramo.
+- **El escalón de cada kilo.** Con el tope el total ya no baja nunca, pero sigue habiendo un salto
+  al cruzar cada kilo. Los combos están armados para caer del lado bueno del borde; los pedidos
+  sueltos no. Se suaviza cobrando por gramo en vez de por kilo.
+- **Techo de peso para el envío gratis.** Hoy un pedido de $100.000 viaja gratis pese lo que pese.
+  Con productos caros y livianos (creatina, colágeno) no importa; con granel sí. Sin ese techo no se
+  puede vender un combo de bultos.
+- **El umbral de $100.000 está 40% por encima del mercado.** MercadoLibre Colombia activa envío
+  gratis desde ~$60.000. Bajarlo a $70.000 acerca la oferta al referente.
+- **Tarifa por zona.** `envios.json` ya lista los 33 departamentos pero no se usan para nada.
+  Cali es la ciudad de la marca y la mensajería urbana cuesta bastante menos que un envío nacional.

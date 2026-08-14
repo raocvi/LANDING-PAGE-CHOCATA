@@ -156,22 +156,44 @@
     return isFinite(n) ? n : null;
   }
 
+  /* Peso de una línea: la presentación suelta, o la suma de los componentes si
+     es un combo. Espejo de gramosLinea() en api/_pedido.js. */
+  function gramosLinea(it) {
+    var carrito = window.CHOCATA_CARRITO;
+    if (it.talla !== carrito.TALLA_COMBO) return gramosDe(it.talla);
+    var combo = carrito.detalleCombo(it.slug);
+    if (!combo) return null;
+    var total = 0;
+    for (var i = 0; i < combo.componentes.length; i++) {
+      var g = gramosDe(combo.componentes[i].talla);
+      if (g === null) return null;
+      total += g * combo.componentes[i].cant;
+    }
+    return total;
+  }
+
   /* Este cálculo es solo para que el comprador vea el total antes de pagar.
      El que manda es el del servidor, que se rehace en /api/checkout. */
   function resumir(items) {
     var carrito = window.CHOCATA_CARRITO;
     var caja = document.getElementById('checkoutResumen');
     var subtotal = 0;
+    var ahorro = 0;
     var filas = items.map(function (it) {
-      var pres = carrito.presentaciones(it.slug).filter(function (p) { return p.talla === it.talla; })[0];
-      if (!pres) return '';
-      subtotal += pres.cop * it.cant;
-      return '<div class="checkout__linea"><span>' + it.cant + ' × ' + it.talla + '</span>' +
-             '<b>' + carrito.pesos(pres.cop * it.cant) + '</b></div>';
+      var combo = it.talla === carrito.TALLA_COMBO ? carrito.detalleCombo(it.slug) : null;
+      var unitario = combo
+        ? combo.cop
+        : (carrito.presentaciones(it.slug).filter(function (p) { return p.talla === it.talla; })[0] || {}).cop;
+      if (typeof unitario !== 'number') return '';
+      subtotal += unitario * it.cant;
+      if (combo) ahorro += combo.ahorro * it.cant;
+      return '<div class="checkout__linea"><span>' + it.cant + ' × ' +
+               (combo ? combo.nombre : it.talla) + '</span>' +
+             '<b>' + carrito.pesos(unitario * it.cant) + '</b></div>';
     }).join('');
 
     var umbral = envios && typeof envios.gratisDesde === 'number' ? envios.gratisDesde : null;
-    var gramos = items.reduce(function (n, it) { return n + (gramosDe(it.talla) || 0) * it.cant; }, 0);
+    var gramos = items.reduce(function (n, it) { return n + (gramosLinea(it) || 0) * it.cant; }, 0);
     var gratis = umbral !== null && subtotal >= umbral;
     var kilos = Math.max((envios && envios.kiloMinimo) || 1, Math.ceil(gramos / 1000));
     var porPeso = kilos * ((envios && envios.tarifaPorKilo) || 0);
@@ -196,7 +218,14 @@
         : !gratis && falta > 0
           ? '<p class="checkout__falta">Te faltan <b>' + carrito.pesos(falta) + '</b> para el envío gratis.</p>'
           : '') +
-      '<div class="checkout__total"><span>Total a pagar</span><b>' + carrito.pesos(subtotal + envio) + '</b></div>';
+      '<div class="checkout__total"><span>Total a pagar</span><b>' + carrito.pesos(subtotal + envio) + '</b></div>' +
+      /* El ahorro no se resta de nada: es la diferencia contra comprar los
+         mismos productos sueltos. Va después del total, para que no se lea
+         como un descuento que debería estar restado del subtotal. */
+      (ahorro > 0
+        ? '<p class="checkout__ahorro">Comprando estos combos te ahorras <b>' +
+          carrito.pesos(ahorro) + '</b> frente a llevar lo mismo por separado.</p>'
+        : '');
   }
 
   function enviar(items) {

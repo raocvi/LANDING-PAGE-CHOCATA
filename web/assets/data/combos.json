@@ -1,0 +1,88 @@
+{
+  "_nota": "Combos. Solo se declara el precio del combo (cop) y qué trae (componentes). El precio suelto, el peso y el ahorro los calcula el servidor sumando los componentes contra precios.json, así que no pueden quedar desfasados. Un combo cuyo componente salga del catálogo deja de venderse solo. Ningún combo puede incluir una presentación sin gramos declarados: el envío se cobra por peso.",
+
+  "combo-despensa": {
+    "_porque_cinco": "Cinco bolsas pesan 1.000 g exactos y el envío se cobra por kilo o fracción. La sexta bolsa cuesta $9.000 pero empujaría el pedido a dos kilos, subiendo el envío $10.500. Al comprador le sale mejor este combo que uno de seis.",
+    "nombre": "Despensa de la casa",
+    "kicker": "Cinco bolsas de 200 g",
+    "descripcion": "El formato de todos los días, en cantidad para que no se acabe a mitad de mes. Una bolsa rinde cerca de diez tazas.",
+    "publico": "hogar",
+    "cop": 40000,
+    "componentes": [
+      { "slug": "chocata-tradicional", "talla": "200 g", "cant": 5 }
+    ]
+  },
+
+  "combo-mes": {
+    "nombre": "Mes completo",
+    "kicker": "Dos bolsas de 1.500 g",
+    "descripcion": "Tres kilos de CHOCATA tradicional. Para casas grandes o para quien ya no quiere volver a pedir en un buen rato.",
+    "publico": "hogar",
+    "cop": 76000,
+    "componentes": [
+      { "slug": "chocata-tradicional", "talla": "1.500 g", "cant": 2 }
+    ]
+  },
+
+  "combo-cata": {
+    "nombre": "Cata CHOCATA",
+    "kicker": "Tradicional y Premium, 500 g cada uno",
+    "descripcion": "Las dos recetas de la casa, una al lado de la otra. La forma corta de saber cuál es la tuya.",
+    "publico": "hogar",
+    "cop": 46000,
+    "componentes": [
+      { "slug": "chocata-tradicional", "talla": "500 g", "cant": 1 },
+      { "slug": "chocata-premium", "talla": "500 g", "cant": 1 }
+    ]
+  },
+
+  "combo-fuerza": {
+    "nombre": "Kit Fuerza",
+    "kicker": "Proteína 400 g + Creatina 250 g",
+    "descripcion": "Las dos únicas ayudas con evidencia sólida para ganar masa muscular con entrenamiento de fuerza. Sin relleno.",
+    "publico": "deportista",
+    "cop": 102000,
+    "componentes": [
+      { "slug": "proteina", "talla": "400 g", "cant": 1 },
+      { "slug": "creatina", "talla": "250 g", "cant": 1 }
+    ]
+  },
+
+  "combo-rendimiento": {
+    "nombre": "Kit Rendimiento",
+    "kicker": "Pre-workout + Creatina + CHOCATA 200 g",
+    "descripcion": "Antes del entreno, durante el ciclo y para el desayuno del día siguiente. Cubre la sesión completa.",
+    "publico": "deportista",
+    "cop": 76000,
+    "componentes": [
+      { "slug": "pre-workout", "talla": "200 g", "cant": 1 },
+      { "slug": "creatina", "talla": "250 g", "cant": 1 },
+      { "slug": "chocata-tradicional", "talla": "200 g", "cant": 1 }
+    ]
+  },
+
+  "combo-bienestar": {
+    "nombre": "Bienestar diario",
+    "kicker": "Colágeno + Magnesio + Vitamina C",
+    "descripcion": "Los tres se toman juntos por una razón: la vitamina C participa en la síntesis del colágeno, y el magnesio interviene en el descanso y en la función muscular.",
+    "publico": "salud",
+    "cop": 56000,
+    "componentes": [
+      { "slug": "colageno", "talla": "200 g", "cant": 1 },
+      { "slug": "magnesio", "talla": "250 g", "cant": 1 },
+      { "slug": "vitamina-c", "talla": "250 g", "cant": 1 }
+    ]
+  },
+
+  "combo-recuperacion": {
+    "nombre": "Recuperación",
+    "kicker": "Remolacha + Magnesio",
+    "descripcion": "Remolacha por sus nitratos y magnesio por su papel en la función muscular normal. Para las semanas de carga alta.",
+    "publico": "deportista",
+    "cop": 52000,
+    "componentes": [
+      { "slug": "remolacha", "talla": "200 g", "cant": 1 },
+      { "slug": "magnesio", "talla": "250 g", "cant": 1 }
+    ]
+  }
+}
