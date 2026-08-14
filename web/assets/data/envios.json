@@ -1,8 +1,9 @@
 {
-  "_nota": "Envío gratis por encima de gratisDesde (estrictamente mayor). Por debajo se cobra tarifaUnica, sin importar la ciudad ni la cantidad de artículos.",
+  "_nota": "Envío gratis desde gratisDesde (inclusive). Por debajo se cobra tarifaPorKilo por cada kilo o fracción del peso del pedido, sin importar la cantidad de artículos. Siempre se cobra al menos un kilo.",
   "moneda": "COP",
   "gratisDesde": 100000,
-  "tarifaUnica": 15000,
+  "tarifaPorKilo": 15000,
+  "kiloMinimo": 1,
   "departamentos": [
     "Amazonas", "Antioquia", "Arauca", "Atlántico", "Bogotá D.C.", "Bolívar",
     "Boyacá", "Caldas", "Caquetá", "Casanare", "Cauca", "Cesar", "Chocó",

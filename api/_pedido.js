@@ -25,13 +25,17 @@ function precioDe(slug, talla) {
 }
 
 /**
- * Envío gratis por encima del umbral, tarifa única por debajo.
- * El umbral es estrictamente mayor: un pedido de exactamente $100.000 paga
- * envío, tal como se definió la regla.
+ * Envío gratis desde el umbral (inclusive: exactamente $100.000 ya viaja
+ * gratis). Por debajo se cobra por kilo o fracción, sin importar cuántos
+ * artículos sean. Nunca menos de un kilo: un solo sobre pequeño tampoco viaja
+ * gratis, y un peso mal declarado no puede dejar el envío en cero.
  */
-function envioDe(subtotal) {
-  if (typeof envios.gratisDesde === 'number' && subtotal > envios.gratisDesde) return 0;
-  return typeof envios.tarifaUnica === 'number' ? envios.tarifaUnica : null;
+function envioDe(subtotal, gramos) {
+  if (typeof envios.gratisDesde === 'number' && subtotal >= envios.gratisDesde) return 0;
+  if (typeof envios.tarifaPorKilo !== 'number') return null;
+  const minimo = typeof envios.kiloMinimo === 'number' ? envios.kiloMinimo : 1;
+  const kilos = Math.max(minimo, Math.ceil((gramos || 0) / 1000));
+  return kilos * envios.tarifaPorKilo;
 }
 
 /** Gramos de una presentación: "1.500 g" → 1500. Null si no los declara. */
@@ -74,13 +78,15 @@ function calcular(items) {
   const subtotal = lineas.reduce((n, l) => n + l.total, 0);
   if (subtotal <= 0) return { ok: false, error: 'El total del pedido no es válido.' };
 
-  const envio = envioDe(subtotal);
-  /* Peso declarado del pedido. Hidratec no declara gramos, así que puede
-     quedar corto; sirve como referencia para logística, no para cobrar. */
+  /* El peso ahora decide el precio del envío, así que una presentación sin
+     gramos declarados es un riesgo: se marca para poder detectarlo. */
   const gramos = lineas.reduce((n, l) => n + (l.gramos || 0) * l.cant, 0);
+  const sinPeso = lineas.filter((l) => l.gramos === null).map((l) => `${l.slug} ${l.talla}`);
+  const envio = envioDe(subtotal, gramos);
 
   return {
-    ok: true, lineas, subtotal, envio, gramos,
+    ok: true, lineas, subtotal, envio, gramos, sinPeso,
+    kilosCobrados: envio === 0 ? 0 : Math.max(1, Math.ceil(gramos / 1000)),
     unidades: lineas.reduce((n, l) => n + l.cant, 0),
     total: subtotal + (envio || 0)
   };

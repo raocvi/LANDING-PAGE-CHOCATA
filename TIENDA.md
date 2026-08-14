@@ -30,7 +30,7 @@ arma la URL de Wompi y la firma, pero no cobra.
 
 ```bash
 node tools/verificar-precios.mjs   # ficha y catálogo numérico coinciden
-node tools/probar-pedido.mjs       # 41 pruebas del núcleo
+node tools/probar-pedido.mjs       # 50 pruebas del núcleo
 node tools/probar-flujo.mjs        # 23 comprobaciones de extremo a extremo (con el servidor arriba)
 ```
 
@@ -96,10 +96,25 @@ contra el guardado: si no cuadra, el pedido queda en `REVISAR_MONTO` en vez de d
 **El endpoint de consulta no expone datos personales.** La referencia viaja en la URL y puede quedar
 en un historial; sin `ADMIN_TOKEN` solo devuelve estado, total y fecha.
 
+## Regla de envío
+
+Gratis desde $100.000 **inclusive**. Por debajo, **$15.000 por kilo o fracción**, con un mínimo de
+un kilo, sin importar la cantidad de artículos.
+
+| Pedido | Peso | Envío | Total |
+|---|---|---|---|
+| 1 × 200 g ($9.000) | 200 g | $15.000 (1 kilo) | $24.000 |
+| 10 × 200 g ($90.000) | 2 kg | $30.000 (2 kilos) | $120.000 |
+| 1 × 3.500 g ($95.000) | 3,5 kg | $60.000 (4 kilos) | $155.000 |
+| 2 × creatina ($100.000) | 500 g | Gratis | $100.000 |
+
+El checkout muestra los kilos que se están cobrando, para que el número no parezca arbitrario.
+
 ## Pendiente de definir
 
-- **El umbral es estrictamente mayor.** Un pedido de exactamente $100.000 paga envío, y con $50.000
-  en el carrito el aviso dice «te faltan $50.001». Si se cambia a «desde $100.000» desaparece ese peso suelto.
-- **Tarifa plana sin tope.** 10 bolsas de 200 g suman $90.000 y pagan $15.000 de envío por 2 kilos.
-  El peso del pedido ya se calcula, listo para una regla por peso si hace falta.
-- **Hidratec no declara gramos** en su presentación, así que no suma al peso del pedido.
+- **Hidratec no declara gramos.** Su presentación se llama «Presentación única», así que aporta cero
+  al peso. Hoy lo salva el mínimo de un kilo, pero **dos o más unidades se cobrarían de menos**.
+  Hace falta el peso neto real; el pedido lo marca en `sinPeso` para poder detectarlo.
+- **El salto en el borde.** Una bolsa de 3.500 g cuesta $95.000 y paga $60.000 de envío, pero
+  agregando $5.000 más el envío queda gratis. El cliente lo va a notar. Conviene decidir si el
+  formato institucional lleva otra regla.

@@ -58,26 +58,47 @@ for (const [nombre, items] of invalidas) {
 }
 
 /* ---------- Regla de envío ----------
-   Gratis por encima de $100.000 (estrictamente mayor), $15.000 por debajo. */
+   Gratis desde $100.000 (inclusive). Por debajo, $15.000 por kilo o fracción,
+   con un mínimo de un kilo. */
 {
-  /* $95.000 → paga envío. Total 110.000. */
+  /* 1 bolsa de 200 g = $9.000 → 1 kilo mínimo → $15.000. */
+  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: 1 }]);
+  comprobar('un pedido liviano paga el kilo mínimo', r.envio === 15000, `envio=${r.envio}`);
+  comprobar('cobra un solo kilo', r.kilosCobrados === 1, `kilos=${r.kilosCobrados}`);
+}
+{
+  /* 1 bolsa de 3.500 g = $95.000 → 4 kilos → $60.000. */
   const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '3.500 g', cant: 1 }]);
-  comprobar('bajo el umbral se cobra el envío', r.envio === 15000, `envio=${r.envio}`);
-  comprobar('el envío se suma al total', r.total === 110000, `total=${r.total}`);
+  comprobar('3,5 kg se redondean a 4 kilos', r.kilosCobrados === 4, `kilos=${r.kilosCobrados}`);
+  comprobar('4 kilos cuestan 60.000', r.envio === 60000, `envio=${r.envio}`);
+  comprobar('el envío se suma al total', r.total === 155000, `total=${r.total}`);
 }
 {
-  /* Exactamente $100.000: 2 × 50.000. La regla dice «mayores a», así que paga. */
+  /* Exactamente $100.000: 2 × 50.000. Al ser inclusive, ya viaja gratis. */
   const r = pedido.calcular([{ slug: 'creatina', talla: '250 g', cant: 2 }]);
-  comprobar('en el umbral exacto todavía se cobra envío', r.subtotal === 100000 && r.envio === 15000, `subtotal=${r.subtotal} envio=${r.envio}`);
+  comprobar('en el umbral exacto el envío ya es gratis', r.subtotal === 100000 && r.envio === 0, `subtotal=${r.subtotal} envio=${r.envio}`);
+  comprobar('en el umbral exacto no se suma nada al total', r.total === 100000, `total=${r.total}`);
 }
 {
-  /* $105.000 → gratis. */
-  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '3.500 g', cant: 1 },
-                             { slug: 'chocata-tradicional', talla: '200 g', cant: 1 }]);
-  comprobar('por encima del umbral el envío es gratis', r.subtotal === 104000 && r.envio === 0, `subtotal=${r.subtotal} envio=${r.envio}`);
-  comprobar('con envío gratis el total es el subtotal', r.total === r.subtotal);
+  /* El caso que motivó la regla: 10 bolsas de 200 g = $90.000 y 2 kilos. */
+  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: 10 }]);
+  comprobar('diez bolsas suman 2 kilos', r.gramos === 2000, `gramos=${r.gramos}`);
+  comprobar('y pagan 30.000 de envío, no 15.000', r.envio === 30000, `envio=${r.envio}`);
 }
-comprobar('envioDe respeta el umbral', pedido.envioDe(100000) === 15000 && pedido.envioDe(100001) === 0);
+{
+  /* Exactamente 1.000 g no debe redondear a 2 kilos. */
+  const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: 5 }]);
+  comprobar('un kilo exacto cobra un kilo', r.gramos === 1000 && r.kilosCobrados === 1, `gramos=${r.gramos} kilos=${r.kilosCobrados}`);
+}
+{
+  /* Hidratec no declara gramos: no puede dejar el envío en cero. */
+  const r = pedido.calcular([{ slug: 'hidratec', talla: 'Presentación única', cant: 1 }]);
+  comprobar('una presentación sin peso cobra el kilo mínimo', r.envio === 15000, `envio=${r.envio}`);
+  comprobar('y queda señalada para revisión', r.sinPeso.length === 1, JSON.stringify(r.sinPeso));
+}
+comprobar('un peso por debajo del umbral todavía paga', pedido.envioDe(99999, 500) === 15000);
+comprobar('el umbral exacto es gratis', pedido.envioDe(100000, 5000) === 0);
+comprobar('2.001 g se cobran como 3 kilos', pedido.envioDe(10000, 2001) === 45000);
 
 /* ---------- Peso declarado ---------- */
 comprobar('lee gramos de "1.500 g"', pedido.gramosDe('1.500 g') === 1500);

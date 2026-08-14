@@ -147,6 +147,15 @@
     });
   }
 
+  /* Gramos de una presentación: "1.500 g" → 1500. Debe coincidir con el mismo
+     cálculo del servidor, en api/_pedido.js. */
+  function gramosDe(talla) {
+    var m = String(talla).match(/^([\d.]+)\s*g$/i);
+    if (!m) return null;
+    var n = Number(m[1].replace(/\./g, ''));
+    return isFinite(n) ? n : null;
+  }
+
   /* Este cálculo es solo para que el comprador vea el total antes de pagar.
      El que manda es el del servidor, que se rehace en /api/checkout. */
   function resumir(items) {
@@ -161,13 +170,17 @@
              '<b>' + carrito.pesos(pres.cop * it.cant) + '</b></div>';
     }).join('');
 
-    var gratis = envios && typeof envios.gratisDesde === 'number' && subtotal > envios.gratisDesde;
-    var envio = gratis ? 0 : ((envios && envios.tarifaUnica) || 0);
-    var falta = envios && typeof envios.gratisDesde === 'number' ? (envios.gratisDesde + 1) - subtotal : 0;
+    var gramos = items.reduce(function (n, it) { return n + (gramosDe(it.talla) || 0) * it.cant; }, 0);
+    var gratis = envios && typeof envios.gratisDesde === 'number' && subtotal >= envios.gratisDesde;
+    var kilos = Math.max((envios && envios.kiloMinimo) || 1, Math.ceil(gramos / 1000));
+    var envio = gratis ? 0 : kilos * ((envios && envios.tarifaPorKilo) || 0);
+    var falta = envios && typeof envios.gratisDesde === 'number' ? envios.gratisDesde - subtotal : 0;
 
     caja.innerHTML = filas +
       '<div class="checkout__linea"><span>Subtotal</span><b>' + carrito.pesos(subtotal) + '</b></div>' +
-      '<div class="checkout__linea"><span>Envío</span><b>' +
+      '<div class="checkout__linea"><span>Envío' +
+        (gratis ? '' : ' <em>(' + kilos + (kilos === 1 ? ' kilo' : ' kilos') + ')</em>') +
+      '</span><b>' +
         (gratis ? '<span class="envio-gratis">Gratis</span>' : carrito.pesos(envio)) +
       '</b></div>' +
       (!gratis && falta > 0
