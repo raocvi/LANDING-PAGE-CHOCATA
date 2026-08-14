@@ -125,11 +125,11 @@ for (const [nombre, items] of invalidas) {
   comprobar('el envío se suma al total', r.total === 137000, `total=${r.total}`);
 }
 {
-  /* Exactamente $100.000: 2 × 50.000. Al ser inclusive, ya viaja gratis. */
+  /* No hay envío gratis: un pedido grande también paga su peso. */
   const r = pedido.calcular([{ slug: 'creatina', talla: '250 g', cant: 2 }]);
-  comprobar('en el umbral exacto el envío ya es gratis', r.subtotal === 100000 && r.envio === 0, `subtotal=${r.subtotal} envio=${r.envio}`);
-  comprobar('en el umbral exacto no se suma nada al total', r.total === 100000, `total=${r.total}`);
-  comprobar('y queda marcado como gratis', r.envioGratis === true);
+  comprobar('un pedido de 100.000 también paga envío', r.subtotal === 100000 && r.envio === 10500, `envio=${r.envio}`);
+  comprobar('y el total lo incluye', r.total === 110500, `total=${r.total}`);
+  comprobar('nada queda marcado como gratis', r.envioGratis === false);
 }
 {
   /* 10 bolsas de 200 g = $90.000 y 2 kilos: tarifa completa, sin subsidio. */
@@ -139,22 +139,19 @@ for (const [nombre, items] of invalidas) {
   comprobar('el total los incluye', r.total === 111000, `total=${r.total}`);
 }
 {
-  /* El envío gratis tiene techo de peso: cubre hasta 5 kilos. Dos bultos de
-     granel suman $190.000 y 7 kilos; los 2 kilos extras se cobran. Sin este
-     techo se despachaban 7 kilos gratis: $73.500 regalados por pedido. */
+  /* El pedido pesado paga todos sus kilos, sin importar cuánto compre. */
   const r = pedido.calcular([{ slug: 'chocata-granel', talla: '3.500 g', cant: 2 }]);
-  comprobar('dos bultos pasan el umbral', r.subtotal === 190000 && r.envioGratis === true, `subtotal=${r.subtotal}`);
-  comprobar('pero pesan 7 kilos y pagan 2 extras', r.kilosExtras === 2, `extras=${r.kilosExtras}`);
-  comprobar('a tarifa plena', r.envio === 21000, `envio=${r.envio}`);
-  comprobar('sumados al total', r.total === 211000, `total=${r.total}`);
+  comprobar('dos bultos pesan 7 kilos', r.gramos === 7000, `gramos=${r.gramos}`);
+  comprobar('y pagan los 7 completos', r.envio === 73500, `envio=${r.envio}`);
+  comprobar('sumados al total', r.total === 263500, `total=${r.total}`);
 }
 {
-  /* Un pedido gratis dentro del techo no paga nada: 2 creatinas + 1 bolsa. */
+  /* Pedido mixto grande: también paga su peso completo. */
   const r = pedido.calcular([
     { slug: 'creatina', talla: '250 g', cant: 2 },
     { slug: 'chocata-tradicional', talla: '3.500 g', cant: 1 }
   ]);
-  comprobar('4 kilos gratis dentro del techo de 5', r.envio === 0 && r.kilosExtras === 0, `envio=${r.envio} extras=${r.kilosExtras}`);
+  comprobar('195.000 en producto pagan sus 4 kilos', r.envio === 42000 && r.total === 237000, `envio=${r.envio} total=${r.total}`);
 }
 {
   /* Exactamente 1.000 g no debe redondear a 2 kilos. */
@@ -169,16 +166,14 @@ for (const [nombre, items] of invalidas) {
   comprobar('y el envío cobra los dos kilos', r.envio === 21000, `envio=${r.envio}`);
   comprobar('y queda señalada para revisión', r.sinPeso.length === 1, JSON.stringify(r.sinPeso));
 }
-comprobar('a un peso del umbral se paga la tarifa completa', pedido.envioDe(99999, 500) === 10500);
-comprobar('el umbral exacto es gratis', pedido.envioDe(100000, 5000) === 0);
+comprobar('todo pedido paga al menos un kilo', pedido.envioDe(99999, 500) === 10500);
+comprobar('100.000 en producto no cambian la regla', pedido.envioDe(100000, 5000) === 52500);
 comprobar('2.001 g son 3 kilos', pedido.envioDe(10000, 2001) === 31500);
-comprobar('el techo del gratis: 5.001 g pagan un kilo extra', pedido.envioDe(150000, 5001) === 10500);
-comprobar('7 kilos gratis pagan 2 extras', pedido.envioDe(150000, 7000) === 21000);
+comprobar('un pedido enorme paga su peso igual', pedido.envioDe(1000000, 7000) === 73500);
 {
   const d = pedido.desgloseEnvio(95000, 2000);
-  comprobar('bajo el umbral se cobra el peso completo', d.envio === 21000 && d.porPeso === 21000, `envio=${d.envio}`);
-  const libre = pedido.desgloseEnvio(150000, 7000);
-  comprobar('el desglose reporta los kilos extras', libre.gratis === true && libre.extras === 2, JSON.stringify(libre));
+  comprobar('el desglose cobra el peso completo', d.envio === 21000 && d.porPeso === 21000, `envio=${d.envio}`);
+  comprobar('y nunca marca gratis', d.gratis === false && d.extras === 0, JSON.stringify(d));
 }
 
 /* ---------- Tipo de documento ---------- */

@@ -35,9 +35,9 @@ ok('conserva las tildes del nombre', url.searchParams.get('customer-data:full-na
 ok('normaliza el documento', url.searchParams.get('customer-data:legal-id') === '1094567890');
 ok('normaliza el celular', url.searchParams.get('customer-data:phone-number') === '3001234567');
 
-const libre = await pedir({ items: [{ slug: 'chocata-tradicional', talla: '3.500 g', cant: 1 },
-                                    { slug: 'chocata-tradicional', talla: '200 g', cant: 1 }], cliente });
-ok('envío gratis por encima del umbral', libre.cuerpo.envio === 0 && libre.cuerpo.total === 104000, libre.cuerpo.total);
+const grande = await pedir({ items: [{ slug: 'chocata-tradicional', talla: '3.500 g', cant: 1 },
+                                     { slug: 'chocata-tradicional', talla: '200 g', cant: 1 }], cliente });
+ok('un pedido grande también paga su peso', grande.cuerpo.envio === 42000 && grande.cuerpo.total === 146000, grande.cuerpo.total);
 
 console.log('\nRechazos del checkout');
 for (const [nombre, cuerpo] of [
@@ -96,8 +96,8 @@ ok('y dice cuánto falta', /faltan \$31\.000/.test(chico.cuerpo.mensaje || ''), 
 
 const kit = await pedir({ items: [{ slug: 'combo-fuerza', talla: 'Combo', cant: 1 }], cliente });
 ok('un combo se puede pagar', kit.estado === 200, kit.estado);
-ok('cobra el precio del combo, no el de sus partes', kit.cuerpo.total === 102000, kit.cuerpo.total);
-ok('el combo pesa 650 g y viaja gratis', kit.cuerpo.envio === 0, kit.cuerpo.envio);
+ok('cobra el precio del combo, no el de sus partes', kit.cuerpo.subtotal === 102000, kit.cuerpo.subtotal);
+ok('el combo pesa 650 g y paga un kilo', kit.cuerpo.envio === 10500 && kit.cuerpo.total === 112500, kit.cuerpo.total);
 
 const despensa = await pedir({ items: [{ slug: 'combo-despensa', talla: 'Combo', cant: 1 }], cliente });
 ok('la despensa cobra un solo kilo', despensa.cuerpo.total === 50500, despensa.cuerpo.total);
@@ -105,12 +105,12 @@ ok('la despensa cobra un solo kilo', despensa.cuerpo.total === 50500, despensa.c
 const fantasma = await pedir({ items: [{ slug: 'combo-fantasma', talla: 'Combo', cant: 1 }], cliente });
 ok('un combo inventado se rechaza', fantasma.estado === 400, fantasma.estado);
 
-console.log('\nTecho del envío gratis y tipo de documento');
+console.log('\nPeso completo y tipo de documento');
 
-/* Dos bultos de granel: $190.000 y 7 kilos. Gratis cubre 5; pagan 2 extras. */
+/* Dos bultos de granel: $190.000 y 7 kilos, todos cobrados. */
 const pesado = await pedir({ items: [{ slug: 'chocata-granel', talla: '3.500 g', cant: 2 }], cliente });
-ok('un pedido de 7 kilos paga los kilos extras', pesado.cuerpo.envio === 21000, pesado.cuerpo.envio);
-ok('y el total los refleja', pesado.cuerpo.total === 211000, pesado.cuerpo.total);
+ok('un pedido de 7 kilos paga los 7 kilos', pesado.cuerpo.envio === 73500, pesado.cuerpo.envio);
+ok('y el total los refleja', pesado.cuerpo.total === 263500, pesado.cuerpo.total);
 
 /* Una compradora con cédula de extranjería. */
 const ce = await pedir({ items: [{ slug: 'creatina', talla: '250 g', cant: 1 }],

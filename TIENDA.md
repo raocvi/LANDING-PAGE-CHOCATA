@@ -125,28 +125,16 @@ en un historial; sin `ADMIN_TOKEN` solo devuelve estado, total y fecha.
 
 ## Regla de envío
 
-Auditada en agosto de 2026 contra el sector de suplementos deportivos con despacho nacional:
+**No hay envío gratis.** La empresa no puede asumir ese costo, así que el cliente paga el
+despacho completo, siempre. Vitanas opera igual ($9.000 plano nacional, sin umbral); Zona FIT
+regala el envío desde $100.000 pero lo asume de su margen.
 
-| Referente | Envío gratis | Por debajo |
-|---|---|---|
-| Zona FIT (líder del sector) | desde $100.000 | $8.000 por cada 8 unidades |
-| Vitanas | no ofrece | $9.000 plano nacional |
-| Nutrafit | siempre | (metido en el precio) |
-| **CHOCATA** | **desde $100.000, hasta 5 kilos** | **$10.500 por kilo o fracción** |
-
-El umbral coincide con el líder. La tarifa va por peso y no plana porque el catálogo mezcla
-suplementos livianos con chocolate pesado (bultos de 3,5 kg), cosa que las tiendas de referencia
-no tienen. **$10.500 es la tarifa real de la transportadora y no es negociable**: se traslada al
-cliente completa, sin recargo y sin subsidio.
-
-Cuatro reglas, en este orden:
+Tres reglas:
 
 0. **Pedido mínimo $40.000.** Por debajo no se puede pagar.
-1. Gratis desde $100.000 **inclusive**, cubriendo **hasta 5 kilos**; los kilos por encima se
-   cobran a tarifa. Sin ese techo, dos bultos de granel ($190.000, 7 kg) viajaban gratis:
-   $73.500 regalados por pedido.
-2. Por debajo del umbral, **$10.500 por kilo o fracción**, mínimo un kilo.
-3. Una presentación sin gramos declarados pesa **1 kilo por unidad** (conservador a propósito)
+1. **$10.500 por kilo o fracción, en todo pedido**, mínimo un kilo. Es la tarifa real de la
+   transportadora, trasladada sin recargo y sin subsidio: no es negociable.
+2. Una presentación sin gramos declarados pesa **1 kilo por unidad** (conservador a propósito)
    y queda señalada en `sinPeso` hasta tener el peso real.
 
 | Pedido | Peso | Envío | Total |
@@ -154,13 +142,13 @@ Cuatro reglas, en este orden:
 | 1 × 200 g ($9.000) | — | — | **Rechazado**: bajo el mínimo |
 | Despensa ($40.000) | 1 kg | $10.500 | $50.500 |
 | 10 × 200 g ($90.000) | 2 kg | $21.000 | $111.000 |
+| 2 × creatina ($100.000) | 500 g | $10.500 | $110.500 |
 | 1 × 3.500 g ($95.000) | 3,5 kg | $42.000 | $137.000 |
-| Kit Fuerza ($102.000) | 650 g | Gratis | $102.000 |
-| 2 × granel ($190.000) | 7 kg | $21.000 (2 kilos extras) | $211.000 |
+| 2 × granel ($190.000) | 7 kg | $73.500 | $263.500 |
 
-Existe el salto del umbral —$95.000 paga $42.000 de envío y $100.000 viaja gratis— y es una
-decisión consciente: es como opera todo el sector, y el aviso «te faltan $X para el envío gratis»
-lo convierte en un empujón de venta en lugar de esconderlo.
+Sin umbral no hay saltos raros: el total sube siempre que sube el pedido, y el peso se muestra
+en el checkout («Envío (7 kilos)») para que el número tenga explicación. Los combos livianos
+pesan justo un kilo para pagar el envío mínimo.
 
 ## Combos
 
@@ -183,8 +171,8 @@ venderse solo. Una prueba comprueba que todos ahorran plata, declaran peso y sup
 a propósito: cinco pesan 1.000 g exactos y cobran un kilo; la sexta cuesta $9.000 pero empujaría el
 pedido a dos kilos y subiría el envío $10.500. Al comprador le sale mejor así.
 
-**Ya se puede armar combo de granel si se quiere.** El techo de 5 kilos del envío gratis cerró el
-hueco que lo impedía: dos bultos hoy pagan sus 2 kilos extras ($21.000) en vez de viajar gratis.
+**El granel ya no regala transporte.** Sin envío gratis, dos bultos pagan sus 7 kilos completos
+($73.500). Se puede armar combo de granel cuando se quiera.
 
 **Por qué existe el tope.** Sin él el total no era monótono: once bolsas costaban $144.000 y doce
 costaban $108.000. Un comprador que descubre que agregar producto le abarata el pedido deja de creer
@@ -206,7 +194,9 @@ Hallazgos corregidos, del más grave al menor:
    y eso viola la Ley 1581. Ahora son privados y se leen con la URL firmada del token.
 2. **El «tope hasta gratis» subsidiaba el envío** cerca del umbral. Se eliminó: el cliente paga el
    costo completo, como en el resto del mercado.
-3. **El envío gratis no tenía techo de peso**: techo de 5 kilos.
+3. **El envío gratis regalaba transporte** (7 kilos gratis en granel): primero se le puso techo
+   de 5 kilos y después se eliminó por completo, por decisión del negocio — la empresa no puede
+   asumir ese costo. Hoy todo pedido paga su peso.
 4. **Hidratec cobraba envío de menos** desde 2 unidades por no declarar gramos: ahora pesa 1 kilo
    por unidad hasta tener el dato real.
 5. **El formulario solo aceptaba cédula (CC)**: ahora CC, CE y NIT, validados en el servidor y
