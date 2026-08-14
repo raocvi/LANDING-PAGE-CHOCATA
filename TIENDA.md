@@ -19,6 +19,8 @@ Rama `feat/pedidos-y-pagos`. No toca `main`: la página publicada sigue igual ha
 | Consulta de estado del pedido | Listo |
 | Términos, privacidad y retracto | Borrador, **falta revisión legal y datos de la empresa** |
 | Cobro real | **Bloqueado**: requiere cuenta de Wompi |
+| Medios de pago anunciados | Listo (PSE primero) |
+| PSE activo de verdad | **Bloqueado**: hay que habilitarlo con Bancolombia |
 | Aviso por correo al recibir un pedido | Pendiente |
 
 ## Probar en local
@@ -65,16 +67,39 @@ En local los pedidos se escriben en `.pedidos/`. Las funciones de Vercel **no ti
 persistente**: hay que crear un store de Vercel Blob y añadir `BLOB_READ_WRITE_TOKEN`. El código
 cambia de implementación solo, sin tocar nada.
 
-### 4. Webhook en Wompi
+### 4. Medios de pago
+
+**El Web Checkout de Wompi no acepta ningún parámetro para filtrar ni preseleccionar medios de
+pago.** Muestra exactamente los que el comercio tenga activos, así que PSE no se enciende desde el
+código: hay que habilitarlo con el comercial de Bancolombia al abrir la cuenta.
+
+`web/assets/data/pagos.json` solo controla lo que se *anuncia* en el checkout. **Deben quedar ahí
+únicamente los medios realmente habilitados**: anunciar uno inactivo es una promesa que el comprador
+descubre rota en la pasarela.
+
+Vale la pena insistir en PSE. Es el medio más usado en compras en línea en Colombia y cuesta cerca
+de la mitad que la tarjeta:
+
+| Pedido | Total | Tarjeta (2,65% + $700 + IVA) | PSE (~1,49%) |
+|---|---|---|---|
+| Despensa | $50.500 | $2.426 (4,8%) | $895 (1,8%) |
+| Bienestar | $66.500 | $2.930 (4,4%) | $1.179 (1,8%) |
+| Kit Fuerza | $102.000 | $4.050 (4,0%) | $1.809 (1,8%) |
+
+El fijo de $700 pega más duro entre más pequeño el pedido. El webhook ya guarda
+`payment_method_type` en cada pedido, así que la mezcla PSE/tarjeta queda medida desde el primer
+pago sin tener que agregar nada.
+
+### 5. Webhook en Wompi
 
 Registrar `https://TU-DOMINIO/api/wompi-webhook` como URL de eventos.
 
-### 5. Hosting
+### 6. Hosting
 
 Las funciones de servidor y el cobro hacen el proyecto **inequívocamente comercial**, y el plan
 gratuito de Vercel solo permite uso personal. Toca Pro (20 USD/mes) o mover a Cloudflare.
 
-### 6. Legal
+### 7. Legal
 
 Completar en `web/legal.html` el NIT, la dirección fiscal y el correo de notificaciones, y hacerlo
 revisar por un abogado. Falta además la facturación electrónica DIAN.

@@ -10,7 +10,17 @@
   'use strict';
 
   var envios = null;
+  var pagos = null;
   var panel, formulario;
+
+  /* Iconos de medio de pago. Se usan formas genéricas a propósito: no tenemos
+     los logos oficiales de PSE, Nequi ni Bancolombia, y usar imitaciones sería
+     un mal uso de marca. */
+  var ICONOS = {
+    banco: '<path d="M3 10h18M5 10v8m4-8v8m6-8v8m4-8v8M2 18h20M12 3 3 8h18l-9-5Z"/>',
+    tarjeta: '<rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/>',
+    celular: '<rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/>'
+  };
 
   /* Mensaje único para cualquier fallo del que el comprador no tiene culpa. */
   var SIN_PASARELA = 'No pudimos abrir el pago en este momento. ' +
@@ -21,6 +31,29 @@
     .then(function (r) { return r.json(); })
     .then(function (d) { envios = d; })
     .catch(function () { envios = { departamentos: [] }; });
+
+  /* Si el archivo no carga, el checkout sigue funcionando sin la tira de
+     medios: es informativa, no cambia lo que se cobra. */
+  fetch('assets/data/pagos.json')
+    .then(function (r) { return r.json(); })
+    .then(function (d) { pagos = d; })
+    .catch(function () { pagos = null; });
+
+  function tiraDeMedios() {
+    if (!pagos || !pagos.medios || !pagos.medios.length) return '';
+    var chips = pagos.medios.map(function (m) {
+      return '<li class="medio' + (m.destacado ? ' medio--destacado' : '') + '">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+          'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          (ICONOS[m.icono] || ICONOS.tarjeta) + '</svg>' +
+        '<b>' + m.nombre + '</b><span>' + m.detalle + '</span>' +
+      '</li>';
+    }).join('');
+    return '<div class="medios">' +
+      '<p class="medios__titulo">Puedes pagar con</p>' +
+      '<ul class="medios__lista">' + chips + '</ul>' +
+    '</div>';
+  }
 
   /* ---------- Validación ---------- */
 
@@ -120,6 +153,7 @@
             '<textarea id="ck-notas" name="notas" rows="2" placeholder="Portería, horario preferido, punto de referencia…"></textarea>' +
           '</div>' +
           '<div class="checkout__resumen" id="checkoutResumen"></div>' +
+          tiraDeMedios() +
           '<p class="checkout__aviso" id="checkoutAviso" role="alert"></p>' +
           '<button class="btn checkout__pagar" type="submit">Ir a pagar</button>' +
           '<p class="checkout__legal">Al continuar aceptas los ' +
