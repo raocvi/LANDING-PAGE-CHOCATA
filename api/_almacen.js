@@ -42,8 +42,12 @@ function leerLocal(referencia) {
 
 async function guardarBlob(pedido) {
   const { put } = require('@vercel/blob');
+  /* access privado, siempre: cada pedido lleva nombre, documento, celular y
+     dirección. Un blob público es una URL que cualquiera con el enlace puede
+     leer, y eso es exactamente lo que la Ley 1581 prohíbe hacer con estos
+     datos. Solo el servidor, con el token, puede descargarlos. */
   await put(`pedidos/${pedido.referencia}.json`, JSON.stringify(pedido, null, 2), {
-    access: 'public',
+    access: 'private',
     contentType: 'application/json',
     addRandomSuffix: false,
     allowOverwrite: true
@@ -53,8 +57,10 @@ async function guardarBlob(pedido) {
 async function leerBlob(referencia) {
   const { head } = require('@vercel/blob');
   try {
+    /* Para un blob privado, head() devuelve una downloadUrl firmada de vida
+       corta; la url plana sin firma dejaría de funcionar. */
     const meta = await head(`pedidos/${referencia}.json`);
-    const respuesta = await fetch(meta.url);
+    const respuesta = await fetch(meta.downloadUrl || meta.url);
     return respuesta.ok ? await respuesta.json() : null;
   } catch {
     return null;

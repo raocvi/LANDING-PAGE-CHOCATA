@@ -105,5 +105,19 @@ ok('la despensa cobra un solo kilo', despensa.cuerpo.total === 50500, despensa.c
 const fantasma = await pedir({ items: [{ slug: 'combo-fantasma', talla: 'Combo', cant: 1 }], cliente });
 ok('un combo inventado se rechaza', fantasma.estado === 400, fantasma.estado);
 
+console.log('\nTecho del envío gratis y tipo de documento');
+
+/* Dos bultos de granel: $190.000 y 7 kilos. Gratis cubre 5; pagan 2 extras. */
+const pesado = await pedir({ items: [{ slug: 'chocata-granel', talla: '3.500 g', cant: 2 }], cliente });
+ok('un pedido de 7 kilos paga los kilos extras', pesado.cuerpo.envio === 21000, pesado.cuerpo.envio);
+ok('y el total los refleja', pesado.cuerpo.total === 211000, pesado.cuerpo.total);
+
+/* Una compradora con cédula de extranjería. */
+const ce = await pedir({ items: [{ slug: 'creatina', talla: '250 g', cant: 1 }],
+                         cliente: { ...cliente, tipoDocumento: 'CE' } });
+ok('la extranjería llega a Wompi', new URL(ce.cuerpo.url).searchParams.get('customer-data:legal-id-type') === 'CE');
+ok('un tipo inventado cae a cédula', new URL((await pedir({ items: [{ slug: 'creatina', talla: '250 g', cant: 1 }],
+   cliente: { ...cliente, tipoDocumento: 'ZZ' } })).cuerpo.url).searchParams.get('customer-data:legal-id-type') === 'CC');
+
 console.log(fallos ? `\n${fallos} fallo(s).` : '\nTodo correcto.');
 process.exit(fallos ? 1 : 0);

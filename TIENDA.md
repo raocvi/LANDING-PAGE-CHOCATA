@@ -125,29 +125,41 @@ en un historial; sin `ADMIN_TOKEN` solo devuelve estado, total y fecha.
 
 ## Regla de envío
 
+Auditada en agosto de 2026 contra el sector de suplementos deportivos con despacho nacional:
+
+| Referente | Envío gratis | Por debajo |
+|---|---|---|
+| Zona FIT (líder del sector) | desde $100.000 | $8.000 por cada 8 unidades |
+| Vitanas | no ofrece | $9.000 plano nacional |
+| Nutrafit | siempre | (metido en el precio) |
+| **CHOCATA** | **desde $100.000, hasta 5 kilos** | **$10.500 por kilo o fracción** |
+
+El umbral coincide con el líder. La tarifa va por peso y no plana porque el catálogo mezcla
+suplementos livianos con chocolate pesado (bultos de 3,5 kg), cosa que las tiendas de referencia
+no tienen. El cliente paga el costo completo del despacho: sin topes ni subsidios.
+
 Cuatro reglas, en este orden:
 
 0. **Pedido mínimo $40.000.** Por debajo no se puede pagar.
-1. Gratis desde $100.000 **inclusive**.
-2. Por debajo, **$10.500 por kilo o fracción**, mínimo un kilo, sin importar la cantidad de artículos.
-3. **Tope:** el envío nunca cobra más de lo que falta para el envío gratis.
+1. Gratis desde $100.000 **inclusive**, cubriendo **hasta 5 kilos**; los kilos por encima se
+   cobran a tarifa. Sin ese techo, dos bultos de granel ($190.000, 7 kg) viajaban gratis:
+   $73.500 regalados por pedido.
+2. Por debajo del umbral, **$10.500 por kilo o fracción**, mínimo un kilo.
+3. Una presentación sin gramos declarados pesa **1 kilo por unidad** (conservador a propósito)
+   y queda señalada en `sinPeso` hasta tener el peso real.
 
-**De dónde sale $10.500.** Es la tarifa más alta observada en el mercado colombiano en
-agosto de 2026: Interrapidísimo urbano hasta 0,5 kg. Servientrega ronda $8.500 el kilo nacional e
-Interrapidísimo arranca en $4.970 vía agregador. Cubre el peor caso; al contratar tarifa corporativa
-conviene bajarla en `envios.json`.
+| Pedido | Peso | Envío | Total |
+|---|---|---|---|
+| 1 × 200 g ($9.000) | — | — | **Rechazado**: bajo el mínimo |
+| Despensa ($40.000) | 1 kg | $10.500 | $50.500 |
+| 10 × 200 g ($90.000) | 2 kg | $21.000 | $111.000 |
+| 1 × 3.500 g ($95.000) | 3,5 kg | $42.000 | $137.000 |
+| Kit Fuerza ($102.000) | 650 g | Gratis | $102.000 |
+| 2 × granel ($190.000) | 7 kg | $21.000 (2 kilos extras) | $211.000 |
 
-**Por qué hay pedido mínimo.** Una bolsa de $9.000 costaba $15.000 de envío: 167%. Nadie completa
-esa compra y despacharla pierde plata. Es lo que hace el mercado — o mínimo, o el producto barato
-solo se lista en pack.
-
-| Pedido | Peso | Por peso | Se cobra | Total |
-|---|---|---|---|---|
-| 1 × 200 g ($9.000) | — | — | — | **Rechazado**: bajo el mínimo |
-| Despensa ($40.000) | 1 kg | $10.500 | $10.500 | $50.500 |
-| 10 × 200 g ($90.000) | 2 kg | $21.000 (2 kilos) | **$10.000** | $100.000 |
-| 1 × 3.500 g ($95.000) | 3,5 kg | $42.000 (4 kilos) | **$5.000** | $100.000 |
-| Kit Fuerza ($102.000) | 650 g | — | Gratis | $102.000 |
+Existe el salto del umbral —$95.000 paga $42.000 de envío y $100.000 viaja gratis— y es una
+decisión consciente: es como opera todo el sector, y el aviso «te faltan $X para el envío gratis»
+lo convierte en un empujón de venta en lugar de esconderlo.
 
 ## Combos
 
@@ -170,9 +182,8 @@ venderse solo. Una prueba comprueba que todos ahorran plata, declaran peso y sup
 a propósito: cinco pesan 1.000 g exactos y cobran un kilo; la sexta cuesta $9.000 pero empujaría el
 pedido a dos kilos y subiría el envío $10.500. Al comprador le sale mejor así.
 
-**No hay combo de granel.** Dos bultos de 3,5 kg suman $190.000 y pasarían el umbral, o sea 7 kilos
-despachados gratis: unos $73.500 de transporte regalado. Falta ponerle techo de peso al envío
-gratis antes de vender ese combo.
+**Ya se puede armar combo de granel si se quiere.** El techo de 5 kilos del envío gratis cerró el
+hueco que lo impedía: dos bultos hoy pagan sus 2 kilos extras ($21.000) en vez de viajar gratis.
 
 **Por qué existe el tope.** Sin él el total no era monótono: once bolsas costaban $144.000 y doce
 costaban $108.000. Un comprador que descubre que agregar producto le abarata el pedido deja de creer
@@ -185,18 +196,28 @@ solo extiende ese mismo trato unos pesos hacia abajo, de forma continua en vez d
 El checkout muestra los kilos cuando manda el peso, y cuando manda el tope lo dice:
 «tu envío costaba $60.000, pero nunca cobramos más de lo que te falta para el envío gratis».
 
+## Auditoría de agosto de 2026
+
+Hallazgos corregidos, del más grave al menor:
+
+1. **Los pedidos se guardaban en Vercel Blob con `access: public`.** Cada pedido lleva nombre,
+   documento, celular y dirección; un blob público es una URL legible por cualquiera que la tenga,
+   y eso viola la Ley 1581. Ahora son privados y se leen con la URL firmada del token.
+2. **El «tope hasta gratis» subsidiaba el envío** cerca del umbral. Se eliminó: el cliente paga el
+   costo completo, como en el resto del mercado.
+3. **El envío gratis no tenía techo de peso**: techo de 5 kilos.
+4. **Hidratec cobraba envío de menos** desde 2 unidades por no declarar gramos: ahora pesa 1 kilo
+   por unidad hasta tener el dato real.
+5. **El formulario solo aceptaba cédula (CC)**: ahora CC, CE y NIT, validados en el servidor y
+   trasladados a Wompi en `legal-id-type`.
+
 ## Pendiente de definir
 
-- **Hidratec no declara gramos.** Su presentación se llama «Presentación única», así que aporta cero
-  al peso. Hoy lo salva el mínimo de un kilo, pero **dos o más unidades se cobrarían de menos**.
-  Hace falta el peso neto real; el pedido lo marca en `sinPeso` para poder detectarlo.
-- **El escalón de cada kilo.** Con el tope el total ya no baja nunca, pero sigue habiendo un salto
-  al cruzar cada kilo. Los combos están armados para caer del lado bueno del borde; los pedidos
-  sueltos no. Se suaviza cobrando por gramo en vez de por kilo.
-- **Techo de peso para el envío gratis.** Hoy un pedido de $100.000 viaja gratis pese lo que pese.
-  Con productos caros y livianos (creatina, colágeno) no importa; con granel sí. Sin ese techo no se
-  puede vender un combo de bultos.
-- **El umbral de $100.000 está 40% por encima del mercado.** MercadoLibre Colombia activa envío
-  gratis desde ~$60.000. Bajarlo a $70.000 acerca la oferta al referente.
-- **Tarifa por zona.** `envios.json` ya lista los 33 departamentos pero no se usan para nada.
-  Cali es la ciudad de la marca y la mensajería urbana cuesta bastante menos que un envío nacional.
+- **El peso real de Hidratec.** El kilo por unidad es un supuesto conservador, no el dato.
+- **Contra entrega.** Vitanas lo ofrece en Bogotá y es común en el sector; decidir si se quiere
+  asumir el riesgo de rechazo en puerta.
+- **Cuotas (Addi / Sistecredito).** Varias tiendas del sector financian; Wompi no lo trae.
+- **Tarifa por zona.** `envios.json` lista los 33 departamentos y no se usan; la mensajería urbana
+  en Cali cuesta menos que el envío nacional.
+- **La tarifa de $10.500 es la más cara del rango.** Zona FIT cobra ~$8.000 y Vitanas $9.000.
+  Con tarifa corporativa de transportadora se puede bajar sin perder plata.

@@ -117,52 +117,44 @@ for (const [nombre, items] of invalidas) {
   comprobar('cobra un solo kilo', r.kilosCobrados === 1, `kilos=${r.kilosCobrados}`);
 }
 {
-  /* 1 bolsa de 3.500 g = $95.000. Por peso serían 4 kilos = $60.000, pero solo
-     faltan $5.000 para el envío gratis, así que el tope los deja en $5.000. */
+  /* 1 bolsa de 3.500 g = $95.000: 4 kilos a tarifa completa. El cliente paga
+     el costo real del despacho, como en el resto del mercado. */
   const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '3.500 g', cant: 1 }]);
   comprobar('3,5 kg se redondean a 4 kilos', r.kilosCobrados === 4, `kilos=${r.kilosCobrados}`);
-  comprobar('el tope recorta el envío a lo que falta', r.envio === 5000, `envio=${r.envio}`);
-  comprobar('y queda marcado como topado', r.envioTopado === true);
-  comprobar('el total no supera el umbral', r.total === 100000, `total=${r.total}`);
+  comprobar('y se cobran completos', r.envio === 42000, `envio=${r.envio}`);
+  comprobar('el envío se suma al total', r.total === 137000, `total=${r.total}`);
 }
 {
   /* Exactamente $100.000: 2 × 50.000. Al ser inclusive, ya viaja gratis. */
   const r = pedido.calcular([{ slug: 'creatina', talla: '250 g', cant: 2 }]);
   comprobar('en el umbral exacto el envío ya es gratis', r.subtotal === 100000 && r.envio === 0, `subtotal=${r.subtotal} envio=${r.envio}`);
   comprobar('en el umbral exacto no se suma nada al total', r.total === 100000, `total=${r.total}`);
+  comprobar('y queda marcado como gratis', r.envioGratis === true);
 }
 {
-  /* El caso que motivó la regla: 10 bolsas de 200 g = $90.000 y 2 kilos.
-     Por peso serían $30.000, pero solo faltan $10.000 para el envío gratis. */
+  /* 10 bolsas de 200 g = $90.000 y 2 kilos: tarifa completa, sin subsidio. */
   const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: 10 }]);
   comprobar('diez bolsas suman 2 kilos', r.gramos === 2000, `gramos=${r.gramos}`);
-  comprobar('el tope las deja en 10.000 de envío', r.envio === 10000, `envio=${r.envio}`);
-  comprobar('y el total queda en el umbral', r.total === 100000, `total=${r.total}`);
+  comprobar('y pagan los 2 kilos completos', r.envio === 21000, `envio=${r.envio}`);
+  comprobar('el total los incluye', r.total === 111000, `total=${r.total}`);
 }
 {
-  /* Lo que motivó el tope: sin él, once bolsas costaban $144.000 y doce
-     $108.000. Agregar producto jamás puede abaratar el total. */
-  let anterior = 0;
-  let rompe = null;
-  for (let n = 1; n <= 40; n++) {
-    const r = pedido.calcular([{ slug: 'chocata-tradicional', talla: '200 g', cant: n }]);
-    if (!r.ok) continue; /* por debajo del pedido mínimo no hay total que comparar */
-    if (r.total < anterior) { rompe = `${n} bolsas cuestan ${r.total} y ${n - 1} costaban ${anterior}`; break; }
-    anterior = r.total;
-  }
-  comprobar('el total nunca baja al agregar producto', rompe === null, rompe);
+  /* El envío gratis tiene techo de peso: cubre hasta 5 kilos. Dos bultos de
+     granel suman $190.000 y 7 kilos; los 2 kilos extras se cobran. Sin este
+     techo se despachaban 7 kilos gratis: $73.500 regalados por pedido. */
+  const r = pedido.calcular([{ slug: 'chocata-granel', talla: '3.500 g', cant: 2 }]);
+  comprobar('dos bultos pasan el umbral', r.subtotal === 190000 && r.envioGratis === true, `subtotal=${r.subtotal}`);
+  comprobar('pero pesan 7 kilos y pagan 2 extras', r.kilosExtras === 2, `extras=${r.kilosExtras}`);
+  comprobar('a tarifa plena', r.envio === 21000, `envio=${r.envio}`);
+  comprobar('sumados al total', r.total === 211000, `total=${r.total}`);
 }
 {
-  /* Ningún pedido por debajo del umbral puede costar más que el umbral. */
-  let excede = null;
-  for (const [slug, talla] of [['chocata-tradicional', '3.500 g'], ['chocata-tradicional', '200 g'], ['creatina', '250 g']]) {
-    for (let n = 1; n <= 20; n++) {
-      const r = pedido.calcular([{ slug, talla, cant: n }]);
-      if (!r.ok) continue;
-      if (r.subtotal < 100000 && r.total > 100000) { excede = `${n} × ${slug} ${talla} → ${r.total}`; break; }
-    }
-  }
-  comprobar('bajo el umbral el total nunca lo supera', excede === null, excede);
+  /* Un pedido gratis dentro del techo no paga nada: 2 creatinas + 1 bolsa. */
+  const r = pedido.calcular([
+    { slug: 'creatina', talla: '250 g', cant: 2 },
+    { slug: 'chocata-tradicional', talla: '3.500 g', cant: 1 }
+  ]);
+  comprobar('4 kilos gratis dentro del techo de 5', r.envio === 0 && r.kilosExtras === 0, `envio=${r.envio} extras=${r.kilosExtras}`);
 }
 {
   /* Exactamente 1.000 g no debe redondear a 2 kilos. */
@@ -170,23 +162,30 @@ for (const [nombre, items] of invalidas) {
   comprobar('un kilo exacto cobra un kilo', r.gramos === 1000 && r.kilosCobrados === 1, `gramos=${r.gramos} kilos=${r.kilosCobrados}`);
 }
 {
-  /* Hidratec no declara gramos: no puede dejar el envío en cero. Sola no
-     alcanza el pedido mínimo, así que se prueba con dos unidades. */
+  /* Hidratec no declara gramos: pesa gramosPorDefecto (1 kilo) por unidad,
+     conservador para no cobrar envío de menos. Dos unidades = 2 kilos. */
   const r = pedido.calcular([{ slug: 'hidratec', talla: 'Presentación única', cant: 2 }]);
-  comprobar('una presentación sin peso cobra el kilo mínimo', r.envio === 10500, `envio=${r.envio}`);
+  comprobar('sin peso declarado se asume un kilo por unidad', r.gramos === 2000, `gramos=${r.gramos}`);
+  comprobar('y el envío cobra los dos kilos', r.envio === 21000, `envio=${r.envio}`);
   comprobar('y queda señalada para revisión', r.sinPeso.length === 1, JSON.stringify(r.sinPeso));
 }
-comprobar('a un peso del umbral el envío cuesta un peso', pedido.envioDe(99999, 500) === 1);
+comprobar('a un peso del umbral se paga la tarifa completa', pedido.envioDe(99999, 500) === 10500);
 comprobar('el umbral exacto es gratis', pedido.envioDe(100000, 5000) === 0);
-comprobar('lejos del umbral manda el peso: 2.001 g son 3 kilos', pedido.envioDe(10000, 2001) === 31500);
-comprobar('el tope nunca deja el envío en negativo', pedido.envioDe(99999, 50000) >= 0);
+comprobar('2.001 g son 3 kilos', pedido.envioDe(10000, 2001) === 31500);
+comprobar('el techo del gratis: 5.001 g pagan un kilo extra', pedido.envioDe(150000, 5001) === 10500);
+comprobar('7 kilos gratis pagan 2 extras', pedido.envioDe(150000, 7000) === 21000);
 {
   const d = pedido.desgloseEnvio(95000, 2000);
-  comprobar('el desglose conserva el precio por peso', d.porPeso === 21000, `porPeso=${d.porPeso}`);
-  comprobar('el desglose avisa que hubo tope', d.topado === true);
-  const sinTope = pedido.desgloseEnvio(10000, 2000);
-  comprobar('sin tope no se marca', sinTope.topado === false && sinTope.envio === 21000, `envio=${sinTope.envio}`);
+  comprobar('bajo el umbral se cobra el peso completo', d.envio === 21000 && d.porPeso === 21000, `envio=${d.envio}`);
+  const libre = pedido.desgloseEnvio(150000, 7000);
+  comprobar('el desglose reporta los kilos extras', libre.gratis === true && libre.extras === 2, JSON.stringify(libre));
 }
+
+/* ---------- Tipo de documento ---------- */
+comprobar('sin tipo de documento se asume cédula', pedido.tipoDocumentoDe({}) === 'CC');
+comprobar('la extranjería se respeta y se normaliza', pedido.tipoDocumentoDe({ tipoDocumento: ' ce ' }) === 'CE');
+comprobar('el NIT se acepta', pedido.tipoDocumentoDe({ tipoDocumento: 'NIT' }) === 'NIT');
+comprobar('un tipo inventado cae a cédula', pedido.tipoDocumentoDe({ tipoDocumento: 'XX; DROP' }) === 'CC');
 
 /* ---------- Peso declarado ---------- */
 comprobar('lee gramos de "1.500 g"', pedido.gramosDe('1.500 g') === 1500);

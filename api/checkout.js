@@ -9,7 +9,7 @@
  *   WOMPI_SECRETO_INTEGRIDAD  secreto para firmar    (jamás sale del servidor)
  *   SITIO_URL               https://tu-dominio       (para el retorno del pago)
  */
-const { calcular, referencia, firmaIntegridad, validarCliente } = require('./_pedido');
+const { calcular, referencia, firmaIntegridad, validarCliente, tipoDocumentoDe } = require('./_pedido');
 const almacen = require('./_almacen');
 
 const MONEDA = 'COP';
@@ -57,7 +57,7 @@ module.exports = async function handler(req, res) {
     'customer-data:full-name': cuerpo.cliente.nombre.trim(),
     'customer-data:phone-number': cuerpo.cliente.celular.replace(/\D/g, ''),
     'customer-data:legal-id': cuerpo.cliente.documento.replace(/\D/g, ''),
-    'customer-data:legal-id-type': 'CC',
+    'customer-data:legal-id-type': tipoDocumentoDe(cuerpo.cliente),
     'shipping-address:address-line-1': cuerpo.cliente.direccion.trim(),
     'shipping-address:country': 'CO',
     'shipping-address:region': cuerpo.cliente.departamento.trim(),
@@ -80,6 +80,7 @@ module.exports = async function handler(req, res) {
       gramos: cuenta.gramos,
       cliente: {
         nombre: c.nombre.trim(),
+        tipoDocumento: tipoDocumentoDe(c),
         documento: c.documento.replace(/\D/g, ''),
         correo: c.correo.trim().toLowerCase(),
         celular: c.celular.replace(/\D/g, ''),

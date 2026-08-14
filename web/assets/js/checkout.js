@@ -107,8 +107,14 @@
     extra = extra || {};
     var control = extra.opciones
       ? '<select id="ck-' + nombre + '" name="' + nombre + '" required>' +
-          '<option value="">Selecciona…</option>' +
-          extra.opciones.map(function (o) { return '<option>' + o + '</option>'; }).join('') +
+          (extra.sinVacio ? '' : '<option value="">Selecciona…</option>') +
+          extra.opciones.map(function (o) {
+            /* Una opción puede ser texto plano o { v, t } cuando el valor que
+               viaja no es el texto que se muestra. */
+            return typeof o === 'object'
+              ? '<option value="' + o.v + '">' + o.t + '</option>'
+              : '<option>' + o + '</option>';
+          }).join('') +
         '</select>'
       : '<input id="ck-' + nombre + '" name="' + nombre + '" type="' + (extra.tipo || 'text') + '"' +
         (extra.modo ? ' inputmode="' + extra.modo + '"' : '') +
@@ -142,7 +148,15 @@
         '</header>' +
         '<form class="checkout__form" id="checkoutForm" novalidate>' +
           campo('nombre', 'Nombre y apellido', { auto: 'name', ancho: true }) +
-          campo('documento', 'Documento', { modo: 'numeric', ayuda: 'Sin puntos ni comas' }) +
+          campo('tipoDocumento', 'Tipo de documento', {
+            sinVacio: true,
+            opciones: [
+              { v: 'CC', t: 'Cédula de ciudadanía' },
+              { v: 'CE', t: 'Cédula de extranjería' },
+              { v: 'NIT', t: 'NIT (empresa)' }
+            ]
+          }) +
+          campo('documento', 'Número de documento', { modo: 'numeric', ayuda: 'Sin puntos ni comas' }) +
           campo('celular', 'Celular', { tipo: 'tel', modo: 'tel', auto: 'tel', placeholder: '3001234567' }) +
           campo('correo', 'Correo', { tipo: 'email', auto: 'email', ancho: true, ayuda: 'Ahí llega la confirmación del pedido' }) +
           campo('departamento', 'Departamento', { opciones: deps }) +
@@ -226,29 +240,34 @@
              '<b>' + carrito.pesos(unitario * it.cant) + '</b></div>';
     }).join('');
 
+    /* Espejo exacto de desgloseEnvio() en api/_pedido.js. Una presentación
+       sin gramos declarados pesa gramosPorDefecto por unidad. */
     var umbral = envios && typeof envios.gratisDesde === 'number' ? envios.gratisDesde : null;
-    var gramos = items.reduce(function (n, it) { return n + (gramosLinea(it) || 0) * it.cant; }, 0);
+    var porDefecto = (envios && typeof envios.gramosPorDefecto === 'number') ? envios.gramosPorDefecto : 1000;
+    var gramos = items.reduce(function (n, it) {
+      var g = gramosLinea(it);
+      return n + (g === null ? porDefecto : g) * it.cant;
+    }, 0);
     var gratis = umbral !== null && subtotal >= umbral;
     var kilos = Math.max((envios && envios.kiloMinimo) || 1, Math.ceil(gramos / 1000));
-    var porPeso = kilos * ((envios && envios.tarifaPorKilo) || 0);
+    var tarifa = (envios && envios.tarifaPorKilo) || 0;
+    var techo = (envios && typeof envios.gratisHastaKilos === 'number') ? envios.gratisHastaKilos : Infinity;
+    var extras = gratis ? Math.max(0, kilos - techo) : 0;
+    var envio = gratis ? extras * tarifa : kilos * tarifa;
     var falta = umbral !== null ? umbral - subtotal : 0;
-
-    /* Mismo tope que aplica el servidor en api/_pedido.js: el envío nunca
-       cobra más de lo que falta para el envío gratis. */
-    var topeActivo = envios && envios.topeHastaGratis === true && umbral !== null;
-    var envio = gratis ? 0 : (topeActivo ? Math.min(porPeso, falta) : porPeso);
-    var topado = !gratis && envio < porPeso;
 
     caja.innerHTML = filas +
       '<div class="checkout__linea"><span>Subtotal</span><b>' + carrito.pesos(subtotal) + '</b></div>' +
       '<div class="checkout__linea"><span>Envío' +
-        (gratis || topado ? '' : ' <em>(' + kilos + (kilos === 1 ? ' kilo' : ' kilos') + ')</em>') +
+        (gratis
+          ? (extras > 0 ? ' <em>(' + extras + (extras === 1 ? ' kilo extra' : ' kilos extras') + ')</em>' : '')
+          : ' <em>(' + kilos + (kilos === 1 ? ' kilo' : ' kilos') + ')</em>') +
       '</span><b>' +
-        (gratis ? '<span class="envio-gratis">Gratis</span>' : carrito.pesos(envio)) +
+        (gratis && !extras ? '<span class="envio-gratis">Gratis</span>' : carrito.pesos(envio)) +
       '</b></div>' +
-      (topado
-        ? '<p class="checkout__falta">Tu envío costaba ' + carrito.pesos(porPeso) +
-          ', pero nunca cobramos más de lo que te falta para el envío gratis.</p>'
+      (gratis && extras > 0
+        ? '<p class="checkout__falta">El envío gratis cubre hasta ' + techo + ' kilos. Tu pedido pesa ' +
+          kilos + '; los ' + extras + ' de más se cobran a ' + carrito.pesos(tarifa) + ' cada uno.</p>'
         : !gratis && falta > 0
           ? '<p class="checkout__falta">Te faltan <b>' + carrito.pesos(falta) + '</b> para el envío gratis.</p>'
           : '') +

@@ -98,32 +98,32 @@ function gramosLinea(slug, talla) {
 
 /**
  * Envío gratis desde el umbral (inclusive: exactamente $100.000 ya viaja
- * gratis). Por debajo se cobra por kilo o fracción, sin importar cuántos
- * artículos sean. Nunca menos de un kilo: un solo sobre pequeño tampoco viaja
- * gratis, y un peso mal declarado no puede dejar el envío en cero.
+ * gratis), igual que el líder del sector. El envío gratis cubre hasta
+ * gratisHastaKilos: por encima, cada kilo extra se cobra a tarifa, porque un
+ * pedido de bultos de 3,5 kg puede pasar el umbral con 7 kilos a bordo y ese
+ * transporte no es gratis para nadie.
  *
- * Y encima va un tope: el envío nunca cobra más de lo que falta para el envío
- * gratis. Sin ese tope el total no es monótono —once bolsas costaban $144.000
- * y doce costaban $108.000—, y un comprador que descubre que agregar producto
- * le abarata el pedido deja de confiar en el precio.
+ * Por debajo del umbral se cobra por kilo o fracción y el cliente paga el
+ * costo completo del despacho: sin tope ni subsidio. Nunca menos de un kilo,
+ * para que un sobre pequeño o un peso mal declarado no viajen gratis.
  *
- * Devuelve { envio, kilos, porPeso, gratis, topado }.
+ * Devuelve { envio, kilos, porPeso, gratis, extras }.
  */
 function desgloseEnvio(subtotal, gramos) {
   const umbral = typeof envios.gratisDesde === 'number' ? envios.gratisDesde : null;
-  if (umbral !== null && subtotal >= umbral) {
-    return { envio: 0, kilos: 0, porPeso: 0, gratis: true, topado: false };
-  }
   if (typeof envios.tarifaPorKilo !== 'number') {
-    return { envio: null, kilos: 0, porPeso: null, gratis: false, topado: false };
+    return { envio: null, kilos: 0, porPeso: null, gratis: false, extras: 0 };
   }
   const minimo = typeof envios.kiloMinimo === 'number' ? envios.kiloMinimo : 1;
   const kilos = Math.max(minimo, Math.ceil((gramos || 0) / 1000));
   const porPeso = kilos * envios.tarifaPorKilo;
 
-  const topeActivo = envios.topeHastaGratis === true && umbral !== null;
-  const envio = topeActivo ? Math.min(porPeso, umbral - subtotal) : porPeso;
-  return { envio, kilos, porPeso, gratis: false, topado: envio < porPeso };
+  if (umbral !== null && subtotal >= umbral) {
+    const techo = typeof envios.gratisHastaKilos === 'number' ? envios.gratisHastaKilos : Infinity;
+    const extras = Math.max(0, kilos - techo);
+    return { envio: extras * envios.tarifaPorKilo, kilos: extras, porPeso, gratis: true, extras };
+  }
+  return { envio: porPeso, kilos, porPeso, gratis: false, extras: 0 };
 }
 
 /** Solo el monto del envío. */
@@ -188,14 +188,19 @@ function calcular(items) {
 
   /* El peso ahora decide el precio del envío, así que una presentación sin
      gramos declarados es un riesgo: se marca para poder detectarlo. */
-  const gramos = lineas.reduce((n, l) => n + (l.gramos || 0) * l.cant, 0);
+  /* Una presentación sin gramos declarados pesa gramosPorDefecto por unidad
+     para efectos del envío: conservador a propósito, porque cobrar de menos
+     lo paga la empresa. Queda señalada en sinPeso hasta tener el peso real. */
+  const porDefecto = typeof envios.gramosPorDefecto === 'number' ? envios.gramosPorDefecto : 1000;
+  const gramos = lineas.reduce((n, l) => n + (l.gramos === null ? porDefecto : l.gramos) * l.cant, 0);
   const sinPeso = lineas.filter((l) => l.gramos === null).map((l) => `${l.slug} ${l.talla}`);
-  const { envio, kilos, topado } = desgloseEnvio(subtotal, gramos);
+  const { envio, kilos, gratis, extras } = desgloseEnvio(subtotal, gramos);
 
   return {
     ok: true, lineas, subtotal, envio, gramos, sinPeso,
     kilosCobrados: kilos,
-    envioTopado: topado,
+    envioGratis: gratis,
+    kilosExtras: extras,
     unidades: lineas.reduce((n, l) => n + l.cant, 0),
     total: subtotal + (envio || 0)
   };
@@ -236,6 +241,16 @@ function firmaEventoValida(evento, secretoEventos) {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
+/* Tipos de documento que acepta Wompi en legal-id-type. CC va primero porque
+   es el caso común; CE cubre extranjeros y NIT compras de empresa. */
+const TIPOS_DOCUMENTO = ['CC', 'CE', 'NIT'];
+
+/** Tipo de documento saneado. Cualquier cosa rara cae a CC. */
+function tipoDocumentoDe(c) {
+  const t = String((c && c.tipoDocumento) || '').trim().toUpperCase();
+  return TIPOS_DOCUMENTO.includes(t) ? t : 'CC';
+}
+
 /** Datos del comprador: se valida de nuevo aquí, no solo en el formulario. */
 function validarCliente(c) {
   if (!c || typeof c !== 'object') return 'Faltan los datos de contacto.';
@@ -252,8 +267,8 @@ function validarCliente(c) {
 }
 
 module.exports = {
-  catalogo, envios, combos, TALLA_COMBO,
+  catalogo, envios, combos, TALLA_COMBO, TIPOS_DOCUMENTO,
   calcular, referencia, envioDe, desgloseEnvio, gramosDe,
   precioDe, detalleCombo, combosVigentes,
-  firmaIntegridad, firmaEventoValida, validarCliente
+  firmaIntegridad, firmaEventoValida, validarCliente, tipoDocumentoDe
 };
