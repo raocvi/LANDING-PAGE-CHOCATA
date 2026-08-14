@@ -1,0 +1,134 @@
+/* =========================================================================
+   CHOCATA — Tienda: carrito y checkout
+   Hoja aparte para no tocar style.css. Reutiliza sus tokens de color y ritmo.
+   ========================================================================= */
+
+/* ---------- Botón flotante ---------- */
+.carrito-btn {
+  position: fixed; right: clamp(1rem, 3vw, 2rem);
+  bottom: calc(clamp(1rem, 3vw, 2rem) + 56px + .75rem);
+  z-index: 90; width: 56px; height: 56px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--surface-2); color: var(--cream);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 14px 34px -14px rgba(0, 0, 0, .9);
+  transition: transform var(--fast) var(--ease), border-color var(--fast) var(--ease);
+}
+.carrito-btn:hover { transform: scale(1.07); border-color: var(--gold); }
+.carrito-btn svg { width: 24px; height: 24px; }
+.carrito-btn__n {
+  position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px;
+  padding: 0 6px; border-radius: 100px;
+  background: var(--gold); color: #17110D;
+  font-size: .7rem; font-weight: 700; line-height: 22px; text-align: center;
+  opacity: 0; transform: scale(.6); transition: all var(--mid) var(--ease);
+}
+.carrito-btn.tiene .carrito-btn__n { opacity: 1; transform: scale(1); }
+
+/* ---------- Panel lateral ---------- */
+.carrito { position: fixed; inset: 0; z-index: 210; display: none; }
+.carrito.is-open { display: block; }
+.carrito__velo {
+  position: absolute; inset: 0; background: rgba(6, 4, 3, .8);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.carrito__panel {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: min(440px, 100%); display: flex; flex-direction: column;
+  background: var(--surface); border-left: 1px solid var(--line-strong);
+}
+.carrito__cab {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.4rem 1.5rem; border-bottom: 1px solid var(--line);
+}
+.carrito__cab h2 { font-family: var(--display); font-size: 1.6rem; color: var(--cream); }
+.carrito__cerrar {
+  width: 44px; height: 44px; border-radius: 50%; flex: none;
+  background: transparent; border: 1px solid var(--line-strong);
+  display: grid; place-items: center; color: var(--cream);
+  transition: background var(--fast) var(--ease);
+}
+.carrito__cerrar:hover { background: rgba(248, 243, 235, .08); }
+.carrito__cerrar svg { width: 17px; height: 17px; }
+
+.carrito__lista {
+  flex: 1; overflow-y: auto; overscroll-behavior: contain;
+  padding: 1.1rem 1.5rem; display: grid; gap: .8rem; align-content: start;
+}
+.carrito__vacio {
+  color: var(--faint); font-size: .92rem; line-height: 1.7;
+  text-align: center; padding: 3rem 1rem;
+}
+
+/* ---------- Línea de pedido ---------- */
+.linea {
+  display: grid; gap: .35rem 1rem;
+  grid-template-columns: minmax(0, 1fr) auto 28px;
+  grid-template-areas: 'txt total quitar' 'cant total quitar';
+  align-items: center;
+  padding: .9rem 1rem; border: 1px solid var(--line);
+  border-radius: var(--r-md); background: var(--surface-2);
+}
+.linea__txt { grid-area: txt; min-width: 0; }
+.linea__txt b { display: block; font-size: .95rem; color: var(--cream); font-weight: 500; }
+.linea__txt span { font-size: .8rem; color: var(--muted); }
+.linea__cant { grid-area: cant; display: flex; align-items: center; gap: .3rem; }
+.linea__cant button {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--surface-3); border: 1px solid var(--line);
+  color: var(--cream); font-size: 1rem; line-height: 1;
+  transition: border-color var(--fast) var(--ease);
+}
+.linea__cant button:hover { border-color: var(--gold); }
+.linea__cant b {
+  min-width: 30px; text-align: center; font-size: .9rem;
+  color: var(--cream); font-variant-numeric: tabular-nums;
+}
+.linea__total {
+  grid-area: total; font-family: var(--display); font-size: 1.15rem;
+  color: var(--gold-soft); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.linea__quitar {
+  grid-area: quitar; width: 28px; height: 28px; border: 0;
+  background: transparent; color: var(--faint);
+  display: grid; place-items: center; border-radius: 6px;
+  transition: color var(--fast) var(--ease);
+}
+.linea__quitar:hover { color: var(--berry); }
+.linea__quitar svg { width: 14px; height: 14px; }
+
+/* ---------- Resumen ---------- */
+.carrito__pie { padding: 1.2rem 1.5rem 1.5rem; border-top: 1px solid var(--line); display: grid; gap: .8rem; }
+.carrito__fila { display: flex; align-items: baseline; justify-content: space-between; }
+.carrito__fila span { font-size: .8rem; letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
+.carrito__fila b {
+  font-family: var(--display); font-size: 1.9rem; color: var(--cream);
+  font-weight: 500; font-variant-numeric: tabular-nums;
+}
+.carrito__envio { font-size: .78rem; color: var(--faint); line-height: 1.5; }
+.carrito__pagar { width: 100%; }
+
+/* ---------- Comprar desde la ficha ---------- */
+.comprar { display: grid; gap: .8rem; }
+.tallas { display: flex; flex-wrap: wrap; gap: .5rem; }
+.talla {
+  display: grid; gap: .15rem; text-align: left;
+  padding: .6rem 1rem; min-height: 52px;
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: transparent; transition: all var(--fast) var(--ease);
+}
+.talla:hover { border-color: var(--line-strong); }
+.talla[aria-pressed="true"] { border-color: var(--gold); background: rgba(242, 176, 30, .08); }
+.talla span { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.talla b { font-family: var(--display); font-size: 1.05rem; color: var(--cream); font-weight: 500; }
+.talla[aria-pressed="true"] b { color: var(--gold-soft); }
+.comprar__sin {
+  font-size: .85rem; color: var(--faint);
+  padding: .9rem 1.1rem; border: 1px dashed var(--line-strong); border-radius: var(--r-md);
+}
+
+@media (max-width: 600px) {
+  .carrito__panel { width: 100%; }
+  .carrito-btn { width: 50px; height: 50px; bottom: calc(clamp(1rem, 3vw, 2rem) + 56px + .6rem); }
+  .linea { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'txt quitar' 'cant total'; }
+}

@@ -274,12 +274,30 @@
       return '<a href="' + s.u + '" target="_blank" rel="noopener noreferrer">' + LINK + '<span>' + s.l + '</span></a>';
     }).join('');
 
+    /* Presentaciones: si tienen precio confirmado se pueden elegir y agregar
+       al pedido; si no, se muestran como consulta por WhatsApp. */
     var prices = '';
     if (p.prices && p.prices.length) {
+      var vendibles = p.prices.filter(function (row) { return row.p; });
+      var opciones = p.prices.map(function (row) {
+        if (!row.p) return '';
+        return '<button class="talla" data-talla="' + row.s + '" aria-pressed="false">' +
+                 '<span>' + row.s + '</span><b>' + row.p + '</b>' +
+               '</button>';
+      }).join('');
+
       prices = '<div class="modal__block"><h3>Presentaciones y precios</h3>' +
-        '<ul class="prices">' + p.prices.map(function (row) {
-          return '<li><span>' + row.s + '</span><b>' + (row.p || 'Consultar') + '</b></li>';
-        }).join('') + '</ul></div>';
+        (vendibles.length
+          ? '<div class="comprar">' +
+              '<div class="tallas" role="group" aria-label="Elige la presentación">' + opciones + '</div>' +
+              '<button class="btn" data-agregar="' + key + '">Agregar al pedido' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">' +
+                  '<path d="M6 6h15l-1.6 9H7.5L6 6Z"/><path d="M6 6 5 3H2"/></svg>' +
+              '</button>' +
+            '</div>'
+          : '<p class="comprar__sin">Aún no tenemos precio publicado para esta referencia. ' +
+            'Escríbenos por WhatsApp y te lo confirmamos al momento.</p>') +
+        '</div>';
     }
 
     modalGrid.innerHTML =
@@ -302,9 +320,35 @@
         '<div class="modal__block"><h3>Modo de uso</h3><p class="usage">' + p.usage + '</p></div>' +
         (p.note ? '<div class="modal__block"><h3>Ten en cuenta</h3><p class="note">' + p.note + '</p></div>' : '') +
         '<div class="modal__block"><h3>Fuentes consultadas</h3><div class="sources">' + sources + '</div></div>' +
-        '<a class="btn" style="justify-self:start" href="https://wa.me/573176685235?text=' + encodeURIComponent('Hola CHOCATA, quiero informacion de ' + p.name) + '" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a>' +
+        '<a class="btn btn--ghost" style="justify-self:start" href="https://wa.me/573176685235?text=' + encodeURIComponent('Hola CHOCATA, quiero informacion de ' + p.name) + '" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a>' +
       '</div>';
+
+    conectarCompra(key);
     return true;
+  }
+
+  /* Selección de presentación y alta en el carrito, dentro de la ficha. */
+  function conectarCompra(key) {
+    var tallas = modal.querySelectorAll('.talla');
+    if (!tallas.length) return;
+    tallas[0].setAttribute('aria-pressed', 'true');
+
+    tallas.forEach(function (b) {
+      b.addEventListener('click', function () {
+        tallas.forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+      });
+    });
+
+    var boton = modal.querySelector('[data-agregar]');
+    if (!boton) return;
+    boton.addEventListener('click', function () {
+      var elegida = modal.querySelector('.talla[aria-pressed="true"]');
+      if (!elegida || !window.CHOCATA_CARRITO) return;
+      if (window.CHOCATA_CARRITO.agregar(key, elegida.getAttribute('data-talla'), 1)) {
+        medir('Agregar al pedido', { producto: key, presentacion: elegida.getAttribute('data-talla') });
+        closeModal();
+      }
+    });
   }
 
   /* Con `contain`, la foto ocupa solo parte del recuadro y su borde derecho
