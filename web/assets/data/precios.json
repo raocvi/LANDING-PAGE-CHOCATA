@@ -1,0 +1,126 @@
+{
+  "chocata-premium": {
+    "nombre": "CHOCATA Premium",
+    "presentaciones": [
+      {
+        "talla": "200 g",
+        "cop": 16000
+      },
+      {
+        "talla": "500 g",
+        "cop": 32000
+      }
+    ]
+  },
+  "chocata-tradicional": {
+    "nombre": "CHOCATA Tradicional",
+    "presentaciones": [
+      {
+        "talla": "200 g",
+        "cop": 9000
+      },
+      {
+        "talla": "500 g",
+        "cop": 22000
+      },
+      {
+        "talla": "1.500 g",
+        "cop": 45000
+      },
+      {
+        "talla": "3.500 g",
+        "cop": 95000
+      }
+    ]
+  },
+  "chocata-granel": {
+    "nombre": "CHOCATA Granel 3,5 kg",
+    "presentaciones": [
+      {
+        "talla": "3.500 g",
+        "cop": 95000
+      }
+    ]
+  },
+  "proteina": {
+    "nombre": "100 % Proteína Whey",
+    "presentaciones": [
+      {
+        "talla": "400 g",
+        "cop": 70000
+      }
+    ]
+  },
+  "creatina": {
+    "nombre": "Creatina Monohidratada",
+    "presentaciones": [
+      {
+        "talla": "250 g",
+        "cop": 50000
+      }
+    ]
+  },
+  "pre-workout": {
+    "nombre": "Pre-Workout",
+    "presentaciones": [
+      {
+        "talla": "200 g",
+        "cop": 30000
+      }
+    ]
+  },
+  "hidratec": {
+    "nombre": "Hidratec",
+    "presentaciones": [
+      {
+        "talla": "Presentación única",
+        "cop": 30000
+      }
+    ]
+  },
+  "colageno": {
+    "nombre": "Colágeno Hidrolizado",
+    "presentaciones": [
+      {
+        "talla": "200 g",
+        "cop": 30000
+      }
+    ]
+  },
+  "magnesio": {
+    "nombre": "Citrato de Magnesio",
+    "presentaciones": [
+      {
+        "talla": "250 g",
+        "cop": 21000
+      }
+    ]
+  },
+  "vitamina-c": {
+    "nombre": "Vitamina C pura",
+    "presentaciones": [
+      {
+        "talla": "250 g",
+        "cop": 15000
+      }
+    ]
+  },
+  "remolacha": {
+    "nombre": "Remolacha en polvo",
+    "presentaciones": [
+      {
+        "talla": "200 g",
+        "cop": 40000
+      }
+    ]
+  },
+  "latte-dorato": {
+    "nombre": "Latte Dorato",
+    "presentaciones": [
+      {
+        "talla": "400 g",
+        "cop": 35000
+      }
+    ]
+  }
+}

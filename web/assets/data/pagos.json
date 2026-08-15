@@ -1,0 +1,32 @@
+{
+  "_nota": "Medios de pago que se anuncian en el checkout. IMPORTANTE: solo deben quedar aquí los que Bancolombia haya habilitado de verdad en el panel de Wompi. Anunciar uno que no está activo es una promesa que el comprador descubre rota en la pasarela. El Web Checkout de Wompi no acepta ningún parámetro para filtrar o preseleccionar medios: muestra exactamente los que el comercio tenga activos, así que esta lista es solo informativa.",
+  "_destacado": "PSE va primero a propósito. Es el medio más usado en compras en línea en Colombia y el más barato de procesar (~1,49% frente a 2,65% + $700 en tarjeta), así que conviene que el comprador lo vea antes que la tarjeta.",
+
+  "medios": [
+    {
+      "id": "pse",
+      "nombre": "PSE",
+      "detalle": "Débito desde tu banco",
+      "icono": "banco",
+      "destacado": true
+    },
+    {
+      "id": "tarjeta",
+      "nombre": "Tarjetas",
+      "detalle": "Crédito y débito",
+      "icono": "tarjeta"
+    },
+    {
+      "id": "nequi",
+      "nombre": "Nequi",
+      "detalle": "Desde la app",
+      "icono": "celular"
+    },
+    {
+      "id": "bancolombia",
+      "nombre": "Bancolombia",
+      "detalle": "Botón de pago",
+      "icono": "banco"
+    }
+  ]
+}

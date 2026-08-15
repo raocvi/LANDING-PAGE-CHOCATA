@@ -213,6 +213,7 @@ window.CHOCATA_PRODUCTS = {
     kicker: "100 % péptidos de colágeno",
     life: "assets/img/life/colageno-2.webp",
     lifeAlt: "Mujer con vaso de colágeno CHOCATA tras una clase de yoga al aire libre",
+    prices: [{ s: "200 g", p: "$30.000" }],
     facts: ["200 g", "Materia prima", "Sin sabor", "Soluble en frío"],
     description: "Colágeno hidrolizado puro en polvo. La hidrólisis fragmenta la proteína en péptidos de bajo peso molecular que se disuelven sin grumos y sin aportar sabor, por lo que se puede añadir al agua, al jugo, al café o a la misma bebida de CHOCATA sin alterar la preparación.",
     benefits: [
@@ -284,7 +285,7 @@ window.CHOCATA_PRODUCTS = {
     life: "assets/img/life/remolacha.webp",
     focus: "46% 44%",
     lifeAlt: "Ciclistas tomando bebida de remolacha CHOCATA antes de rodar",
-    prices: [{ s: "200 g", p: null }],
+    prices: [{ s: "200 g", p: "$40.000" }],
     facts: ["200 g", "≈ 25 porciones", "Dosis 8 g", "100 % pura y natural"],
     description: "Extracto de remolacha en polvo, 100 % puro. Es el aliado clásico del deporte de resistencia por su contenido de nitratos dietarios, y el color intenso que le da a la bebida es exactamente el de la betalaína natural de la raíz.",
     benefits: [

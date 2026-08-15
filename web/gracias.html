@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedido recibido — CHOCATA Colombia</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A0806">
+<link rel="icon" type="image/png" href="assets/img/brand/favicon.png?v=56">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=56">
+<link rel="stylesheet" href="assets/css/tienda.css?v=56">
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<main class="section" style="min-height:100svh;display:grid;place-items:center">
+  <div class="wrap" style="display:grid;gap:1.6rem;justify-items:center;text-align:center;max-width:52ch">
+
+    <a class="logo" href="./" aria-label="CHOCATA, volver al inicio">
+      <img class="logo__mark" src="assets/img/brand/chocata-logo.webp" alt="CHOCATA — Sabor y Pasión" width="1100" height="859">
+    </a>
+
+    <p class="eyebrow eyebrow--center">Pedido recibido</p>
+    <h1 class="h-section">Gracias. Ya lo estamos <em>revisando</em>.</h1>
+
+    <p class="lede" style="text-align:center">
+      Estamos confirmando el pago con la pasarela. En cuanto quede aprobado te escribimos
+      al correo y al celular que registraste para coordinar el envío.
+    </p>
+
+    <p class="note" id="refCaja" style="display:none">
+      Guarda este número por si necesitas escribirnos:
+      <b id="ref" style="color:var(--cream);font-weight:500"></b>
+    </p>
+
+    <div class="hero__actions" style="justify-content:center">
+      <a class="btn" href="https://wa.me/573176685235?text=Hola%20CHOCATA%2C%20acabo%20de%20hacer%20un%20pedido" target="_blank" rel="noopener noreferrer">
+        Escribir por WhatsApp
+      </a>
+      <a class="btn btn--ghost" href="./">Volver al portafolio</a>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  /* La referencia llega por la URL. Ojo: llegar a esta página no significa que
+     el pago se haya aprobado — eso solo lo confirma el webhook. Por eso el
+     texto habla de «revisando» y nunca de «pago exitoso». */
+  (function () {
+    var ref = new URLSearchParams(location.search).get('ref');
+    if (!ref || !/^[A-Z0-9-]{8,48}$/.test(ref)) return;
+    document.getElementById('ref').textContent = ref;
+    document.getElementById('refCaja').style.display = '';
+  })();
+</script>
+</body>
+</html>
