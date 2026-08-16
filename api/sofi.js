@@ -34,6 +34,43 @@ REGLAS OBLIGATORIAS:
 CATÁLOGO:
 `;
 
+/* Google retira modelos con el tiempo y un nombre fijo caduca. Se le pregunta
+   a la propia API qué modelos hay y se elige el mejor «flash» disponible
+   (rápido y barato); GEMINI_MODELO en el entorno manda sobre todo esto. */
+let modeloCache = null;
+
+async function elegirModelo(llave) {
+  if (process.env.GEMINI_MODELO) return process.env.GEMINI_MODELO;
+  if (modeloCache) return modeloCache;
+  try {
+    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000', {
+      headers: { 'x-goog-api-key': llave },
+      signal: AbortSignal.timeout(8000)
+    });
+    if (!r.ok) {
+      console.error('[sofi] no se pudo listar modelos:', r.status, (await r.text().catch(() => '')).slice(0, 200));
+      return null;
+    }
+    const datos = await r.json();
+    const candidatos = (datos.models || [])
+      .filter((m) => (m.supportedGenerationMethods || []).includes('generateContent'))
+      .map((m) => m.name.replace('models/', ''))
+      .filter((n) => /flash/i.test(n) && !/preview|exp|image|tts|live|8b|lite/i.test(n));
+    /* El de versión más alta primero: "gemini-3.5-flash" antes que "gemini-2.5-flash". */
+    candidatos.sort((a, b) => {
+      const va = parseFloat((a.match(/(\d+(?:\.\d+)?)/) || [0, 0])[1]);
+      const vb = parseFloat((b.match(/(\d+(?:\.\d+)?)/) || [0, 0])[1]);
+      return vb - va || a.length - b.length;
+    });
+    modeloCache = candidatos[0] || null;
+    console.log('[sofi] modelo elegido:', modeloCache);
+    return modeloCache;
+  } catch (e) {
+    console.error('[sofi] fallo eligiendo modelo:', e && e.message);
+    return null;
+  }
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -64,8 +101,10 @@ module.exports = async function handler(req, res) {
   const llave = process.env.GEMINI_API_KEY;
   if (!llave) return res.status(503).json({ codigo: 'IA_SIN_CONFIGURAR' });
 
-  const modelo = process.env.GEMINI_MODELO || 'gemini-2.5-flash';
   try {
+    const modelo = await elegirModelo(llave);
+    if (!modelo) return res.status(502).json({ codigo: 'IA_FALLO' });
+
     const r = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`,
       {
@@ -81,7 +120,9 @@ module.exports = async function handler(req, res) {
     );
 
     if (!r.ok) {
-      console.error('[sofi] Gemini respondió', r.status);
+      const detalle = await r.text().catch(() => '');
+      console.error('[sofi] Gemini respondió', r.status, 'modelo', modelo, detalle.slice(0, 300));
+      modeloCache = null; /* puede haber caducado: la próxima vez se reelige */
       return res.status(502).json({ codigo: 'IA_FALLO' });
     }
 
