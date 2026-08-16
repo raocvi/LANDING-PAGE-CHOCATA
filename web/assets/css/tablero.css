@@ -1,0 +1,128 @@
+/* =========================================================================
+   CHOCATA — Tablero (estilos)
+   Paleta de datos validada contra daltonismo y contraste sobre #171310.
+   ========================================================================= */
+
+.tb-cabecera {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap; margin-bottom: 1.4rem;
+}
+.tb-cabecera__acciones { display: flex; gap: .5rem; }
+
+/* ---------- KPIs ---------- */
+.tb-kpis {
+  display: grid; gap: .6rem; margin-bottom: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.tb-kpi {
+  display: grid; gap: .2rem; padding: 1rem 1.1rem; border-radius: 14px;
+  border: 1px solid var(--line);
+  background: linear-gradient(150deg, rgba(248,243,235,.05), rgba(248,243,235,.015));
+}
+.tb-kpi b {
+  font-family: var(--display); font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+  font-weight: 500; color: var(--cream); font-variant-numeric: tabular-nums;
+}
+.tb-kpi span { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.tb-kpi--alerta { border-color: rgba(198, 134, 0, .55); }
+.tb-kpi--alerta b { color: #FFD470; }
+
+/* ---------- Retícula de cartas ---------- */
+.tb-retícula {
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.tb-carta {
+  padding: 1.2rem 1.3rem 1.1rem; border-radius: 16px;
+  border: 1px solid var(--line);
+  background: linear-gradient(160deg, rgba(248,243,235,.04), rgba(248,243,235,.01));
+  min-width: 0;
+}
+.tb-carta--ancha { grid-column: 1 / -1; }
+.tb-carta h2 {
+  font-family: var(--display); font-size: 1.1rem; font-weight: 500;
+  color: var(--cream); margin-bottom: .9rem;
+}
+.tb-carta h2 span {
+  display: block; font-family: var(--sans, inherit); font-size: .68rem;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin-top: .2rem;
+}
+.tb-carta svg { width: 100%; height: auto; display: block; }
+.tb-vacio { font-size: .85rem; color: var(--faint); padding: 1rem 0; }
+
+/* ---------- Marcas ---------- */
+.tb-barra { cursor: pointer; }
+.tb-hit { fill: transparent; }
+.tb-barra:hover .tb-hit { fill: rgba(248, 243, 235, .04); }
+.tb-etiqueta { font-size: 13px; fill: var(--muted); font-family: inherit; }
+.tb-valor { font-size: 13px; fill: var(--cream); font-variant-numeric: tabular-nums; }
+.tb-pista { fill: rgba(248, 243, 235, .07); }
+.tb-apagada { opacity: .3; }
+.tb-seleccion .tb-relleno { filter: drop-shadow(0 0 6px rgba(255, 212, 112, .6)); }
+.tb-barra, .tb-arco, .tb-punto, .tb-relleno { transition: opacity .25s ease, width .45s ease; }
+
+.tb-arco { cursor: pointer; }
+.tb-arco.tb-seleccion { filter: drop-shadow(0 0 8px rgba(255, 212, 112, .5)); }
+.tb-dona { display: grid; grid-template-columns: minmax(150px, 190px) 1fr; gap: 1rem; align-items: center; }
+.tb-dona-centro { font-size: 30px; fill: var(--cream); text-anchor: middle; font-family: var(--display); }
+.tb-dona-sub { font-size: 11px; fill: var(--faint); text-anchor: middle; letter-spacing: .1em; }
+.tb-leyendas { display: grid; gap: .4rem; }
+.tb-leyenda {
+  display: flex; align-items: center; gap: .5rem; cursor: pointer;
+  background: none; border: 0; color: var(--muted); font: inherit; font-size: .82rem; text-align: left;
+  padding: .3rem .4rem; border-radius: 8px;
+}
+.tb-leyenda:hover { background: rgba(248,243,235,.05); }
+.tb-leyenda i { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 auto; }
+.tb-leyenda b { margin-left: auto; color: var(--cream); font-variant-numeric: tabular-nums; }
+
+.tb-punto { cursor: pointer; }
+.tb-eje { font-size: 11px; fill: var(--faint); text-anchor: middle; }
+
+/* ---------- Chips de filtros ---------- */
+.tb-filtros[hidden] { display: none; }
+.tb-filtros {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  padding: .6rem .9rem; margin-bottom: 1rem; border-radius: 12px;
+  border: 1px solid rgba(198, 134, 0, .4); background: rgba(198, 134, 0, .07);
+}
+.tb-filtros__titulo { font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+.tb-chip {
+  padding: .35rem .7rem; border-radius: 999px; cursor: pointer;
+  background: rgba(255, 212, 112, .14); border: 1px solid rgba(255, 212, 112, .35);
+  color: #FFD470; font: inherit; font-size: .78rem;
+}
+.tb-filtros__limpiar {
+  margin-left: auto; background: none; border: 0; cursor: pointer;
+  color: var(--muted); font: inherit; font-size: .78rem; text-decoration: underline; text-underline-offset: 3px;
+}
+.tb-filtros__limpiar:hover { color: var(--cream); }
+
+/* ---------- Tabla ---------- */
+.tb-tabla-caja { overflow-x: auto; }
+.tb-tabla { width: 100%; border-collapse: collapse; font-size: .84rem; }
+.tb-tabla th {
+  text-align: left; padding: .5rem .6rem; color: var(--faint);
+  font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+  border-bottom: 1px solid var(--line-strong);
+}
+.tb-tabla td { padding: .55rem .6rem; color: var(--muted); border-bottom: 1px solid var(--line); }
+.tb-tabla-ref { font-family: var(--display); color: var(--cream); letter-spacing: .03em; }
+.tb-num { text-align: right; font-variant-numeric: tabular-nums; color: var(--cream); }
+.tb-pepita { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: .45rem; }
+
+/* ---------- Tooltip ---------- */
+.tb-tooltip {
+  position: fixed; z-index: 300; pointer-events: none;
+  padding: .5rem .7rem; border-radius: 9px; max-width: 240px;
+  background: #241d15; border: 1px solid var(--line-strong);
+  font-size: .8rem; line-height: 1.5; color: var(--muted);
+  box-shadow: 0 12px 30px -10px rgba(0,0,0,.9);
+}
+.tb-tooltip b { color: var(--cream); }
+.tb-tooltip[hidden] { display: none; }
+
+@media (max-width: 760px) {
+  .tb-retícula { grid-template-columns: 1fr; }
+  .tb-dona { grid-template-columns: 1fr; justify-items: center; }
+}
