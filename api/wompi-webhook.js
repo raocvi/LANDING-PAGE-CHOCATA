@@ -49,6 +49,14 @@ module.exports = async function handler(req, res) {
     try { evento = JSON.parse(evento); } catch { return res.status(400).json({ mensaje: 'Evento malformado.' }); }
   }
 
+  /* Ping de verificación del panel: un POST sin firma y sin transacción no es
+     un evento, es el panel comprobando que la URL existe. Se saluda con 200 y
+     no se procesa nada. Todo lo que traiga transacción sigue exigiendo firma. */
+  const trae = (o, ruta) => ruta.split('.').every((k) => (o = o && o[k]) !== undefined);
+  if (!trae(evento, 'signature.checksum') && !trae(evento, 'data.transaction')) {
+    return res.status(200).json({ ok: true, mensaje: 'Webhook activo.' });
+  }
+
   if (!firmaEventoValida(evento, secreto)) {
     console.warn('[webhook] firma inválida, evento descartado');
     /* 401 y no 400: el evento se entiende, pero no se puede confiar en él. */

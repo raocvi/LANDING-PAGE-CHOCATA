@@ -64,6 +64,7 @@ const enviarEvento = (e) => fetch(`${BASE}/api/wompi-webhook`, {
 });
 
 const ref = bajo.cuerpo.referencia;
+ok('un ping sin firma ni transacción se saluda con 200', (await enviarEvento({})).status === 200);
 ok('rechaza firma inválida', (await enviarEvento({ ...evento(ref, 'APPROVED', 6050000), timestamp: 1 })).status === 401);
 ok('acepta el evento legítimo', (await enviarEvento(evento(ref, 'APPROVED', 6050000))).status === 200);
 
