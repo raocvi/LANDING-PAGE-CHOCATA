@@ -110,7 +110,7 @@
 
   /* ---------- Barras horizontales ---------- */
 
-  function barrasH(cajaId, datos, color, dim, formato) {
+  function barrasH(cajaId, datos, color, dim, formato, formato2) {
     var caja = document.getElementById(cajaId);
     if (!datos.length) { caja.innerHTML = '<p class="tb-vacio">Sin datos con este filtro.</p>'; return; }
 
@@ -129,7 +129,8 @@
           '<text class="tb-etiqueta" x="0" y="' + (y + 15) + '">' + esc(d.k.length > 26 ? d.k.slice(0, 25) + '…' : d.k) + '</text>' +
           '<rect class="tb-pista" x="0" y="' + (y + 22) + '" width="330" height="10" rx="4"/>' +
           '<rect class="tb-relleno" x="0" y="' + (y + 22) + '" width="' + w + '" height="10" rx="4" fill="' + color + '"/>' +
-          '<text class="tb-valor" x="' + 340 + '" y="' + (y + 31) + '">' + formato(d.v) + '</text>' +
+          '<text class="tb-valor" x="' + 340 + '" y="' + (y + (formato2 ? 24 : 31)) + '">' + formato(d.v) + '</text>' +
+          (formato2 ? '<text class="tb-valor2" x="' + 340 + '" y="' + (y + 37) + '">' + formato2(d) + '</text>' : '') +
         '</g>'
       );
     });
@@ -145,14 +146,17 @@
 
   function pintarProductos() {
     var datos = filtrar('producto').filter(pagado);
-    var conteo = {};
+    var conteo = {}, plata = {};
     datos.forEach(function (p) {
-      (p.lineas || []).forEach(function (l) { conteo[l.nombre] = (conteo[l.nombre] || 0) + l.cant; });
+      (p.lineas || []).forEach(function (l) {
+        conteo[l.nombre] = (conteo[l.nombre] || 0) + l.cant;
+        plata[l.nombre] = (plata[l.nombre] || 0) + (l.total || 0);
+      });
     });
     var lista = Object.keys(conteo)
-      .map(function (k) { return { k: k, v: conteo[k] }; })
+      .map(function (k) { return { k: k, v: conteo[k], extra: pesos(plata[k]) + ' vendidos' }; })
       .sort(function (a, b) { return b.v - a.v; }).slice(0, 7);
-    barrasH('graficaProductos', lista, COLORES.azul, 'producto', function (v) { return v + ' und'; });
+    barrasH('graficaProductos', lista, COLORES.azul, 'producto', function (v) { return v + ' und'; }, function (d) { return pesosCortos(plata[d.k]); });
   }
 
   function pintarCiudades() {
@@ -175,8 +179,12 @@
     var datos = filtrar('estado');
     if (!datos.length) { caja.innerHTML = '<p class="tb-vacio">Sin datos con este filtro.</p>'; return; }
 
-    var conteo = {};
-    datos.forEach(function (p) { var e = estadoDe(p); conteo[e] = (conteo[e] || 0) + 1; });
+    var conteo = {}, plataEstado = {};
+    datos.forEach(function (p) {
+      var e = estadoDe(p);
+      conteo[e] = (conteo[e] || 0) + 1;
+      plataEstado[e] = (plataEstado[e] || 0) + (p.total || 0);
+    });
     var claves = Object.keys(ESTADOS_META).filter(function (k) { return conteo[k]; });
     var total = datos.length;
 
@@ -199,7 +207,7 @@
         ' fill="none" stroke="' + ESTADOS_META[k].color + '" stroke-width="' + GROSOR + '" stroke-linecap="butt"/>');
       leyenda.push('<button class="tb-leyenda' + (apagada ? ' tb-apagada' : '') + '" data-k="' + k + '" type="button">' +
         '<i style="background:' + ESTADOS_META[k].color + '"></i>' + ESTADOS_META[k].nombre +
-        ' <b>' + conteo[k] + '</b></button>');
+        ' <b>' + conteo[k] + ' · ' + pesosCortos(plataEstado[k]) + '</b></button>');
     });
 
     svg.push('<text class="tb-dona-centro" x="90" y="86">' + total + '</text>');
@@ -213,7 +221,7 @@
       var k = el.getAttribute('data-k');
       el.addEventListener('click', function () { alternar('estado', k); });
       conTip(el, '<b>' + ESTADOS_META[k].nombre + '</b><br>' + conteo[k] + ' pedido' + (conteo[k] === 1 ? '' : 's') +
-        ' · ' + Math.round((conteo[k] / total) * 100) + '%');
+        ' · ' + Math.round((conteo[k] / total) * 100) + '%<br>' + pesos(plataEstado[k] || 0));
     });
   }
 

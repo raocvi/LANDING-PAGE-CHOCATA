@@ -56,6 +56,7 @@
 .tb-barra:hover .tb-hit { fill: rgba(248, 243, 235, .04); }
 .tb-etiqueta { font-size: 13px; fill: var(--muted); font-family: inherit; }
 .tb-valor { font-size: 13px; fill: var(--cream); font-variant-numeric: tabular-nums; }
+.tb-valor2 { font-size: 11px; fill: #FFD470; font-variant-numeric: tabular-nums; }
 .tb-pista { fill: rgba(248, 243, 235, .07); }
 .tb-apagada { opacity: .3; }
 .tb-seleccion .tb-relleno { filter: drop-shadow(0 0 6px rgba(255, 212, 112, .6)); }
