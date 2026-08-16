@@ -105,6 +105,10 @@ async function enviarConfirmacion(pedido) {
       body: JSON.stringify({
         sender: { name: process.env.CORREO_NOMBRE || 'CHOCATA Colombia', email: remitente },
         to: [{ email: destinatario, name: pedido.cliente.nombre || '' }],
+        /* Copia oculta al correo del negocio: la confirmación queda también
+           en la bandeja de CHOCATA, sin exponerle al cliente esa dirección
+           en el campo de destinatarios. CORREO_COPIA permite cambiarla. */
+        bcc: [{ email: process.env.CORREO_COPIA || remitente }],
         subject: asunto,
         htmlContent: html,
         textContent: texto
