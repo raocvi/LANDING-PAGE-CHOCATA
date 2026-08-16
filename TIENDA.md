@@ -22,6 +22,7 @@ Rama `feat/pedidos-y-pagos`. No toca `main`: la página publicada sigue igual ha
 | Medios de pago anunciados | Listo (PSE primero) |
 | PSE activo de verdad | **Bloqueado**: hay que habilitarlo con Bancolombia |
 | Aviso por WhatsApp al confirmarse un pago | Listo (**falta activar CallMeBot**, 2 minutos) |
+| Sofi, asistente de preguntas | Listo (respuestas fijas siempre; **IA de Gemini al poner la llave**) |
 
 ## Probar en local
 
@@ -59,6 +60,7 @@ En Vercel → Settings → Environment Variables:
 | `ADMIN_TOKEN` | Ver el pedido completo | **Jamás** |
 | `WHATSAPP_AVISO_TELEFONO` | A dónde llega el aviso de pedido | No aplica |
 | `WHATSAPP_AVISO_APIKEY` | Llave de CallMeBot | **Jamás** |
+| `GEMINI_API_KEY` | IA de Sofi (beneficios e ingredientes) | **Jamás** |
 
 Sin las dos primeras, el checkout responde 503 con un mensaje que invita a WhatsApp: la tienda no
 queda rota, queda sin cobrar.
@@ -115,16 +117,35 @@ avisos al propio número, sin garantía de entrega. Si el negocio crece y el avi
 el paso serio es la API oficial de WhatsApp Business (Meta) o Twilio; se cambia por dentro de
 `api/_avisos.js` sin tocar el webhook.
 
-### 6. Webhook en Wompi
+### 6. La IA de Sofi (Gemini)
+
+Sofi responde al instante con reglas fijas (precios, envíos, pagos, combos, sede). Con la llave de
+Gemini configurada, las preguntas de **beneficios e ingredientes** («¿para qué sirve la
+creatina?», «¿el latte tiene cafeína?») las responde la IA — pero encadenada:
+
+- **Su única fuente es el corpus de las fichas de la página** (`api/_conocimiento.js`), que ya
+  citan metaanálisis, posturas de la ISSN y declaraciones EFSA. No tiene internet ni memoria.
+- Tiene orden de responder `NO_LO_SE` ante lo que no esté en las fichas → Sofi cae a la
+  respuesta fija o a WhatsApp. **No inventar es el diseño, no una esperanza.**
+- Palabras sencillas, máximo 90 palabras, jamás promesas médicas, ignora instrucciones
+  escondidas en la pregunta del visitante.
+- La llave vive solo en el servidor; el endpoint rechaza orígenes ajenos y preguntas de más de
+  300 caracteres.
+
+**Activar:** crear una llave gratis en aistudio.google.com → en Vercel poner `GEMINI_API_KEY`.
+El modelo por defecto es `gemini-2.5-flash` (nivel gratuito disponible; cambiable con
+`GEMINI_MODELO`). Sin la llave, Sofi funciona igual con sus respuestas fijas.
+
+### 7. Webhook en Wompi
 
 Registrar `https://TU-DOMINIO/api/wompi-webhook` como URL de eventos.
 
-### 7. Hosting
+### 8. Hosting
 
 Las funciones de servidor y el cobro hacen el proyecto **inequívocamente comercial**, y el plan
 gratuito de Vercel solo permite uso personal. Toca Pro (20 USD/mes) o mover a Cloudflare.
 
-### 8. Legal
+### 9. Legal
 
 Completar en `web/legal.html` el NIT, la dirección fiscal y el correo de notificaciones, y hacerlo
 revisar por un abogado. Falta además la facturación electrónica DIAN.
