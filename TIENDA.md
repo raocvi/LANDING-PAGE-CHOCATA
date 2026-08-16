@@ -21,7 +21,7 @@ Rama `feat/pedidos-y-pagos`. No toca `main`: la página publicada sigue igual ha
 | Cobro real | **Bloqueado**: requiere cuenta de Wompi |
 | Medios de pago anunciados | Listo (PSE primero) |
 | PSE activo de verdad | **Bloqueado**: hay que habilitarlo con Bancolombia |
-| Aviso por correo al recibir un pedido | Pendiente |
+| Aviso por WhatsApp al confirmarse un pago | Listo (**falta activar CallMeBot**, 2 minutos) |
 
 ## Probar en local
 
@@ -57,6 +57,8 @@ En Vercel → Settings → Environment Variables:
 | `SITIO_URL` | Retorno tras el pago | Sí |
 | `BLOB_READ_WRITE_TOKEN` | Guardar pedidos | **Jamás** |
 | `ADMIN_TOKEN` | Ver el pedido completo | **Jamás** |
+| `WHATSAPP_AVISO_TELEFONO` | A dónde llega el aviso de pedido | No aplica |
+| `WHATSAPP_AVISO_APIKEY` | Llave de CallMeBot | **Jamás** |
 
 Sin las dos primeras, el checkout responde 503 con un mensaje que invita a WhatsApp: la tienda no
 queda rota, queda sin cobrar.
@@ -90,16 +92,39 @@ El fijo de $700 pega más duro entre más pequeño el pedido. El webhook ya guar
 `payment_method_type` en cada pedido, así que la mezcla PSE/tarjeta queda medida desde el primer
 pago sin tener que agregar nada.
 
-### 5. Webhook en Wompi
+### 5. Aviso por WhatsApp al confirmarse un pago
+
+Cuando el webhook confirma un pago, el sistema manda un WhatsApp al +57 317 668 5235 con la
+referencia, el total, las líneas, el cliente y la dirección. También avisa si un monto no cuadra
+(«no despachar») y si llega un pago sin pedido.
+
+**Activarlo toma 2 minutos, desde el celular que recibe los avisos:**
+
+1. Agregar el número de CallMeBot **+34 621 331 709** a los contactos.
+2. Enviarle por WhatsApp el mensaje: `I allow callmebot to send me messages`.
+3. El bot responde con una **apikey**.
+4. En Vercel → Environment Variables: `WHATSAPP_AVISO_TELEFONO = 573176685235` y
+   `WHATSAPP_AVISO_APIKEY = <la llave>`. Redeploy y listo.
+
+Sin esas variables el sistema funciona igual y solo deja en el log «WhatsApp sin configurar».
+Un aviso fallido jamás tumba el webhook, y los reintentos de Wompi no duplican mensajes: solo se
+avisa en la primera transición de estado.
+
+**Honestidad sobre el proveedor:** CallMeBot es un servicio gratuito de aficionado, perfecto para
+avisos al propio número, sin garantía de entrega. Si el negocio crece y el aviso se vuelve crítico,
+el paso serio es la API oficial de WhatsApp Business (Meta) o Twilio; se cambia por dentro de
+`api/_avisos.js` sin tocar el webhook.
+
+### 6. Webhook en Wompi
 
 Registrar `https://TU-DOMINIO/api/wompi-webhook` como URL de eventos.
 
-### 6. Hosting
+### 7. Hosting
 
 Las funciones de servidor y el cobro hacen el proyecto **inequívocamente comercial**, y el plan
 gratuito de Vercel solo permite uso personal. Toca Pro (20 USD/mes) o mover a Cloudflare.
 
-### 7. Legal
+### 8. Legal
 
 Completar en `web/legal.html` el NIT, la dirección fiscal y el correo de notificaciones, y hacerlo
 revisar por un abogado. Falta además la facturación electrónica DIAN.
