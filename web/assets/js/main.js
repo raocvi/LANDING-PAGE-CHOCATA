@@ -61,7 +61,8 @@
 
   /* Profundidad de lectura: dice hasta dónde llega la gente en una página larga. */
   var hitos = [25, 50, 75, 100], hitosVistos = {};
-  window.addEventListener('scroll', function () {
+  window.addEventListener('scroll', medirScrollPasivo, { passive: true });
+  function medirScrollPasivo() {
     if (document.body.classList.contains('is-locked')) return;
     var alto = document.documentElement.scrollHeight - window.innerHeight;
     if (alto <= 0) return;
@@ -72,7 +73,7 @@
         medir('Profundidad de lectura', { porcentaje: hitos[i] });
       }
     }
-  }, { passive: true });
+  }
 
   /* ---------- Preloader ---------- */
   var preloader = document.getElementById('preloader');
@@ -85,10 +86,23 @@
 
   if (animate) {
     gsap.to(fill, { width: '100%', duration: 1.1, ease: 'power2.inOut' });
-    window.addEventListener('load', function () {
-      gsap.delayedCall(0.35, function () { hidePreloader(); startHero(); });
-    });
-    setTimeout(function () { if (preloader.style.display !== 'none') { hidePreloader(); startHero(); } }, 4000);
+
+    /* El preloader se va apenas el hero esté decodificado, sin esperar a que
+       carguen todas las imágenes de la página; y nunca retiene más de 2,2 s.
+       Una portada que hace esperar por cortesía no es cortesía. */
+    var arrancado = false;
+    function arrancar() {
+      if (arrancado) return;
+      arrancado = true;
+      hidePreloader();
+      startHero();
+    }
+    var heroImg = document.querySelector('.hero__bg img');
+    if (heroImg && heroImg.decode) {
+      heroImg.decode().then(function () { gsap.delayedCall(0.3, arrancar); }).catch(function () {});
+    }
+    window.addEventListener('load', function () { gsap.delayedCall(0.3, arrancar); });
+    setTimeout(arrancar, 2200);
   } else {
     hidePreloader();
   }

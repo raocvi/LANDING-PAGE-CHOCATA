@@ -133,14 +133,24 @@ ul { margin: 0; padding: 0; list-style: none; }
 
 /* Fondo con grano y halos */
 .grain {
-  position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: .32;
+  /* Sin mix-blend-mode: el overlay a pantalla completa obligaba a recomponer
+     toda la página en cada frame. La textura en normal con menos opacidad se
+     ve casi igual sobre fondo oscuro y no cuesta nada. */
+  position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: .14;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
 }
 .halo {
-  position: absolute; border-radius: 50%; filter: blur(90px);
+  /* El difuminado se hace con una máscara radial y no con filter: blur(90px):
+     el blur real obliga a la GPU a recalcular un desenfoque enorme en cada
+     frame del scroll y en móviles se siente; la máscara pinta una sola vez. */
+  position: absolute; border-radius: 50%;
+  -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,.5) 42%, transparent 70%);
+          mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,.5) 42%, transparent 70%);
   pointer-events: none; z-index: 0;
 }
+
+/* Toque directo: sin espera de doble tap en pantallas táctiles. */
+a, button, select, input, textarea, .card { touch-action: manipulation; }
 
 /* ---------- 4. Botones ---------- */
 .btn {
