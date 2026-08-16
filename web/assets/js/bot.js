@@ -149,7 +149,10 @@
         texto += '<br><br>' + prod.ficha.usage;
       }
       medirBot('producto: ' + prod.key);
-      return { html: texto, ficha: prod.key, ia: quiereSaber && !pidePrecio };
+      /* A la IA salvo precio puro: el detector de palabras clave se caia con un
+         error de tipeo (benedicios), y Gemini entiende los errores de sobra.
+         Si la IA no esta o falla, la ficha fija responde igual. */
+      return { html: texto, ficha: prod.key, ia: !pidePrecio };
     }
 
     /* Identidad: quien pregunta con quien habla merece respuesta honesta. */
