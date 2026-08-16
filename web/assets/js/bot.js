@@ -152,6 +152,15 @@
       return { html: texto, ficha: prod.key, ia: quiereSaber && !pidePrecio };
     }
 
+    /* Identidad: quien pregunta con quien habla merece respuesta honesta. */
+    if (/como te llamas|tu nombre|quien eres|que eres|eres un robot|eres una persona|eres real|eres humana|eres una ia/.test(n)) {
+      medirBot('identidad');
+      return { html: 'Me llamo <b>Sofi</b> 🚴‍♀️ y soy la asistente virtual de CHOCATA — un bot, ' +
+        'no una persona, entrenada con la información de nuestros productos y su respaldo ' +
+        'científico. Pregúntame por precios, envíos o beneficios. Y si prefieres hablar con ' +
+        'alguien de carne y hueso, escríbenos por ' +
+        '<a href="https://wa.me/573176685235" target="_blank" rel="noopener noreferrer">WhatsApp</a>.' };
+    }
     if (esSaludo) {
       medirBot('saludo');
       return { html: '¡Hola! 😊 Qué gusto tenerte por aquí. Pregúntame por cualquier producto, ' +
