@@ -112,7 +112,10 @@
     if (linea) linea.cant = Math.min(99, linea.cant + cant);
     else items.push({ slug: slug, talla: talla, cant: Math.min(99, cant) });
     guardar();
-    abrir();
+    /* No se abre el carrito: interrumpir la compra en cada agregado baja el
+       ticket. Se confirma con un aviso flotante y el comprador sigue
+       escogiendo; al carrito se entra cuando se quiere. */
+    avisarAgregado(nombreDe(slug));
     return true;
   }
 
@@ -128,6 +131,35 @@
   function quitar(indice) {
     items.splice(indice, 1);
     guardar();
+  }
+
+  /* ---------- Aviso de agregado ---------- */
+
+  var aviso = null, avisoTimer = null;
+
+  function avisarAgregado(nombre) {
+    if (!aviso) {
+      aviso = document.createElement('div');
+      aviso.className = 'carrito-aviso';
+      aviso.setAttribute('role', 'status');
+      aviso.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg>' +
+        '<span></span>' +
+        '<button type="button">Ver pedido</button>';
+      document.body.appendChild(aviso);
+      aviso.querySelector('button').addEventListener('click', function () {
+        aviso.classList.remove('es-visible');
+        abrir();
+      });
+    }
+    aviso.querySelector('span').textContent = nombre + ' agregado';
+    aviso.classList.add('es-visible');
+    if (disparador) {
+      disparador.classList.add('pulso');
+      setTimeout(function () { disparador.classList.remove('pulso'); }, 650);
+    }
+    clearTimeout(avisoTimer);
+    avisoTimer = setTimeout(function () { aviso.classList.remove('es-visible'); }, 3200);
   }
 
   /* ---------- Interfaz ---------- */
@@ -243,7 +275,8 @@
           '<p class="carrito__causa">Sin sede física tras el terremoto de Cali, tu pedido sostiene directamente la operación. Gracias.</p>') +
       '<button class="btn carrito__pagar" id="carritoPagar"' + (falta > 0 ? ' disabled' : '') + '>' +
         (falta > 0 ? 'Pedido mínimo ' + pesos(reglas.pedidoMinimo) : 'Continuar con el pedido') +
-      '</button>';
+      '</button>' +
+      '<button class="carrito__seguir" type="button" data-cerrar-carrito>← Seguir comprando</button>';
 
     if (falta > 0) {
       document.getElementById('carritoCombos').addEventListener('click', function () {
