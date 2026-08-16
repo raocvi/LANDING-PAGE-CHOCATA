@@ -47,7 +47,9 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ mensaje: 'No pudimos consultar el pedido.' });
   }
 
-  if (!pedido) return res.status(404).json({ mensaje: 'No encontramos ese pedido.' });
+  /* El campo motor permite saber desde afuera qué versión del código corre,
+     porque un deploy atascado no se distingue de un fallo de lectura. */
+  if (!pedido) return res.status(404).json({ mensaje: 'No encontramos ese pedido.', motor: 'get-v2' });
 
   const esAdmin = tokenValido(req.headers['x-admin-token'], process.env.ADMIN_TOKEN);
 
