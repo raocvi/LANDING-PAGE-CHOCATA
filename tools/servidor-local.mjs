@@ -76,7 +76,9 @@ const servidor = createServer(async (req, res) => {
   }
 });
 
-servidor.listen(PUERTO, () => {
+/* Solo loopback: este servidor corre con llaves de mentira y sin ninguna
+   autenticación; no tiene por qué ser visible para el resto de la red local. */
+servidor.listen(PUERTO, '127.0.0.1', () => {
   console.log(`Sitio y API en http://localhost:${PUERTO}`);
   console.log('Llaves de desarrollo activas: el checkout arma la URL de Wompi pero no cobra.');
 });

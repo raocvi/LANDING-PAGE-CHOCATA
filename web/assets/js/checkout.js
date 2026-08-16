@@ -326,7 +326,13 @@
         window.location.href = res.cuerpo.url;
       })
       .catch(function (err) {
-        aviso.innerHTML = (err && err.message) || SIN_PASARELA;
+        /* Los mensajes del servidor se pintan como texto plano: aunque el
+           servidor ya sanea lo que devuelve, este cajón no debe poder
+           interpretar HTML ajeno jamás. El único HTML permitido es el
+           mensaje local SIN_PASARELA, que es nuestro y trae el enlace. */
+        var mensaje = (err && err.message) || SIN_PASARELA;
+        if (mensaje === SIN_PASARELA) aviso.innerHTML = mensaje;
+        else aviso.textContent = mensaje;
         boton.disabled = false;
         boton.textContent = 'Ir a pagar';
       });

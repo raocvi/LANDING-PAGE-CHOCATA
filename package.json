@@ -1,0 +1,8 @@
+{
+  "name": "chocata-web",
+  "private": true,
+  "description": "Landing y tienda de CHOCATA Colombia. Sitio est\u00e1tico en web/ y funciones en api/.",
+  "dependencies": {
+    "@vercel/blob": "^2.8.0"
+  }
+}

@@ -202,6 +202,42 @@ Hallazgos corregidos, del más grave al menor:
 5. **El formulario solo aceptaba cédula (CC)**: ahora CC, CE y NIT, validados en el servidor y
    trasladados a Wompi en `legal-id-type`.
 
+## Auditoría de seguridad (agosto de 2026)
+
+Lo que ya estaba bien: precio y firma solo en servidor, checksum del webhook en tiempo constante,
+monto del pago cruzado contra el pedido guardado, referencia con formato estricto (sin path
+traversal), vista pública sin datos personales, blobs privados, `.pedidos/` fuera de git, sin
+llaves reales en la historia, `gracias.html` pinta la referencia con textContent.
+
+Lo que se corrigió en esta pasada:
+
+1. **Content-Security-Policy** en `vercel.json`: solo scripts propios, cdn.jsdelivr.net y umami,
+   con hashes SHA-256 para los tres scripts inline (sin `unsafe-inline` en scripts). **Ojo: si se
+   edita cualquier `<script>` inline de `index.html` o `gracias.html`, hay que recalcular su hash
+   en la CSP o el script deja de ejecutar.** También `Permissions-Policy` restrictiva.
+2. **El error del catálogo ya no refleja la entrada del atacante**: slug y talla se reducen a
+   caracteres inofensivos antes de volver en el mensaje, y el navegador pinta los errores del
+   servidor como texto plano, nunca como HTML.
+3. **Token de administración comparado en tiempo constante** (timingSafeEqual), como ya se hacía
+   con el webhook.
+4. **Chequeo de Origin en el checkout**: una página ajena ya no puede crear pedidos desde el
+   navegador de un visitante (CSRF). Peticiones sin Origin (integraciones, pruebas) pasan.
+5. **Topes de largo en los datos del comprador**: nadie puede mandar campos de un megabyte a
+   engordar el almacenamiento.
+6. **`package.json` con `@vercel/blob`**: sin él, el guardado en producción habría reventado al
+   configurar el token (la dependencia no se instalaba).
+7. **El servidor local solo escucha en 127.0.0.1**: corre sin autenticación y no tiene por qué
+   verse desde la red local.
+
+Lo que queda fuera del código y conviene saber:
+
+- **Sin límite de tasa (rate limiting).** Un bot puede crear pedidos PENDIENTE en volumen. No
+  cuesta plata (nadie paga), pero ensucia el almacén. Vercel WAF o BotID lo resuelven si pasa.
+- **El token de administración viaja en una cabecera sin expirar.** Suficiente para un solo
+  administrador; si algún día hay panel, toca sesión de verdad.
+- **Correo de aviso al recibir pedido sigue pendiente**: hoy un pedido pagado solo se ve
+  consultando el almacén.
+
 ## Pendiente de definir
 
 - **El peso real de Hidratec.** El kilo por unidad es un supuesto conservador, no el dato.
