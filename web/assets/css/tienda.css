@@ -396,3 +396,39 @@
 }
 .bot__form input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
 .bot__form .btn { min-height: 44px; padding: 0 1rem; }
+
+/* ---------- Aviso de agregado al pedido ---------- */
+.carrito-aviso {
+  position: fixed; right: clamp(1rem, 3vw, 2rem);
+  bottom: calc(clamp(1rem, 3vw, 2rem) + 56px + 56px + 1.5rem);
+  z-index: 150; display: flex; align-items: center; gap: .6rem;
+  padding: .65rem .9rem; border-radius: 12px;
+  background: var(--surface, #171310); border: 1px solid rgba(242, 176, 30, .4);
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, .9);
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  max-width: min(320px, calc(100vw - 2rem));
+}
+.carrito-aviso.es-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.carrito-aviso svg { flex: 0 0 auto; width: 18px; height: 18px; color: var(--gold); }
+.carrito-aviso span { font-size: .82rem; color: var(--cream); line-height: 1.35; }
+.carrito-aviso button {
+  flex: 0 0 auto; min-height: 34px; padding: 0 .7rem; border-radius: 8px; cursor: pointer;
+  background: var(--gold); border: 0; color: #17110D;
+  font: inherit; font-size: .76rem; font-weight: 600;
+}
+
+/* Pulso del botón del carrito al agregar */
+.carrito-btn.pulso { animation: carritoPulso .6s ease; }
+@keyframes carritoPulso {
+  0%, 100% { transform: scale(1); }
+  35% { transform: scale(1.22); border-color: var(--gold); }
+}
+
+/* Seguir comprando dentro del panel */
+.carrito__seguir {
+  width: 100%; min-height: 44px; margin-top: .1rem; cursor: pointer;
+  background: none; border: 0; color: var(--muted);
+  font: inherit; font-size: .82rem;
+}
+.carrito__seguir:hover { color: var(--gold-soft); }
