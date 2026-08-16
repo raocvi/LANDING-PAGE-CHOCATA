@@ -504,3 +504,33 @@
 .admin-cliente b { color: var(--cream); font-weight: 500; }
 .admin-acciones { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .3rem; }
 .admin-acciones .btn { min-height: 42px; padding: .5rem 1rem; font-size: .72rem; }
+
+/* ---------- Estadísticas y despacho ---------- */
+.admin-stats {
+  display: grid; gap: .6rem; margin-bottom: 1.4rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+.admin-stat {
+  display: grid; gap: .15rem; padding: .9rem 1rem; border-radius: 13px;
+  border: 1px solid var(--line); background: rgba(248,243,235,.03);
+}
+.admin-stat b { font-family: var(--display); font-size: 1.25rem; color: var(--gold-soft); font-weight: 500; }
+.admin-stat span { font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+.admin-stat--pendiente { border-color: rgba(242,176,30,.4); }
+.admin-stat--ancho { grid-column: span 2; }
+.admin-estado--atencion { background: rgba(242,176,30,.2); color: var(--gold-soft); }
+
+.admin-despachar {
+  display: grid; grid-template-columns: 1fr auto; gap: .5rem;
+  padding-top: .5rem; border-top: 1px dashed var(--line); margin-top: .2rem;
+}
+.admin-despachar input {
+  min-height: 44px; padding: 0 .9rem; border-radius: 10px;
+  background: rgba(248,243,235,.05); border: 1px solid var(--line-strong);
+  color: var(--cream); font: inherit; font-size: .85rem;
+}
+.admin-despachar input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.admin-despachar .btn { min-height: 44px; padding: .5rem 1rem; font-size: .7rem; }
+.admin-guia { font-size: .84rem; color: #7fe0a0; padding-top: .3rem; }
+.admin-guia b { font-weight: 600; }
+@media (max-width: 480px) { .admin-despachar { grid-template-columns: 1fr; } }

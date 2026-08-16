@@ -131,5 +131,15 @@ console.log('\nCentral de despachos');
 ok('la lista exige el token', (await fetch(BASE + '/api/pedidos')).status === 401);
 const listado = await (await fetch(BASE + '/api/pedidos', { headers: { 'x-admin-token': 'admin_desarrollo' } })).json();
 ok('con token entrega los pedidos con cliente', listado.total > 0 && listado.pedidos[0].cliente !== undefined);
+
+console.log('\nDespacho');
+const desp = (c) => fetch(BASE + '/api/despachar', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-token': 'admin_desarrollo' }, body: JSON.stringify(c) });
+ok('despachar exige token', (await fetch(BASE + '/api/despachar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ referencia: ref, guia: 'X' }) })).status === 401);
+const d1 = await desp({ referencia: ref, guia: 'TCC-12345' });
+ok('un pedido pagado se puede despachar con guía', d1.status === 200 && (await d1.json()).despacho.guia === 'TCC-12345');
+const refPend = (await pedir({ items: [{ slug: 'creatina', talla: '250 g', cant: 1 }], cliente })).cuerpo.referencia;
+ok('uno pendiente de pago no se despacha', (await desp({ referencia: refPend, guia: 'X' })).status === 409);
+const conDespacho = await (await fetch(BASE + '/api/pedidos', { headers: { 'x-admin-token': 'admin_desarrollo' } })).json();
+ok('el listado registra la guía del despacho', conDespacho.pedidos.some((p) => p.despacho && p.despacho.guia === 'TCC-12345'));
 console.log(fallos ? `\n${fallos} fallo(s).` : '\nTodo correcto.');
 process.exit(fallos ? 1 : 0);
