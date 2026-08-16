@@ -10,23 +10,34 @@
 /* Recomendador por objetivo: cada meta apunta a las referencias que la
    trabajan, con la razón concreta (dosis o mecanismo), no un eslogan. */
 window.CHOCATA_GOALS = {
+  /* Un producto puede servir a varias metas: se clasifica por sus componentes
+     y por los beneficios que su propia ficha declara con evidencia, no por
+     una sola casilla. El Latte Dorato, por ejemplo, aparece en energía,
+     defensas, articulaciones y descanso porque cúrcuma, maca y jengibre
+     cubren esas cuatro. */
   fuerza: [
     { p: "creatina",         w: "3 a 5 g diarios. Es el ergogénico con más respaldo para trabajo de alta intensidad y masa magra." },
     { p: "proteina",         w: "20 a 40 g por toma para cerrar el requerimiento proteico del día y sostener la síntesis muscular." },
-    { p: "pre-workout",      w: "12 g media hora antes si la sesión es larga o de mucho volumen." }
+    { p: "pre-workout",      w: "12 g media hora antes si la sesión es larga o de mucho volumen." },
+    { p: "magnesio",         w: "La contracción y relajación muscular lo necesitan, y entrenar duro lo gasta." }
   ],
   resistencia: [
     { p: "remolacha",        w: "Nitratos 2 a 3 horas antes: reducen el costo de oxígeno del ejercicio submáximo." },
     { p: "hidratec",         w: "Carbohidrato y electrolitos durante el esfuerzo, a sorbos, no solo al final." },
-    { p: "chocata-premium",  w: "Carga de carbohidrato disponible antes de una salida larga." }
+    { p: "chocata-premium",  w: "Carga de carbohidrato disponible antes de una salida larga." },
+    { p: "magnesio",         w: "Sudar mucho lo elimina y los calambres lo cobran: reponerlo es parte del fondo." },
+    { p: "proteina",         w: "20 g al terminar una sesión larga: la resistencia también rompe fibra que hay que reparar." }
   ],
   energia: [
     { p: "chocata-premium",  w: "Malta y cacao endulzados con estevia: energía del desayuno con menos azúcar añadido." },
-    { p: "latte-dorato",     w: "Bebida caliente sin cafeína, con cúrcuma, maca, canela y jengibre." },
-    { p: "chocata-tradicional", w: "El chocolate de la mesa familiar: 25 g por taza, desde 200 g hasta 3.500 g." }
+    { p: "chocata-tradicional", w: "El chocolate de la mesa familiar: 25 g por taza, desde 200 g hasta 3.500 g." },
+    { p: "latte-dorato",     w: "La maca aporta compuestos asociados a actividad antifatiga, sin nada de cafeína." },
+    { p: "pre-workout",      w: "12 g antes de entrenar, para los días en que el cuerpo pide un empujón extra." },
+    { p: "vitamina-c",       w: "Participa en el metabolismo energético normal y ayuda a reducir el cansancio y la fatiga." }
   ],
   defensas: [
     { p: "vitamina-c",       w: "Acorta y suaviza los resfriados, y multiplica la absorción del hierro de origen vegetal." },
+    { p: "latte-dorato",     w: "Cúrcuma, jengibre y maca: perfil antioxidante, con pimienta para que la curcumina sí se absorba." },
     { p: "chocata-granel",   w: "Vehículo de calcio, hierro, zinc y vitaminas A, C, D y del complejo B para toda la familia." }
   ],
   piel: [
@@ -36,7 +47,7 @@ window.CHOCATA_GOALS = {
   ],
   descanso: [
     { p: "magnesio",         w: "Reduce el tiempo que se tarda en dormirse y acompaña la relajación muscular." },
-    { p: "latte-dorato",     w: "Ritual caliente de la noche, sin cafeína." },
+    { p: "latte-dorato",     w: "Ritual caliente de la noche, sin cafeína: no te quita el sueño." },
     { p: "colageno",         w: "Sin sabor: se disuelve en la misma bebida de la noche." }
   ]
 };
