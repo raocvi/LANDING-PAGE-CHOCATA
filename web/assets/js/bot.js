@@ -149,16 +149,15 @@
         texto += '<br><br>' + prod.ficha.usage;
       }
       medirBot('producto: ' + prod.key);
-      /* A la IA salvo precio puro: el detector de palabras clave se caia con un
-         error de tipeo (benedicios), y Gemini entiende los errores de sobra.
-         Si la IA no esta o falla, la ficha fija responde igual. */
-      return { html: texto, ficha: prod.key, ia: !pidePrecio };
+      /* El precio puro responde directo del catalogo: en plata no opina un
+         modelo. Todo lo demas del producto lo piensa la IA. */
+      return { instant: pidePrecio, html: texto, ficha: prod.key };
     }
 
     /* Identidad: quien pregunta con quien habla merece respuesta honesta. */
     if (/como te llamas|tu nombre|quien eres|que eres|eres un robot|eres una persona|eres real|eres humana|eres una ia/.test(n)) {
       medirBot('identidad');
-      return { html: 'Me llamo <b>Sofi</b> 🚴‍♀️ y soy la asistente virtual de CHOCATA — un bot, ' +
+      return { instant: true, html: 'Me llamo <b>Sofi</b> 🚴‍♀️ y soy la asistente virtual de CHOCATA — un bot, ' +
         'no una persona, entrenada con la información de nuestros productos y su respaldo ' +
         'científico. Pregúntame por precios, envíos o beneficios. Y si prefieres hablar con ' +
         'alguien de carne y hueso, escríbenos por ' +
@@ -166,12 +165,12 @@
     }
     if (esSaludo) {
       medirBot('saludo');
-      return { html: '¡Hola! 😊 Qué gusto tenerte por aquí. Pregúntame por cualquier producto, ' +
+      return { instant: true, html: '¡Hola! 😊 Qué gusto tenerte por aquí. Pregúntame por cualquier producto, ' +
         'el costo del envío o las formas de pago — y recuerda que <b>enviamos a toda Colombia</b>.' };
     }
     if (esGracias) {
       medirBot('gracias');
-      return { html: '¡Con mucho gusto! 💛 Si necesitas algo más, aquí estoy. ' +
+      return { instant: true, html: '¡Con mucho gusto! 💛 Si necesitas algo más, aquí estoy. ' +
         'Y si prefieres hablar con una persona, escríbenos por ' +
         '<a href="https://wa.me/573176685235" target="_blank" rel="noopener noreferrer">WhatsApp</a>.' };
     }
@@ -238,7 +237,7 @@
     CHIPS.forEach(function (c) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'bot__chip'; b.textContent = c[0];
-      b.addEventListener('click', function () { preguntar(c[0]); });
+      b.addEventListener('click', function () { preguntar(c[0], true); });
       chips.appendChild(b);
     });
 
@@ -283,11 +282,14 @@
     hilo.scrollTop = hilo.scrollHeight;
   }
 
-  function preguntar(q) {
+  function preguntar(q, directo) {
     burbuja(q.replace(/[<>&]/g, ''), true);
     var r = responder(q);
 
-    if (r.ia) {
+    /* Todo lo que el visitante ESCRIBE lo piensa primero la IA, que entiende
+       errores de tipeo y preguntas raras; la respuesta fija es el respaldo.
+       Los chips (directo) y las cortesias responden al instante. */
+    if (!directo && !r.instant) {
       /* La IA responde con las fichas de la página; mientras piensa se ve el
          indicador, y si no está configurada o no sabe, cae a la respuesta
          fija sin que el visitante note el engranaje. */

@@ -54,8 +54,34 @@ function corpus() {
     bloques.push(partes.join('\n'));
   }
 
+  bloques.push(reglasDelNegocio());
   corpusCache = bloques.join('\n\n---\n\n');
   return corpusCache;
+}
+
+/** Las reglas comerciales vigentes, derivadas de los mismos archivos que
+ *  cobran: si cambia una tarifa o un combo, la IA lo sabe sin tocar nada. */
+function reglasDelNegocio() {
+  const pedido = require('./_pedido');
+  const e = pedido.envios;
+  const cop = (n) => '$' + Number(n).toLocaleString('es-CO');
+
+  const combos = pedido.combosVigentes()
+    .map((c) => `- ${c.nombre}: ${c.kicker}. Cuesta ${cop(c.cop)} (comprado suelto vale ${cop(c.sueltos)}, ahorra ${cop(c.ahorro)}).`)
+    .join('\n');
+
+  return [
+    'NEGOCIO CHOCATA (reglas comerciales vigentes):',
+    `- Envíos: solo dentro de Colombia. Despachamos desde Cali a los 32 departamentos y Bogotá con transportadora.`,
+    `- Tarifa de envío: ${cop(e.tarifaPorKilo)} por cada kilo o fracción del peso del pedido, mínimo un kilo. No hay envío gratis: es la tarifa real de la transportadora trasladada sin recargo. El costo y el peso se muestran antes de pagar.`,
+    `- Pedido mínimo: ${cop(e.pedidoMinimo)}.`,
+    '- No enviamos al exterior (exportar alimentos exige registros sanitarios por país y el flete supera el valor del producto). Desde el exterior sí se puede pagar con tarjeta para entregar a una familia en Colombia.',
+    '- Pagos: PSE (débito bancario), tarjetas de crédito y débito, Nequi y botón Bancolombia, en la plataforma segura de la pasarela. CHOCATA no ve los datos de la tarjeta. Ningún medio tiene recargo.',
+    '- Sede física: cerró tras el terremoto del 10 de agosto de 2026 en Cali; el local resistió pero el edificio vecino quedó en riesgo y primero está la vida. La tienda ahora es la página, y cada pedido sostiene la operación.',
+    '- Devoluciones: derecho de retracto de 5 días hábiles desde la entrega, con el producto sin abrir y su sello intacto (son alimentos). Garantía legal si algo llega defectuoso o no corresponde. Contacto: WhatsApp +57 317 668 5235.',
+    '- COMBOS vigentes:',
+    combos
+  ].join('\n');
 }
 
 module.exports = { corpus, cargarFichas };
