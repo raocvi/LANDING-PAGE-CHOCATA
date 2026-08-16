@@ -255,6 +255,16 @@ function tipoDocumentoDe(c) {
   return TIPOS_DOCUMENTO.includes(t) ? t : 'CC';
 }
 
+/* Comparación en tiempo constante para el token de administración: un ===
+   filtra por cronómetro cuántos caracteres coinciden. */
+function tokenValido(recibido, esperado) {
+  if (!esperado || typeof recibido !== 'string') return false;
+  const a = Buffer.from(recibido, 'utf8');
+  const b = Buffer.from(esperado, 'utf8');
+  if (a.length !== b.length) return crypto.timingSafeEqual(b, b) && false;
+  return crypto.timingSafeEqual(a, b);
+}
+
 /** Datos del comprador: se valida de nuevo aquí, no solo en el formulario. */
 function validarCliente(c) {
   if (!c || typeof c !== 'object') return 'Faltan los datos de contacto.';
@@ -274,5 +284,5 @@ module.exports = {
   catalogo, envios, combos, TALLA_COMBO, TIPOS_DOCUMENTO,
   calcular, referencia, envioDe, desgloseEnvio, gramosDe,
   precioDe, detalleCombo, combosVigentes,
-  firmaIntegridad, firmaEventoValida, validarCliente, tipoDocumentoDe
+  firmaIntegridad, firmaEventoValida, validarCliente, tipoDocumentoDe, tokenValido
 };

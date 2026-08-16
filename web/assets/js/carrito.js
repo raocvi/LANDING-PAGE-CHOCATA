@@ -167,15 +167,31 @@
   var panel, lista, resumen, contador, disparador;
 
   function construir() {
+    /* El carrito vive en la barra de navegación, arriba a la derecha: es
+       donde todo comprador lo busca, la barra es fija y visible siempre, y
+       abajo a la derecha competía con el botón de WhatsApp y el asistente.
+       Si la barra no existiera, cae al flotante clásico como respaldo. */
+    var cta = document.querySelector('.nav__cta');
+    var botonCarrito = document.createElement('button');
+    botonCarrito.className = cta ? 'nav-carrito' : 'carrito-btn';
+    botonCarrito.id = 'carritoBtn';
+    botonCarrito.setAttribute('aria-label', 'Abrir el carrito');
+    botonCarrito.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">' +
+        '<path d="M6 6h15l-1.6 9H7.5L6 6Z"/><path d="M6 6 5 3H2"/>' +
+        '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/>' +
+      '</svg>' +
+      '<span class="carrito-btn__n" id="carritoN" aria-hidden="true">0</span>';
+    if (cta) {
+      var burger = cta.querySelector('.nav__burger');
+      if (burger) cta.insertBefore(botonCarrito, burger);
+      else cta.appendChild(botonCarrito);
+    } else {
+      document.body.appendChild(botonCarrito);
+    }
+
     var envoltura = document.createElement('div');
     envoltura.innerHTML =
-      '<button class="carrito-btn" id="carritoBtn" aria-label="Abrir el carrito">' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">' +
-          '<path d="M6 6h15l-1.6 9H7.5L6 6Z"/><path d="M6 6 5 3H2"/>' +
-          '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/>' +
-        '</svg>' +
-        '<span class="carrito-btn__n" id="carritoN" aria-hidden="true">0</span>' +
-      '</button>' +
       '<div class="carrito" id="carrito" role="dialog" aria-modal="true" aria-label="Carrito de compra">' +
         '<div class="carrito__velo" data-cerrar-carrito></div>' +
         '<aside class="carrito__panel" data-lenis-prevent>' +
