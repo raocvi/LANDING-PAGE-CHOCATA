@@ -202,6 +202,7 @@
         puerta.hidden = true;
         tablero.hidden = false;
         document.getElementById('refrescar').hidden = false;
+        document.getElementById('probarCorreo').hidden = false;
         document.getElementById('salir').hidden = false;
         pintar();
       });
@@ -222,6 +223,19 @@
       x.setAttribute('aria-pressed', String(x === b));
     });
     pintar();
+  });
+
+  document.getElementById('probarCorreo').addEventListener('click', function () {
+    var b = this;
+    b.disabled = true; b.textContent = 'Enviando…';
+    fetch('/api/probar-correo', {
+      method: 'POST',
+      headers: { 'x-admin-token': sessionStorage.getItem(LLAVE) || '' }
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { alert(d.detalle || 'Sin respuesta.'); })
+      .catch(function () { alert('No se pudo probar. Intenta de nuevo.'); })
+      .then(function () { b.disabled = false; b.textContent = 'Probar correo'; });
   });
 
   document.getElementById('refrescar').addEventListener('click', function () {
