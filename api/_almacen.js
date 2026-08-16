@@ -55,14 +55,17 @@ async function guardarBlob(pedido) {
 }
 
 async function leerBlob(referencia) {
-  const { head } = require('@vercel/blob');
+  const { get } = require('@vercel/blob');
   try {
-    /* Para un blob privado, head() devuelve una downloadUrl firmada de vida
-       corta; la url plana sin firma dejaría de funcionar. */
-    const meta = await head(`pedidos/${referencia}.json`);
-    const respuesta = await fetch(meta.downloadUrl || meta.url);
-    return respuesta.ok ? await respuesta.json() : null;
-  } catch {
+    /* get() es la vía oficial para leer un blob privado desde el servidor:
+       autentica solo con el token del entorno y entrega el contenido como
+       stream. useCache en false porque el webhook lee el pedido segundos
+       después de escribirlo y una copia cacheada podría llegar vieja. */
+    const r = await get(`pedidos/${referencia}.json`, { access: 'private', useCache: false });
+    if (!r || !r.stream) return null;
+    return JSON.parse(await new Response(r.stream).text());
+  } catch (e) {
+    console.error('[almacen] fallo leyendo blob', referencia, e && e.message);
     return null;
   }
 }
