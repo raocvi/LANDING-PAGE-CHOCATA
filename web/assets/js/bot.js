@@ -70,7 +70,7 @@
   /* ---------- Respuestas ---------- */
 
   var R = {
-    envios: 'Despachamos a <b>todo el país</b> con transportadora. El envío cuesta ' +
+    envios: '<b>Enviamos a toda Colombia</b>, a los 32 departamentos y Bogotá, con transportadora. El envío cuesta ' +
       '<b>$10.500 por cada kilo o fracción</b> del peso del pedido (mínimo un kilo): es la ' +
       'tarifa real de la transportadora, sin recargo. El costo exacto y el peso se muestran ' +
       'antes de pagar. Los tiempos dependen de la transportadora y de tu ciudad.',
@@ -82,7 +82,7 @@
     combos: (function () { return null; })(), /* se arma en vivo con los datos */
     sede: 'Nuestra sede física en Cali cerró tras el <b>terremoto del 10 de agosto</b>: el local ' +
       'resistió, pero el edificio vecino quedó en riesgo y primero está la vida. Seguimos ' +
-      'atendiendo por esta tienda y a domicilio. ' +
+      'atendiendo por esta tienda, con envíos a toda Colombia. ' +
       '<a href="https://www.instagram.com/reel/Db7C-_Pg-h_/" target="_blank" rel="noopener noreferrer">Aquí está la historia</a>.',
     retracto: 'Tienes <b>5 días hábiles</b> desde la entrega para retractarte, con el producto ' +
       'sin abrir y el sello intacto (son alimentos). Y si algo llega en mal estado o no ' +
@@ -253,8 +253,8 @@
     panel.hidden = false;
     medirBot('abrir');
     if (!hilo.childElementCount) {
-      burbuja('¡Hola! Soy <b>Sofi</b> 🚴‍♀️. Pregúntame por un producto, el envío, ' +
-        'las formas de pago o lo que necesites. Y si no me la sé, te paso con un humano.');
+      burbuja('¡Hola! Soy <b>Sofi</b> 🚴‍♀️. <b>Enviamos a toda Colombia.</b> ' +
+        'Pregúntame por un producto, el envío, las formas de pago o lo que necesites. Y si no me la sé, te paso con un humano.');
     }
     campo.focus();
   }
