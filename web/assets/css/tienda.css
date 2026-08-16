@@ -456,6 +456,8 @@
 .nav-carrito.pulso { animation: carritoPulso .6s ease; }
 
 /* ---------- Central de despachos ---------- */
+/* hidden debe mandar sobre el display: la puerta desaparece al entrar. */
+.admin-puerta[hidden], #tablero[hidden] { display: none; }
 .admin-puerta { display: grid; gap: 1rem; max-width: 48ch; }
 .admin-puerta p { font-size: .92rem; line-height: 1.7; color: var(--muted); }
 .admin-puerta__fila { display: grid; grid-template-columns: 1fr auto; gap: .5rem; }
