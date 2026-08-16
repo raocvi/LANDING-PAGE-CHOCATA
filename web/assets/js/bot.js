@@ -137,6 +137,10 @@
     /* Primero: ¿pregunta por un producto? */
     var prod = buscarProducto(n);
     var pidePrecio = /precio|cuanto|vale|cuesta|valor/.test(n);
+    /* Preguntas de saber: beneficios, ingredientes, para qué sirve, casos
+       personales. Estas van primero a la IA, que responde solo con las
+       fichas; si la IA no está o no sabe, cae a la respuesta fija. */
+    var quiereSaber = /beneficio|sirve|para que|ayuda|efecto|ingrediente|contiene|composicion|engorda|azucar|apto|embaraz|lactancia|nino|nina|lactosa|gluten|es bueno|es malo|hace dano|diferencia/.test(n);
 
     if (prod) {
       var precios = preciosDe(prod.key);
@@ -145,7 +149,7 @@
         texto += '<br><br>' + prod.ficha.usage;
       }
       medirBot('producto: ' + prod.key);
-      return { html: texto, ficha: prod.key };
+      return { html: texto, ficha: prod.key, ia: quiereSaber && !pidePrecio };
     }
 
     if (esSaludo) {
@@ -172,7 +176,8 @@
     medirBot('sin respuesta');
     return {
       html: 'Esa no me la sé, pero un humano sí. Escríbenos y te respondemos rápido:',
-      wa: WA + '?text=' + encodeURIComponent('Hola CHOCATA, tengo una pregunta: ' + pregunta)
+      wa: WA + '?text=' + encodeURIComponent('Hola CHOCATA, tengo una pregunta: ' + pregunta),
+      ia: true
     };
   }
 
@@ -248,10 +253,53 @@
     return b;
   }
 
+  /* Pide la respuesta al servidor de IA. Devuelve el texto o null. */
+  function preguntarIA(q) {
+    return fetch('/api/sofi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pregunta: q })
+    })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { return d && d.respuesta ? d.respuesta : null; })
+      .catch(function () { return null; });
+  }
+
+  function pintarRespuesta(r) {
+    var b = burbuja(r.html);
+    anexarAcciones(b, r);
+    hilo.scrollTop = hilo.scrollHeight;
+  }
+
   function preguntar(q) {
     burbuja(q.replace(/[<>&]/g, ''), true);
     var r = responder(q);
-    var b = burbuja(r.html);
+
+    if (r.ia) {
+      /* La IA responde con las fichas de la página; mientras piensa se ve el
+         indicador, y si no está configurada o no sabe, cae a la respuesta
+         fija sin que el visitante note el engranaje. */
+      var espera = burbuja('<span class="bot__puntos"><i></i><i></i><i></i></span>');
+      preguntarIA(q).then(function (texto) {
+        espera.remove();
+        if (texto) {
+          medirBot('ia responde');
+          var limpio = String(texto).replace(/[<>]/g, '');
+          var b = burbuja(limpio.split(String.fromCharCode(10)).filter(Boolean).join('<br>'));
+          if (r.ficha) anexarAcciones(b, { ficha: r.ficha });
+          hilo.scrollTop = hilo.scrollHeight;
+        } else {
+          medirBot('ia cae a fijo');
+          pintarRespuesta(r);
+        }
+      });
+      return;
+    }
+
+    pintarRespuesta(r);
+  }
+
+  function anexarAcciones(b, r) {
 
     if (r.ficha) {
       var ver = document.createElement('button');
@@ -271,7 +319,6 @@
       wa.textContent = 'Escribir por WhatsApp';
       b.appendChild(wa);
     }
-    hilo.scrollTop = hilo.scrollHeight;
   }
 
   function abrir() {

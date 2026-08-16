@@ -119,5 +119,12 @@ ok('la extranjería llega a Wompi', new URL(ce.cuerpo.url).searchParams.get('cus
 ok('un tipo inventado cae a cédula', new URL((await pedir({ items: [{ slug: 'creatina', talla: '250 g', cant: 1 }],
    cliente: { ...cliente, tipoDocumento: 'ZZ' } })).cuerpo.url).searchParams.get('customer-data:legal-id-type') === 'CC');
 
+console.log('\nIA de Sofi');
+const ia1 = await fetch(BASE + '/api/sofi', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pregunta: 'beneficios de la creatina' }) });
+ok('sin llave de Gemini responde 503 con código', ia1.status === 503 && (await ia1.json()).codigo === 'IA_SIN_CONFIGURAR');
+const ia2 = await fetch(BASE + '/api/sofi', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pregunta: '' }) });
+ok('una pregunta vacía se rechaza', ia2.status === 400);
+const ia3 = await fetch(BASE + '/api/sofi', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Origin': 'https://sitio-malo.com' }, body: JSON.stringify({ pregunta: 'hola' }) });
+ok('un origen ajeno se rechaza', ia3.status === 403);
 console.log(fallos ? `\n${fallos} fallo(s).` : '\nTodo correcto.');
 process.exit(fallos ? 1 : 0);
