@@ -164,8 +164,8 @@ venderse solo. Una prueba comprueba que todos ahorran plata, declaran peso y sup
 | Cata CHOCATA | Tradicional + Premium 500 g | $46.000 | $54.000 | 15% | 1 kg |
 | Kit Fuerza | Proteína + Creatina | $102.000 | $120.000 | 15% | 650 g |
 | Kit Rendimiento | Pre-workout + Creatina + 200 g | $76.000 | $89.000 | 15% | 650 g |
-| Bienestar diario | Colágeno + Magnesio + Vitamina C | $56.000 | $66.000 | 15% | 700 g |
-| Recuperación | Remolacha + Magnesio | $52.000 | $61.000 | 15% | 450 g |
+| Bienestar diario | Colágeno + Magnesio + Vitamina C | $56.000 | $65.000 | 14% | 700 g |
+| Recuperación | Remolacha + Magnesio | $52.000 | $60.000 | 13% | 450 g |
 
 **Los pesos están calculados contra el borde del kilo.** La despensa lleva cinco bolsas y no seis
 a propósito: cinco pesan 1.000 g exactos y cobran un kilo; la sexta cuesta $9.000 pero empujaría el
