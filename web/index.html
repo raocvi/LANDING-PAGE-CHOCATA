@@ -26,10 +26,10 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="preload" as="image" href="assets/img/life/familia.webp" fetchpriority="high">
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" href="assets/img/brand/favicon.png?v=64">
-<link rel="apple-touch-icon" href="assets/img/brand/favicon.png?v=64">
-<link rel="stylesheet" href="assets/css/style.css?v=64">
-<link rel="stylesheet" href="assets/css/tienda.css?v=64">
+<link rel="icon" type="image/png" href="assets/img/brand/favicon.png?v=65">
+<link rel="apple-touch-icon" href="assets/img/brand/favicon.png?v=65">
+<link rel="stylesheet" href="assets/css/style.css?v=65">
+<link rel="stylesheet" href="assets/css/tienda.css?v=65">
 <script>document.documentElement.classList.add('motion');setTimeout(function(){if(!window.__chocataListo)document.documentElement.classList.remove('motion')},3000);</script>
 </head>
 <body>
@@ -41,6 +41,17 @@
   <img class="preloader__mark" src="assets/img/brand/chocata-logo.webp" alt="" width="1100" height="859">
   <div class="preloader__bar"><i class="preloader__fill" id="preloaderFill"></i></div>
   <p class="preloader__txt">Chocata · Sabor y Pasión</p>
+</div>
+
+<div class="aviso-sede" id="avisoSede" hidden>
+  <p>
+    Nuestra sede física en Cali cerró por el terremoto del 10 de agosto.
+    Seguimos aquí: <b>cada pedido nos ayuda a levantarnos.</b>
+    <a href="https://www.instagram.com/reel/Db7C-_Pg-h_/" target="_blank" rel="noopener noreferrer" id="avisoSedeHistoria">Ver la historia</a>
+  </p>
+  <button id="avisoSedeCerrar" aria-label="Cerrar el aviso">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+  </button>
 </div>
 
 <div class="grain" aria-hidden="true"></div>
@@ -188,6 +199,18 @@
         <li class="pillar reveal"><b>02</b><p><strong>Lo que dice la bolsa es lo que hay.</strong> Contenido neto, ingredientes y porciones declarados en el frente. Sin mezclas que escondan la dosis real.</p></li>
         <li class="pillar reveal"><b>03</b><p><strong>Precio de país.</strong> Formatos de 200 g a 3.500 g para que la buena nutrición no dependa de una importación.</p></li>
       </ul>
+
+      <div class="manifesto__capitulo reveal">
+        <p class="eyebrow">Agosto de 2026</p>
+        <p>El terremoto del 10 de agosto obligó a cerrar nuestra sede física en Cali: el local
+          resistió, pero el edificio vecino quedó en riesgo y primero está la vida. Seis años de
+          trabajo no se caen con una pared. <strong style="color:var(--cream);font-weight:500">Hoy
+          la tienda es esta</strong>, y cada pedido sostiene directamente la operación.</p>
+        <div class="hero__actions" style="margin-top:1.1rem">
+          <a class="btn btn--ghost" href="https://www.instagram.com/reel/Db7C-_Pg-h_/" target="_blank" rel="noopener noreferrer" id="capituloHistoria">Ver la historia en Instagram</a>
+          <a class="btn" href="#combos">Apoyar con un pedido</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -799,10 +822,10 @@
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script defer src="assets/js/products.js?v=64"></script>
-<script defer src="assets/js/carrito.js?v=64"></script>
-<script defer src="assets/js/combos.js?v=64"></script>
-<script defer src="assets/js/checkout.js?v=64"></script>
-<script defer src="assets/js/main.js?v=64"></script>
+<script defer src="assets/js/products.js?v=65"></script>
+<script defer src="assets/js/carrito.js?v=65"></script>
+<script defer src="assets/js/combos.js?v=65"></script>
+<script defer src="assets/js/checkout.js?v=65"></script>
+<script defer src="assets/js/main.js?v=65"></script>
 </body>
 </html>
