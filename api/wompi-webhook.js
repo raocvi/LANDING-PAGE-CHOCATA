@@ -27,8 +27,14 @@ function resumenTx(tx) {
 }
 
 module.exports = async function handler(req, res) {
+  /* El panel de Wompi verifica la URL con una visita simple antes de dejarla
+     guardar: a GET/HEAD se responde 200 para que el registro no falle. Los
+     eventos reales llegan por POST y esos sí exigen firma. */
+  if (req.method === 'GET' || req.method === 'HEAD') {
+    return res.status(200).json({ ok: true, servicio: 'webhook de pagos CHOCATA' });
+  }
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
+    res.setHeader('Allow', 'GET, POST');
     return res.status(405).json({ mensaje: 'Método no permitido.' });
   }
 
