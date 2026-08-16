@@ -140,7 +140,7 @@
     /* Preguntas de saber: beneficios, ingredientes, para qué sirve, casos
        personales. Estas van primero a la IA, que responde solo con las
        fichas; si la IA no está o no sabe, cae a la respuesta fija. */
-    var quiereSaber = /beneficio|sirve|para que|ayuda|efecto|ingrediente|contiene|composicion|engorda|azucar|apto|embaraz|lactancia|nino|nina|lactosa|gluten|es bueno|es malo|hace dano|diferencia/.test(n);
+    var quiereSaber = /beneficio|sirve|para que|ayuda|efecto|ingrediente|contiene|composicion|engorda|azucar|apto|embaraz|lactancia|nino|nina|lactosa|gluten|es bueno|es malo|hace dano|diferencia|cafeina|caloria|endulza|estevia|puedo tomar|se puede tomar|de noche|en ayunas|cuanta|cuantos gramos de/.test(n);
 
     if (prod) {
       var precios = preciosDe(prod.key);
