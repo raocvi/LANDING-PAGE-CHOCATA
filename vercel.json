@@ -65,5 +65,10 @@
         }
       ]
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "feat/pedidos-y-pagos": false
+    }
+  }
 }
