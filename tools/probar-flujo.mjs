@@ -127,8 +127,7 @@ const ia2 = await fetch(BASE + '/api/sofi', { method: 'POST', headers: { 'Conten
 ok('una pregunta vacía se rechaza', ia2.status === 400);
 const ia3 = await fetch(BASE + '/api/sofi', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Origin': 'https://sitio-malo.com' }, body: JSON.stringify({ pregunta: 'hola' }) });
 ok('un origen ajeno se rechaza', ia3.status === 403);
-console.log('
-Central de despachos');
+console.log('\nCentral de despachos');
 ok('la lista exige el token', (await fetch(BASE + '/api/pedidos')).status === 401);
 const listado = await (await fetch(BASE + '/api/pedidos', { headers: { 'x-admin-token': 'admin_desarrollo' } })).json();
 ok('con token entrega los pedidos con cliente', listado.total > 0 && listado.pedidos[0].cliente !== undefined);
