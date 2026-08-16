@@ -24,10 +24,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" href="assets/img/brand/favicon.png?v=57">
-<link rel="apple-touch-icon" href="assets/img/brand/favicon.png?v=57">
-<link rel="stylesheet" href="assets/css/style.css?v=57">
-<link rel="stylesheet" href="assets/css/tienda.css?v=57">
+<link rel="icon" type="image/png" href="assets/img/brand/favicon.png?v=58">
+<link rel="apple-touch-icon" href="assets/img/brand/favicon.png?v=58">
+<link rel="stylesheet" href="assets/css/style.css?v=58">
+<link rel="stylesheet" href="assets/css/tienda.css?v=58">
 <script>document.documentElement.classList.add('motion');</script>
 </head>
 <body>
@@ -361,7 +361,10 @@
 <!-- ============ MODAL ============ -->
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal__scrim" data-close></div>
-  <div class="modal__panel" id="modalPanel">
+  <!-- data-lenis-prevent: con el scroll suave detenido, Lenis cancela los
+       gestos táctiles de toda la página; sin este atributo el panel no se
+       puede desplazar con el dedo (iPad, iPhone). -->
+  <div class="modal__panel" id="modalPanel" data-lenis-prevent>
     <div class="modal__closebar">
       <button class="modal__close" data-close aria-label="Cerrar ficha de producto">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
@@ -794,10 +797,10 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="assets/js/products.js?v=57"></script>
-<script src="assets/js/carrito.js?v=57"></script>
-<script src="assets/js/combos.js?v=57"></script>
-<script src="assets/js/checkout.js?v=57"></script>
-<script src="assets/js/main.js?v=57"></script>
+<script src="assets/js/products.js?v=58"></script>
+<script src="assets/js/carrito.js?v=58"></script>
+<script src="assets/js/combos.js?v=58"></script>
+<script src="assets/js/checkout.js?v=58"></script>
+<script src="assets/js/main.js?v=58"></script>
 </body>
 </html>
