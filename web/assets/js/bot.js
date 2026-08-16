@@ -88,6 +88,10 @@
       'sin abrir y el sello intacto (son alimentos). Y si algo llega en mal estado o no ' +
       'corresponde, lo reponemos o devolvemos tu dinero sin costo. ' +
       '<a href="legal.html" target="_blank" rel="noopener">Los términos completos están aquí</a>.',
+    exterior: 'Por ahora <b>solo enviamos dentro de Colombia</b>: exportar alimentos exige ' +
+      'registros sanitarios por cada país y el flete internacional cuesta más que el producto. ' +
+      'Pero si estás en el exterior, <b>sí puedes comprar</b>: paga con tu tarjeta desde ' +
+      'cualquier país y el pedido le llega a tu familia en Colombia.',
     pedido: 'Tu pedido queda confirmado cuando la pasarela aprueba el pago; te escribimos al ' +
       'correo y al celular que registraste. Si tienes tu número de referencia (CHOCATA-…), ' +
       'escríbenos por WhatsApp y te decimos en qué va.',
@@ -113,6 +117,7 @@
     { claves: ['minimo', 'pedido minimo'], r: function () { return R.minimo; } },
     { claves: ['combo', 'kit', 'promocion', 'descuento', 'oferta'], r: respuestaCombos },
     { claves: ['sede', 'local', 'tienda fisica', 'direccion', 'donde estan', 'donde queda', 'terremoto', 'visitar'], r: function () { return R.sede; } },
+    { claves: ['exterior', 'internacional', 'estados unidos', 'usa', 'espana', 'miami', 'madrid', 'otro pais', 'fuera de colombia', 'exportan'], r: function () { return R.exterior; } },
     { claves: ['devolucion', 'retracto', 'garantia', 'cambio', 'reembolso'], r: function () { return R.retracto; } },
     { claves: ['mi pedido', 'referencia', 'estado', 'confirmacion', 'factura'], r: function () { return R.pedido; } },
     { claves: ['enfermedad', 'medicamento', 'cura', 'diabetes', 'embarazo', 'medico'], r: function () { return R.salud; } }
