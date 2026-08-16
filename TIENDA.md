@@ -123,10 +123,13 @@ Sofi responde al instante con reglas fijas (precios, envíos, pagos, combos, sed
 Gemini configurada, las preguntas de **beneficios e ingredientes** («¿para qué sirve la
 creatina?», «¿el latte tiene cafeína?») las responde la IA — pero encadenada:
 
-- **Su única fuente es el corpus de las fichas de la página** (`api/_conocimiento.js`), que ya
-  citan metaanálisis, posturas de la ISSN y declaraciones EFSA. No tiene internet ni memoria.
-- Tiene orden de responder `NO_LO_SE` ante lo que no esté en las fichas → Sofi cae a la
-  respuesta fija o a WhatsApp. **No inventar es el diseño, no una esperanza.**
+- **Dos niveles de fuente.** Sobre CHOCATA y sus productos, la única fuente es el corpus de las
+  fichas (`api/_conocimiento.js`). Sobre nutrición e ingredientes en general (beneficios de la
+  cúrcuma, cuánta proteína necesita una persona), responde con ciencia bien establecida:
+  metaanálisis, OMS, NIH, EFSA, ISSN — con orden explícita de decir «la ciencia todavía no es
+  concluyente» cuando la evidencia sea débil, y de no citar modas ni remedios sin respaldo.
+- Ante temas que no son de nutrición ni de la marca responde `NO_LO_SE` → Sofi cae a la
+  respuesta fija o a WhatsApp.
 - Palabras sencillas, máximo 90 palabras, jamás promesas médicas, ignora instrucciones
   escondidas en la pregunta del visitante.
 - La llave vive solo en el servidor; el endpoint rechaza orígenes ajenos y preguntas de más de
