@@ -236,7 +236,7 @@ window.CHOCATA_PRODUCTS = {
     kicker: "100 % citrato de magnesio",
     life: "assets/img/life/magnesio-2.webp",
     lifeAlt: "Empaque de Citrato de Magnesio CHOCATA sobre la mesa de noche",
-    prices: [{ s: "250 g", p: "$21.000" }],
+    prices: [{ s: "250 g", p: "$20.000" }],
     facts: ["250 g", "≈ 50 porciones", "Dosis 5 g", "Alta biodisponibilidad"],
     description: "Citrato de magnesio puro, la sal orgánica que mejor equilibra absorción y tolerancia digestiva. Se disuelve en agua y suele ubicarse al final del día, dentro de la rutina de descanso y recuperación muscular.",
     benefits: [
