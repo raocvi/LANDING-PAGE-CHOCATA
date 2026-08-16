@@ -22,7 +22,8 @@
     APPROVED: { nombre: 'Por despachar', color: COLORES.dorado },
     PENDIENTE: { nombre: 'Pendiente de pago', color: '#6E645B' },
     REVISAR_MONTO: { nombre: 'Revisar', color: COLORES.rosa },
-    OTRO: { nombre: 'Otros', color: '#4a443d' }
+    DECLINED: { nombre: 'Rechazado', color: '#4a443d' },
+    OTRO: { nombre: 'Otros', color: '#3a352f' }
   };
 
   var pedidos = [];
@@ -59,7 +60,15 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
     });
   }
-  function diaDe(iso) { return String(iso || '').slice(0, 10); }
+  function dosDigitos(n) { return String(n).padStart(2, '0'); }
+  /* Día y mes en hora LOCAL: con el corte UTC un pedido de la noche caía en
+     el día siguiente de la gráfica. */
+  function diaDe(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    return d.getFullYear() + '-' + dosDigitos(d.getMonth() + 1) + '-' + dosDigitos(d.getDate());
+  }
+  function mesDe(iso) { return diaDe(iso).slice(0, 7); }
 
   function estadoDe(p) {
     if (p.despacho) return 'DESPACHADO';
@@ -76,7 +85,7 @@
           ((p.cliente && p.cliente.ciudad) || '—') !== filtros.ciudad) return false;
       if (excepto !== 'estado' && filtros.estado && estadoDe(p) !== filtros.estado) return false;
       if (excepto !== 'dia' && filtros.dia && diaDe(p.creado) !== filtros.dia) return false;
-      if (excepto !== 'mes' && filtros.mes && String(p.creado || '').slice(0, 7) !== filtros.mes) return false;
+      if (excepto !== 'mes' && filtros.mes && mesDe(p.creado) !== filtros.mes) return false;
       return true;
     });
   }
@@ -250,7 +259,7 @@
     var dias = [];
     for (var i = 29; i >= 0; i--) {
       var d = new Date(hoy); d.setDate(hoy.getDate() - i);
-      dias.push(d.toISOString().slice(0, 10));
+      dias.push(d.getFullYear() + '-' + dosDigitos(d.getMonth() + 1) + '-' + dosDigitos(d.getDate()));
     }
     var suma = {};
     datos.forEach(function (p) { var k = diaDe(p.creado); suma[k] = (suma[k] || 0) + (p.total || 0); });
@@ -307,20 +316,27 @@
     var datos = filtrar('mes').filter(pagado);
     var suma = {};
     datos.forEach(function (p) {
-      var k = String(p.creado || '').slice(0, 7);
+      var k = mesDe(p.creado);
       if (k) suma[k] = (suma[k] || 0) + (p.total || 0);
     });
-    var claves = Object.keys(suma).sort().slice(-12);
-    if (!claves.length) { caja.innerHTML = '<p class="tb-vacio">Sin datos con este filtro.</p>'; return; }
+    /* Los 12 meses corridos, siempre: un mes en cero es información, no un
+       hueco en el eje. */
+    var claves = [];
+    var cursor = new Date();
+    for (var m = 11; m >= 0; m--) {
+      var f = new Date(cursor.getFullYear(), cursor.getMonth() - m, 1);
+      claves.push(f.getFullYear() + '-' + dosDigitos(f.getMonth() + 1));
+    }
 
     var W = 560, H = 210, ABAJO = 30, ARRIBA = 26;
-    var max = Math.max.apply(null, claves.map(function (k) { return suma[k]; }));
+    var max = Math.max.apply(null, claves.map(function (k) { return suma[k] || 0; }).concat([1]));
     var paso = W / claves.length;
     var anchoBarra = Math.min(64, paso - 14);
     var svg = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Ventas por mes">'];
 
     claves.forEach(function (k, i) {
-      var h = Math.max(5, (suma[k] / max) * (H - ABAJO - ARRIBA));
+      var v = suma[k] || 0;
+      var h = v ? Math.max(5, (v / max) * (H - ABAJO - ARRIBA)) : 2;
       var x = i * paso + (paso - anchoBarra) / 2;
       var y = H - ABAJO - h;
       var sel = filtros.mes === k;
@@ -328,8 +344,8 @@
       svg.push('<g class="tb-barra' + (apagada ? ' tb-apagada' : '') + (sel ? ' tb-seleccion' : '') + '" data-k="' + k + '">' +
         '<rect class="tb-hit" x="' + (i * paso) + '" y="0" width="' + paso + '" height="' + H + '"/>' +
         '<rect class="tb-relleno" x="' + x + '" y="' + y + '" width="' + anchoBarra + '" height="' + h + '" rx="4" fill="' + COLORES.verde + '"/>' +
-        '<text class="tb-valor" text-anchor="middle" x="' + (i * paso + paso / 2) + '" y="' + (y - 8) + '">' + pesosCortos(suma[k]) + '</text>' +
-        '<text class="tb-eje" x="' + (i * paso + paso / 2) + '" y="' + (H - 10) + '">' + nombreMes(k) + '</text>' +
+        (v ? '<text class="tb-valor" text-anchor="middle" x="' + (i * paso + paso / 2) + '" y="' + (y - 8) + '">' + pesosCortos(v) + '</text>' : '') +
+        '<text class="tb-eje" x="' + (i * paso + paso / 2) + '" y="' + (H - 10) + '">' + MESES_CORTOS[+k.slice(5, 7) - 1] + '</text>' +
       '</g>');
     });
     svg.push('</svg>');
@@ -338,7 +354,7 @@
     caja.querySelectorAll('.tb-barra').forEach(function (g) {
       var k = g.getAttribute('data-k');
       g.addEventListener('click', function () { alternar('mes', k); });
-      conTip(g, '<b>' + nombreMes(k) + '</b><br>' + pesos(suma[k]));
+      conTip(g, '<b>' + nombreMes(k) + '</b><br>' + pesos(suma[k] || 0));
     });
   }
 
