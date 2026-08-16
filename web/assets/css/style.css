@@ -952,3 +952,33 @@ html.motion .reveal-fade { opacity: 0; }
   .hero__benefits::-webkit-scrollbar { display: none; }
   .hero__benefits-track { animation: none; }
 }
+
+/* ---------- Aviso de la sede (terremoto) ---------- */
+.aviso-sede {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 120;
+  display: flex; align-items: center; justify-content: center; gap: .8rem;
+  padding: .55rem clamp(.9rem, 3vw, 1.5rem);
+  background: linear-gradient(90deg, #1a1208, #241505 55%, #1a1208);
+  border-bottom: 1px solid rgba(242, 176, 30, .35);
+}
+.aviso-sede p { font-size: .8rem; line-height: 1.45; color: var(--muted); text-align: center; }
+.aviso-sede b { color: var(--gold-soft); font-weight: 500; }
+.aviso-sede a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.aviso-sede button {
+  flex: 0 0 auto; display: grid; place-items: center; width: 30px; height: 30px;
+  background: none; border: 0; border-radius: 8px; color: var(--faint); cursor: pointer;
+}
+.aviso-sede button:hover { color: var(--cream); background: rgba(248,243,235,.08); }
+.aviso-sede button svg { width: 14px; height: 14px; }
+/* Con el aviso visible, la barra de navegación baja para no taparlo. */
+body.con-aviso .nav { top: var(--aviso-h, 42px); }
+
+/* ---------- Capítulo del terremoto en el manifiesto ---------- */
+.manifesto__capitulo {
+  margin-top: 2.2rem; padding: 1.4rem 1.5rem;
+  border: 1px solid rgba(242, 176, 30, .22); border-radius: 16px;
+  background: rgba(242, 176, 30, .045);
+}
+.manifesto__capitulo p:not(.eyebrow) {
+  margin-top: .7rem; font-size: .95rem; line-height: 1.75; color: var(--muted);
+}

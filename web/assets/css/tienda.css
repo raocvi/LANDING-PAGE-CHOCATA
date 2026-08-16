@@ -302,3 +302,9 @@
 .medio--destacado { border-color: rgba(242, 176, 30, .32); background: rgba(242, 176, 30, .05); }
 .medio--destacado svg { color: var(--gold); }
 .medio--destacado b { color: var(--gold-soft); }
+
+/* ---------- Nota de la causa en el carrito ---------- */
+.carrito__causa {
+  font-size: .74rem; line-height: 1.55; color: var(--gold-soft); opacity: .85;
+  padding-top: .2rem; border-top: 1px dashed rgba(242, 176, 30, .25); margin-top: .2rem;
+}

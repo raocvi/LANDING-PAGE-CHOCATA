@@ -562,4 +562,37 @@
     viewport.classList.add('is-native');
   }
 
+  /* ---------- Aviso de la sede (terremoto de Cali) ---------- */
+  (function () {
+    var aviso = document.getElementById('avisoSede');
+    if (!aviso) return;
+    var LLAVE_AVISO = 'chocata.avisoSede.cerrado';
+    var cerrado = false;
+    try { cerrado = localStorage.getItem(LLAVE_AVISO) === '1'; } catch (e) { /* incógnito */ }
+    if (cerrado) return;
+
+    aviso.hidden = false;
+    document.body.classList.add('con-aviso');
+    /* La barra de navegación baja exactamente lo que mide el aviso. */
+    function ajustar() {
+      document.body.style.setProperty('--aviso-h', aviso.offsetHeight + 'px');
+    }
+    ajustar();
+    window.addEventListener('resize', ajustar, { passive: true });
+
+    document.getElementById('avisoSedeCerrar').addEventListener('click', function () {
+      aviso.hidden = true;
+      document.body.classList.remove('con-aviso');
+      try { localStorage.setItem(LLAVE_AVISO, '1'); } catch (e) { /* sin memoria: reaparece */ }
+      medir('Aviso sede', { accion: 'cerrar' });
+    });
+    document.getElementById('avisoSedeHistoria').addEventListener('click', function () {
+      medir('Aviso sede', { accion: 'ver historia' });
+    });
+    var capitulo = document.getElementById('capituloHistoria');
+    if (capitulo) capitulo.addEventListener('click', function () {
+      medir('Historia terremoto', { origen: 'manifiesto' });
+    });
+  })();
+
 })();

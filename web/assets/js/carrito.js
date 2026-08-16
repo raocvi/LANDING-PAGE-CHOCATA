@@ -239,7 +239,8 @@
               ' cuesta más que el producto. Los combos ya salen por encima y ahorran hasta un 17%.</span>' +
             '<button class="carrito__vercombos" id="carritoCombos">Ver los combos</button>' +
           '</div>'
-        : '<p class="carrito__envio">El costo de envío se confirma antes de pagar, según tu ciudad.</p>') +
+        : '<p class="carrito__envio">El costo de envío se confirma antes de pagar, según tu ciudad.</p>' +
+          '<p class="carrito__causa">Sin sede física tras el terremoto de Cali, tu pedido sostiene directamente la operación. Gracias.</p>') +
       '<button class="btn carrito__pagar" id="carritoPagar"' + (falta > 0 ? ' disabled' : '') + '>' +
         (falta > 0 ? 'Pedido mínimo ' + pesos(reglas.pedidoMinimo) : 'Continuar con el pedido') +
       '</button>';
