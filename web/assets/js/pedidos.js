@@ -1,11 +1,10 @@
 /* =========================================================================
    CHOCATA — Central de despachos
 
-   Página privada de la administración: lista los pedidos con todo lo
-   necesario para despachar. La clave nunca se guarda en el servidor de la
-   página; viaja en cada consulta y el servidor la compara en tiempo
-   constante. Se recuerda solo en este navegador (sessionStorage), así al
-   cerrar la pestaña vuelve a pedirla.
+   Página privada de la administración: estadísticas del historial, lista de
+   pedidos con datos de entrega, y control de despacho con número de guía.
+   La clave viaja en cada consulta y el servidor la compara en tiempo
+   constante; solo se recuerda en la pestaña (sessionStorage).
    ========================================================================= */
 (function () {
   'use strict';
@@ -14,6 +13,7 @@
   var puerta = document.getElementById('puerta');
   var tablero = document.getElementById('tablero');
   var lista = document.getElementById('lista');
+  var stats = document.getElementById('estadisticas');
   var errorCaja = document.getElementById('puertaError');
   var filtroActivo = 'todos';
   var pedidos = [];
@@ -28,23 +28,57 @@
     } catch (e) { return iso || ''; }
   }
 
-  var ESTADOS = {
-    APPROVED: ['Pagado', 'ok'],
-    PENDIENTE: ['Pendiente de pago', 'espera'],
-    REVISAR_MONTO: ['⚠ Revisar monto — no despachar', 'alerta'],
-    DECLINED: ['Rechazado', 'gris'],
-    VOIDED: ['Anulado', 'gris'],
-    ERROR: ['Error en la pasarela', 'gris']
-  };
-
   function esc(t) {
     return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
     });
   }
 
+  /* El estado que se muestra: el despacho manda sobre el estado del pago. */
+  function estadoVisual(p) {
+    if (p.despacho) return 'DESPACHADO';
+    return p.estado || '—';
+  }
+
+  var ESTADOS = {
+    DESPACHADO: ['Despachado', 'ok'],
+    APPROVED: ['Pagado · por despachar', 'atencion'],
+    PENDIENTE: ['Pendiente de pago', 'gris'],
+    REVISAR_MONTO: ['⚠ Revisar monto — no despachar', 'alerta'],
+    DECLINED: ['Rechazado', 'gris'],
+    VOIDED: ['Anulado', 'gris'],
+    ERROR: ['Error en la pasarela', 'gris']
+  };
+
+  /* ---------- Estadísticas del historial ---------- */
+
+  function pintarEstadisticas() {
+    var pagados = pedidos.filter(function (p) { return p.estado === 'APPROVED'; });
+    var vendido = pagados.reduce(function (n, p) { return n + (p.total || 0); }, 0);
+    var porDespachar = pagados.filter(function (p) { return !p.despacho; }).length;
+    var despachados = pagados.length - porDespachar;
+
+    var unidades = {};
+    pagados.forEach(function (p) {
+      (p.lineas || []).forEach(function (l) {
+        unidades[l.nombre] = (unidades[l.nombre] || 0) + l.cant;
+      });
+    });
+    var top = Object.keys(unidades).sort(function (a, b) { return unidades[b] - unidades[a]; })[0];
+
+    stats.innerHTML =
+      '<div class="admin-stat"><b>' + pesos(vendido) + '</b><span>Vendido (pagado)</span></div>' +
+      '<div class="admin-stat"><b>' + pagados.length + '</b><span>Pedidos pagados</span></div>' +
+      '<div class="admin-stat' + (porDespachar ? ' admin-stat--pendiente' : '') + '"><b>' + porDespachar + '</b><span>Por despachar</span></div>' +
+      '<div class="admin-stat"><b>' + despachados + '</b><span>Despachados</span></div>' +
+      (top ? '<div class="admin-stat admin-stat--ancho"><b>' + esc(top) + '</b><span>Más vendido (' + unidades[top] + ' und)</span></div>' : '');
+  }
+
+  /* ---------- Tarjetas ---------- */
+
   function tarjeta(p) {
-    var e = ESTADOS[p.estado] || [p.estado || '—', 'gris'];
+    var ev = estadoVisual(p);
+    var e = ESTADOS[ev] || [ev, 'gris'];
     var c = p.cliente || {};
     var lineas = (p.lineas || []).map(function (l) {
       return '<li>' + l.cant + ' × ' + esc(l.nombre) + ' <em>' + esc(l.talla) + '</em></li>';
@@ -52,7 +86,19 @@
     var direccion = [c.direccion, c.ciudad, c.departamento].filter(Boolean).join(', ');
     var celular = String(c.celular || '').replace(/\D/g, '');
 
-    return '<article class="admin-pedido" data-estado="' + esc(p.estado) + '">' +
+    var bloqueDespacho = '';
+    if (p.despacho) {
+      bloqueDespacho = '<p class="admin-guia">Guía: <b>' + (esc(p.despacho.guia) || 'sin número') +
+        '</b> · ' + fecha(p.despacho.fecha) + '</p>';
+    } else if (p.estado === 'APPROVED') {
+      bloqueDespacho =
+        '<div class="admin-despachar">' +
+          '<input type="text" maxlength="60" placeholder="Nº de guía transportadora" data-guia="' + esc(p.referencia) + '">' +
+          '<button class="btn" type="button" data-despachar="' + esc(p.referencia) + '">Marcar despachado</button>' +
+        '</div>';
+    }
+
+    return '<article class="admin-pedido" data-estado="' + esc(ev) + '">' +
       '<header>' +
         '<span class="admin-estado admin-estado--' + e[1] + '">' + e[0] + '</span>' +
         '<time>' + fecha(p.creado) + '</time>' +
@@ -74,18 +120,25 @@
                 ', te escribimos de CHOCATA por tu pedido ' + p.referencia) +
                 '" target="_blank" rel="noopener noreferrer">WhatsApp al cliente</a>'
               : '') +
-            '<button class="btn" type="button" data-copiar="' +
+            '<button class="btn btn--ghost" type="button" data-copiar="' +
               esc(c.nombre + ' — ' + celular + ' — ' + direccion + (c.notas ? ' — ' + c.notas : '')) +
             '">Copiar datos de envío</button>' +
           '</div>'
         : '<p class="admin-cliente"><em>Pago huérfano: sin datos de pedido. Buscar en el panel de Wompi.</em></p>') +
+      bloqueDespacho +
     '</article>';
   }
 
+  function coincide(p) {
+    if (filtroActivo === 'todos') return true;
+    if (filtroActivo === 'POR_DESPACHAR') return p.estado === 'APPROVED' && !p.despacho;
+    if (filtroActivo === 'DESPACHADO') return !!p.despacho;
+    return p.estado === filtroActivo;
+  }
+
   function pintar() {
-    var visibles = pedidos.filter(function (p) {
-      return filtroActivo === 'todos' || p.estado === filtroActivo;
-    });
+    pintarEstadisticas();
+    var visibles = pedidos.filter(coincide);
     lista.innerHTML = visibles.length
       ? visibles.map(tarjeta).join('')
       : '<p class="admin-vacio">No hay pedidos ' +
@@ -100,7 +153,40 @@
         });
       });
     });
+
+    lista.querySelectorAll('[data-despachar]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var ref = b.getAttribute('data-despachar');
+        var campo = lista.querySelector('[data-guia="' + ref + '"]');
+        var guia = campo ? campo.value.trim() : '';
+        if (!guia && !confirm('¿Marcar como despachado sin número de guía?')) return;
+        b.disabled = true;
+        b.textContent = 'Guardando…';
+        fetch('/api/despachar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-token': sessionStorage.getItem(LLAVE) || ''
+          },
+          body: JSON.stringify({ referencia: ref, guia: guia })
+        })
+          .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+          .then(function (res) {
+            if (!res.ok) throw new Error(res.d.mensaje || 'No se pudo registrar.');
+            var p = pedidos.filter(function (x) { return x.referencia === ref; })[0];
+            if (p) p.despacho = res.d.despacho;
+            pintar();
+          })
+          .catch(function (err) {
+            b.disabled = false;
+            b.textContent = 'Marcar despachado';
+            alert(err.message);
+          });
+      });
+    });
   }
+
+  /* ---------- Sesión ---------- */
 
   function cargar(clave) {
     errorCaja.textContent = '';
@@ -148,7 +234,6 @@
     location.reload();
   });
 
-  /* Si la clave quedó de esta misma sesión, entra directo. */
   var guardada = null;
   try { guardada = sessionStorage.getItem(LLAVE); } catch (e) { /* incógnito */ }
   if (guardada) cargar(guardada).catch(function () { try { sessionStorage.removeItem(LLAVE); } catch (e) {} });

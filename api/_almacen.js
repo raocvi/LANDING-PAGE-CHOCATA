@@ -125,8 +125,27 @@ async function listarReferencias() {
   } catch { return []; }
 }
 
+/**
+ * Anota el despacho de un pedido: número de guía y fecha. No toca el estado
+ * del pago —ese es territorio del webhook—: el despacho es un campo aparte,
+ * así un reintento tardío de Wompi jamás borra que el paquete ya salió.
+ */
+async function anotarDespacho(referencia, guia) {
+  const previo = usaBlob() ? await leerBlob(referencia) : leerLocal(referencia);
+  if (!previo) return { ok: false, motivo: 'NO_EXISTE' };
+  if (previo.estado !== 'APPROVED') return { ok: false, motivo: 'NO_PAGADO', pedido: previo };
+  const actualizado = {
+    ...previo,
+    despacho: { guia: String(guia || '').trim().slice(0, 60), fecha: new Date().toISOString() },
+    actualizado: new Date().toISOString()
+  };
+  if (usaBlob()) await guardarBlob(actualizado);
+  else guardarLocal(actualizado);
+  return { ok: true, pedido: actualizado };
+}
+
 async function leer(referencia) {
   return usaBlob() ? leerBlob(referencia) : leerLocal(referencia);
 }
 
-module.exports = { crear, marcarEstado, leer, listarReferencias, usaBlob, CARPETA_LOCAL };
+module.exports = { crear, marcarEstado, leer, listarReferencias, anotarDespacho, usaBlob, CARPETA_LOCAL };
