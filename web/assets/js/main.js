@@ -204,6 +204,11 @@
 
   /* ---------- Reveals ---------- */
   if (animate) {
+    /* Le avisa al guardián del <head> que las animaciones sí arrancaron. Si
+       esta bandera no aparece en 3 segundos (CDN caído o colgado), el inline
+       quita la clase motion y el contenido se muestra sin animar: la página
+       jamás puede quedarse invisible esperando una animación. */
+    window.__chocataListo = true;
     gsap.utils.toArray('.reveal').forEach(function (el) {
       gsap.to(el, {
         opacity: 1, y: 0, duration: .95, ease: 'power3.out',
