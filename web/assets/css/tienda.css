@@ -514,7 +514,7 @@
   display: grid; gap: .15rem; padding: .9rem 1rem; border-radius: 13px;
   border: 1px solid var(--line); background: rgba(248,243,235,.03);
 }
-.admin-stat b { font-family: var(--display); font-size: 1.25rem; color: var(--gold-soft); font-weight: 500; }
+.admin-stat b { font-family: inherit; font-size: 1.15rem; color: var(--gold-soft); font-weight: 600; font-variant-numeric: tabular-nums; }
 .admin-stat span { font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 .admin-stat--pendiente { border-color: rgba(242,176,30,.4); }
 .admin-stat--ancho { grid-column: span 2; }

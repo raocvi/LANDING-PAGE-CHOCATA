@@ -6,13 +6,13 @@
 <title>Tablero — CHOCATA</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0A0806">
-<link rel="icon" type="image/png" href="assets/img/brand/favicon.png?v=84">
+<link rel="icon" type="image/png" href="assets/img/brand/favicon.png?v=85">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=84">
-<link rel="stylesheet" href="assets/css/tienda.css?v=84">
-<link rel="stylesheet" href="assets/css/tablero.css?v=84">
+<link rel="stylesheet" href="assets/css/style.css?v=85">
+<link rel="stylesheet" href="assets/css/tienda.css?v=85">
+<link rel="stylesheet" href="assets/css/tablero.css?v=85">
 </head>
 <body>
 
@@ -59,13 +59,23 @@
         </section>
 
         <section class="tb-carta">
+          <h2>Ventas por mes <span>dinero pagado · toca para filtrar</span></h2>
+          <div id="graficaMeses"></div>
+        </section>
+
+        <section class="tb-carta">
           <h2>Estado de los pedidos <span>toca para filtrar</span></h2>
           <div id="graficaEstados"></div>
         </section>
 
         <section class="tb-carta">
-          <h2>Productos más vendidos <span>unidades pagadas · toca para filtrar</span></h2>
+          <h2>Dinero por referencia <span>pesos pagados · toca para filtrar</span></h2>
           <div id="graficaProductos"></div>
+        </section>
+
+        <section class="tb-carta">
+          <h2>Dinero por unidad <span>promedio por unidad de cada referencia</span></h2>
+          <div id="graficaUnitario"></div>
         </section>
 
         <section class="tb-carta">
@@ -85,6 +95,6 @@
 
 <div class="tb-tooltip" id="tooltip" hidden></div>
 
-<script defer src="assets/js/tablero.js?v=84"></script>
+<script defer src="assets/js/tablero.js?v=85"></script>
 </body>
 </html>

@@ -20,8 +20,10 @@
   background: linear-gradient(150deg, rgba(248,243,235,.05), rgba(248,243,235,.015));
 }
 .tb-kpi b {
-  font-family: var(--display); font-size: clamp(1.2rem, 2.4vw, 1.6rem);
-  font-weight: 500; color: var(--cream); font-variant-numeric: tabular-nums;
+  /* Jost y no Bodoni: el trazo vertical del $ en la didona es un hilo que
+     desaparece a este tamaño y la cifra se lee como «S3.967.500». */
+  font-family: inherit; font-size: clamp(1.15rem, 2.3vw, 1.5rem);
+  font-weight: 600; color: var(--cream); font-variant-numeric: tabular-nums;
 }
 .tb-kpi span { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
 .tb-kpi--alerta { border-color: rgba(198, 134, 0, .55); }
