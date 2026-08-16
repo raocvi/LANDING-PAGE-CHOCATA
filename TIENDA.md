@@ -23,7 +23,8 @@ Rama `feat/pedidos-y-pagos`. No toca `main`: la página publicada sigue igual ha
 | Tablero de inteligencia (/tablero) | Listo — filtro cruzado, misma clave |
 | Central de despachos (/pedidos) | Listo — la dueña entra con el ADMIN_TOKEN |
 | PSE activo de verdad | **Bloqueado**: hay que habilitarlo con Bancolombia |
-| Aviso por WhatsApp al confirmarse un pago | Listo (**falta activar CallMeBot**, 2 minutos) |
+| Aviso por WhatsApp al confirmarse un pago | Listo y activo |
+| Correo de confirmación al cliente | Listo (**falta la llave de Brevo**, 10 minutos) |
 | Sofi, asistente de preguntas | Listo (respuestas fijas siempre; **IA de Gemini al poner la llave**) |
 
 ## Probar en local
@@ -119,7 +120,22 @@ avisos al propio número, sin garantía de entrega. Si el negocio crece y el avi
 el paso serio es la API oficial de WhatsApp Business (Meta) o Twilio; se cambia por dentro de
 `api/_avisos.js` sin tocar el webhook.
 
-### 6. La IA de Sofi (Gemini)
+### 6. Correo de confirmación al cliente (Brevo)
+
+Al confirmarse un pago, el cliente recibe un correo de CHOCATA con el detalle del pedido, la
+referencia, la dirección de entrega y el botón de WhatsApp. Proveedor: Brevo (gratis, 300/día).
+
+**Activarlo:**
+1. Crear cuenta en brevo.com (gratis).
+2. En Brevo → Senders & IP → **verificar el correo remitente** (el de la empresa o un Gmail).
+3. En Brevo → SMTP & API → **generar una API key**.
+4. En Vercel: `BREVO_API_KEY` (Sensitive), `CORREO_REMITENTE` = el correo verificado, y
+   opcional `CORREO_NOMBRE` (por defecto «CHOCATA Colombia»). Redeploy.
+
+Sin las variables, el sistema funciona igual y el log dice «Brevo sin configurar». Un correo
+fallido jamás tumba el webhook.
+
+### 7. La IA de Sofi (Gemini)
 
 Sofi responde al instante con reglas fijas (precios, envíos, pagos, combos, sede). Con la llave de
 Gemini configurada, las preguntas de **beneficios e ingredientes** («¿para qué sirve la
@@ -141,16 +157,16 @@ creatina?», «¿el latte tiene cafeína?») las responde la IA — pero encaden
 El modelo por defecto es `gemini-2.5-flash` (nivel gratuito disponible; cambiable con
 `GEMINI_MODELO`). Sin la llave, Sofi funciona igual con sus respuestas fijas.
 
-### 7. Webhook en Wompi
+### 8. Webhook en Wompi
 
 Registrar `https://TU-DOMINIO/api/wompi-webhook` como URL de eventos.
 
-### 8. Hosting
+### 9. Hosting
 
 Las funciones de servidor y el cobro hacen el proyecto **inequívocamente comercial**, y el plan
 gratuito de Vercel solo permite uso personal. Toca Pro (20 USD/mes) o mover a Cloudflare.
 
-### 9. Legal
+### 10. Legal
 
 Completar en `web/legal.html` el NIT, la dirección fiscal y el correo de notificaciones, y hacerlo
 revisar por un abogado. Falta además la facturación electrónica DIAN.
