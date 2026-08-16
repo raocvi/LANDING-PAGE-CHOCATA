@@ -26,7 +26,7 @@
   };
 
   var pedidos = [];
-  var filtros = { producto: null, ciudad: null, estado: null, dia: null };
+  var filtros = { producto: null, ciudad: null, estado: null, dia: null, mes: null };
 
   var puerta = document.getElementById('puerta');
   var tablero = document.getElementById('tablero');
@@ -63,6 +63,7 @@
           ((p.cliente && p.cliente.ciudad) || '—') !== filtros.ciudad) return false;
       if (excepto !== 'estado' && filtros.estado && estadoDe(p) !== filtros.estado) return false;
       if (excepto !== 'dia' && filtros.dia && diaDe(p.creado) !== filtros.dia) return false;
+      if (excepto !== 'mes' && filtros.mes && String(p.creado || '').slice(0, 7) !== filtros.mes) return false;
       return true;
     });
   }
@@ -153,10 +154,10 @@
         plata[l.nombre] = (plata[l.nombre] || 0) + (l.total || 0);
       });
     });
-    var lista = Object.keys(conteo)
-      .map(function (k) { return { k: k, v: conteo[k], extra: pesos(plata[k]) + ' vendidos' }; })
+    var lista = Object.keys(plata)
+      .map(function (k) { return { k: k, v: plata[k], extra: conteo[k] + ' unidades' }; })
       .sort(function (a, b) { return b.v - a.v; }).slice(0, 7);
-    barrasH('graficaProductos', lista, COLORES.azul, 'producto', function (v) { return v + ' und'; }, function (d) { return pesosCortos(plata[d.k]); });
+    barrasH('graficaProductos', lista, COLORES.azul, 'producto', pesosCortos, function (d) { return conteo[d.k] + ' und'; });
   }
 
   function pintarCiudades() {
@@ -280,6 +281,70 @@
     });
   }
 
+  /* ---------- Ventas por mes (barras verticales) ---------- */
+
+  var MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  function nombreMes(k) {
+    return MESES_CORTOS[+k.slice(5, 7) - 1] + ' ' + k.slice(0, 4);
+  }
+
+  function pintarMeses() {
+    var caja = document.getElementById('graficaMeses');
+    var datos = filtrar('mes').filter(pagado);
+    var suma = {};
+    datos.forEach(function (p) {
+      var k = String(p.creado || '').slice(0, 7);
+      if (k) suma[k] = (suma[k] || 0) + (p.total || 0);
+    });
+    var claves = Object.keys(suma).sort().slice(-12);
+    if (!claves.length) { caja.innerHTML = '<p class="tb-vacio">Sin datos con este filtro.</p>'; return; }
+
+    var W = 560, H = 210, ABAJO = 30, ARRIBA = 26;
+    var max = Math.max.apply(null, claves.map(function (k) { return suma[k]; }));
+    var paso = W / claves.length;
+    var anchoBarra = Math.min(64, paso - 14);
+    var svg = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Ventas por mes">'];
+
+    claves.forEach(function (k, i) {
+      var h = Math.max(5, (suma[k] / max) * (H - ABAJO - ARRIBA));
+      var x = i * paso + (paso - anchoBarra) / 2;
+      var y = H - ABAJO - h;
+      var sel = filtros.mes === k;
+      var apagada = filtros.mes && !sel;
+      svg.push('<g class="tb-barra' + (apagada ? ' tb-apagada' : '') + (sel ? ' tb-seleccion' : '') + '" data-k="' + k + '">' +
+        '<rect class="tb-hit" x="' + (i * paso) + '" y="0" width="' + paso + '" height="' + H + '"/>' +
+        '<rect class="tb-relleno" x="' + x + '" y="' + y + '" width="' + anchoBarra + '" height="' + h + '" rx="4" fill="' + COLORES.verde + '"/>' +
+        '<text class="tb-valor" text-anchor="middle" x="' + (i * paso + paso / 2) + '" y="' + (y - 8) + '">' + pesosCortos(suma[k]) + '</text>' +
+        '<text class="tb-eje" x="' + (i * paso + paso / 2) + '" y="' + (H - 10) + '">' + nombreMes(k) + '</text>' +
+      '</g>');
+    });
+    svg.push('</svg>');
+    caja.innerHTML = svg.join('');
+
+    caja.querySelectorAll('.tb-barra').forEach(function (g) {
+      var k = g.getAttribute('data-k');
+      g.addEventListener('click', function () { alternar('mes', k); });
+      conTip(g, '<b>' + nombreMes(k) + '</b><br>' + pesos(suma[k]));
+    });
+  }
+
+  /* ---------- Dinero por unidad de cada referencia ---------- */
+
+  function pintarUnitario() {
+    var datos = filtrar('producto').filter(pagado);
+    var conteo = {}, plata = {};
+    datos.forEach(function (p) {
+      (p.lineas || []).forEach(function (l) {
+        conteo[l.nombre] = (conteo[l.nombre] || 0) + l.cant;
+        plata[l.nombre] = (plata[l.nombre] || 0) + (l.total || 0);
+      });
+    });
+    var lista = Object.keys(plata)
+      .map(function (k) { return { k: k, v: plata[k] / conteo[k], extra: conteo[k] + ' unidades vendidas' }; })
+      .sort(function (a, b) { return b.v - a.v; }).slice(0, 7);
+    barrasH('graficaUnitario', lista, COLORES.rosa, 'producto', function (v) { return pesos(v) + '/und'; });
+  }
+
   /* ---------- Tabla de detalle ---------- */
 
   function pintarTabla() {
@@ -304,6 +369,7 @@
   function pintarChips() {
     var caja = document.getElementById('filtrosActivos');
     var chips = [];
+    if (filtros.mes) chips.push(['mes', nombreMes(filtros.mes)]);
     if (filtros.dia) chips.push(['dia', filtros.dia]);
     if (filtros.estado) chips.push(['estado', ESTADOS_META[filtros.estado].nombre]);
     if (filtros.producto) chips.push(['producto', filtros.producto]);
@@ -321,6 +387,8 @@
     pintarChips();
     pintarKpis();
     pintarDias();
+    pintarMeses();
+    pintarUnitario();
     pintarEstados();
     pintarProductos();
     pintarCiudades();
@@ -328,7 +396,7 @@
   }
 
   document.getElementById('limpiarFiltros').addEventListener('click', function () {
-    filtros = { producto: null, ciudad: null, estado: null, dia: null };
+    filtros = { producto: null, ciudad: null, estado: null, dia: null, mes: null };
     pintar();
   });
 
