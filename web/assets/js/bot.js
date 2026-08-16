@@ -202,6 +202,9 @@
 
     document.getElementById('botBtn').addEventListener('click', abrir);
     document.getElementById('botCerrar').addEventListener('click', cerrar);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !panel.hidden) cerrar();
+    });
     document.getElementById('botForm').addEventListener('submit', function (e) {
       e.preventDefault();
       var q = campo.value.trim();
