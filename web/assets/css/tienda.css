@@ -322,6 +322,9 @@
 .bot-btn:hover { transform: scale(1.07); }
 .bot-btn svg { width: 26px; height: 26px; }
 
+/* El display de abajo le ganaba al atributo hidden y el panel nacía abierto:
+   esta regla devuelve a hidden su autoridad. */
+.bot[hidden] { display: none; }
 .bot {
   position: fixed; left: clamp(.6rem, 2vw, 2rem); bottom: clamp(.6rem, 2vw, 2rem);
   z-index: 205; width: min(390px, calc(100vw - 1.2rem));
