@@ -14,6 +14,7 @@
 const { firmaEventoValida } = require('./_pedido');
 const almacen = require('./_almacen');
 const { mensajePedido, avisarWhatsApp } = require('./_avisos');
+const { enviarConfirmacion } = require('./_correo');
 
 /** Solo lo necesario de la transacción, sin arrastrar datos de más. */
 function resumenTx(tx) {
@@ -99,6 +100,7 @@ module.exports = async function handler(req, res) {
     } else if (tx.status === 'APPROVED') {
       console.log('[webhook] PAGADO', tx.reference, `total=${r.pedido.total}`);
       await avisarWhatsApp(mensajePedido(r.pedido, 'APPROVED'));
+      await enviarConfirmacion(r.pedido);
     }
   } catch (e) {
     /* El guardado no puede tumbar la respuesta: si devolvemos error, Wompi
