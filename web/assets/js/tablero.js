@@ -26,6 +26,19 @@
   };
 
   var pedidos = [];
+  var catalogoNombres = [];
+  /* El catálogo completo, para que las gráficas muestren también lo que NO
+     se vende: un cero es información, no ausencia. */
+  Promise.all([
+    fetch('assets/data/precios.json').then(function (r) { return r.json(); }),
+    fetch('assets/data/combos.json').then(function (r) { return r.json(); })
+  ]).then(function (d) {
+    var nombres = [];
+    for (var k in d[0]) { if (d[0][k] && d[0][k].nombre) nombres.push(d[0][k].nombre); }
+    for (var c2 in d[1]) { if (c2.indexOf('_') !== 0 && d[1][c2].nombre) nombres.push(d[1][c2].nombre); }
+    catalogoNombres = nombres;
+    if (pedidos.length) pintar();
+  }).catch(function () { catalogoNombres = []; });
   var filtros = { producto: null, ciudad: null, estado: null, dia: null, mes: null };
 
   var puerta = document.getElementById('puerta');
@@ -148,6 +161,7 @@
   function pintarProductos() {
     var datos = filtrar('producto').filter(pagado);
     var conteo = {}, plata = {};
+    catalogoNombres.forEach(function (n) { conteo[n] = 0; plata[n] = 0; });
     datos.forEach(function (p) {
       (p.lineas || []).forEach(function (l) {
         conteo[l.nombre] = (conteo[l.nombre] || 0) + l.cant;
@@ -156,7 +170,7 @@
     });
     var lista = Object.keys(plata)
       .map(function (k) { return { k: k, v: plata[k], extra: conteo[k] + ' unidades' }; })
-      .sort(function (a, b) { return b.v - a.v; }).slice(0, 7);
+      .sort(function (a, b) { return b.v - a.v; });
     barrasH('graficaProductos', lista, COLORES.azul, 'producto', pesosCortos, function (d) { return conteo[d.k] + ' und'; });
   }
 
@@ -333,6 +347,7 @@
   function pintarUnitario() {
     var datos = filtrar('producto').filter(pagado);
     var conteo = {}, plata = {};
+    catalogoNombres.forEach(function (n) { conteo[n] = 0; plata[n] = 0; });
     datos.forEach(function (p) {
       (p.lineas || []).forEach(function (l) {
         conteo[l.nombre] = (conteo[l.nombre] || 0) + l.cant;
@@ -340,9 +355,9 @@
       });
     });
     var lista = Object.keys(plata)
-      .map(function (k) { return { k: k, v: plata[k] / conteo[k], extra: conteo[k] + ' unidades vendidas' }; })
-      .sort(function (a, b) { return b.v - a.v; }).slice(0, 7);
-    barrasH('graficaUnitario', lista, COLORES.rosa, 'producto', function (v) { return pesos(v) + '/und'; });
+      .map(function (k) { return { k: k, v: conteo[k] ? plata[k] / conteo[k] : 0, extra: conteo[k] + ' unidades vendidas' }; })
+      .sort(function (a, b) { return b.v - a.v; });
+    barrasH('graficaUnitario', lista, COLORES.rosa, 'producto', function (v) { return v ? pesos(v) + '/und' : 'sin ventas'; });
   }
 
   /* ---------- Tabla de detalle ---------- */
