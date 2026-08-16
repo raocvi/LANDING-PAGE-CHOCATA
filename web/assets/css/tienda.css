@@ -400,7 +400,7 @@
 /* ---------- Aviso de agregado al pedido ---------- */
 .carrito-aviso {
   position: fixed; right: clamp(1rem, 3vw, 2rem);
-  bottom: calc(clamp(1rem, 3vw, 2rem) + 56px + 56px + 1.5rem);
+  top: calc(var(--aviso-h, 0px) + 86px);
   z-index: 150; display: flex; align-items: center; gap: .6rem;
   padding: .65rem .9rem; border-radius: 12px;
   background: var(--surface, #171310); border: 1px solid rgba(242, 176, 30, .4);
@@ -432,3 +432,73 @@
   font: inherit; font-size: .82rem;
 }
 .carrito__seguir:hover { color: var(--gold-soft); }
+
+
+/* ---------- Carrito en la barra de navegación ---------- */
+.nav-carrito {
+  position: relative; display: grid; place-items: center;
+  width: 44px; height: 44px; border-radius: 12px; cursor: pointer;
+  background: none; border: 1px solid transparent; color: var(--cream);
+  transition: border-color var(--fast) var(--ease), background var(--fast) var(--ease);
+}
+.nav-carrito:hover { border-color: var(--line-strong); background: rgba(248, 243, 235, .05); }
+.nav-carrito svg { width: 22px; height: 22px; }
+.nav-carrito .carrito-btn__n {
+  position: absolute; top: -3px; right: -3px;
+  min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--gold); color: #17110D;
+  font-size: .66rem; font-weight: 700; line-height: 1;
+  opacity: 0; transform: scale(.4);
+  transition: opacity var(--fast) var(--ease), transform var(--fast) var(--ease);
+}
+.nav-carrito.tiene .carrito-btn__n { opacity: 1; transform: scale(1); }
+.nav-carrito.pulso { animation: carritoPulso .6s ease; }
+
+/* ---------- Central de despachos ---------- */
+.admin-puerta { display: grid; gap: 1rem; max-width: 48ch; }
+.admin-puerta p { font-size: .92rem; line-height: 1.7; color: var(--muted); }
+.admin-puerta__fila { display: grid; grid-template-columns: 1fr auto; gap: .5rem; }
+.admin-puerta input {
+  min-height: 48px; padding: 0 1rem; border-radius: 11px;
+  background: rgba(248,243,235,.05); border: 1px solid var(--line-strong);
+  color: var(--cream); font: inherit;
+}
+.admin-puerta input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.admin-puerta__error { font-size: .85rem; color: var(--berry); min-height: 1.2em; }
+
+.admin-filtros { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+.admin-filtro {
+  padding: .5rem .9rem; border-radius: 999px; cursor: pointer;
+  background: none; border: 1px solid var(--line-strong); color: var(--muted); font: inherit; font-size: .8rem;
+}
+.admin-filtro[aria-pressed="true"] { border-color: var(--gold); color: var(--gold-soft); background: rgba(242,176,30,.08); }
+
+.admin-lista { display: grid; gap: 1rem; }
+.admin-vacio { color: var(--faint); font-size: .9rem; }
+.admin-pedido {
+  display: grid; gap: .55rem; padding: 1.2rem 1.3rem;
+  border: 1px solid var(--line); border-radius: 16px;
+  background: linear-gradient(160deg, rgba(248,243,235,.04), rgba(248,243,235,.01));
+}
+.admin-pedido[data-estado="REVISAR_MONTO"] { border-color: rgba(214,35,107,.5); }
+.admin-pedido header { display: flex; align-items: center; justify-content: space-between; gap: .8rem; }
+.admin-pedido time { font-size: .76rem; color: var(--faint); }
+.admin-estado {
+  padding: .28rem .7rem; border-radius: 999px; font-size: .72rem; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase;
+}
+.admin-estado--ok { background: rgba(66,180,99,.15); color: #7fe0a0; }
+.admin-estado--espera { background: rgba(242,176,30,.14); color: var(--gold-soft); }
+.admin-estado--alerta { background: rgba(214,35,107,.16); color: #ff86b6; }
+.admin-estado--gris { background: rgba(248,243,235,.08); color: var(--faint); }
+.admin-ref { font-family: var(--display); font-size: 1.05rem; color: var(--cream); letter-spacing: .04em; }
+.admin-lineas { display: grid; gap: .2rem; padding-left: 1.1rem; list-style: disc; }
+.admin-lineas li { font-size: .88rem; color: var(--muted); }
+.admin-lineas em { color: var(--faint); font-style: normal; }
+.admin-total { font-size: .85rem; color: var(--muted); }
+.admin-total b { color: var(--gold-soft); }
+.admin-cliente { font-size: .88rem; line-height: 1.6; color: var(--muted); padding-top: .3rem; border-top: 1px dashed var(--line); }
+.admin-cliente b { color: var(--cream); font-weight: 500; }
+.admin-acciones { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .3rem; }
+.admin-acciones .btn { min-height: 42px; padding: .5rem 1rem; font-size: .72rem; }

@@ -113,8 +113,20 @@ async function marcarEstado(referencia, estado, transaccion) {
   return { ok: true, cambio: true, pedido: actualizado };
 }
 
+/** Referencias de todos los pedidos guardados, sin leerlos aún. */
+async function listarReferencias() {
+  if (usaBlob()) {
+    const { list } = require('@vercel/blob');
+    const r = await list({ prefix: 'pedidos/', limit: 1000 });
+    return (r.blobs || []).map((b) => b.pathname.replace('pedidos/', '').replace(/.json$/, ''));
+  }
+  try {
+    return fs.readdirSync(CARPETA_LOCAL).filter((f) => f.endsWith('.json')).map((f) => f.replace(/.json$/, ''));
+  } catch { return []; }
+}
+
 async function leer(referencia) {
   return usaBlob() ? leerBlob(referencia) : leerLocal(referencia);
 }
 
-module.exports = { crear, marcarEstado, leer, usaBlob, CARPETA_LOCAL };
+module.exports = { crear, marcarEstado, leer, listarReferencias, usaBlob, CARPETA_LOCAL };

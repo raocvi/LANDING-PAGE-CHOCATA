@@ -20,6 +20,7 @@ Rama `feat/pedidos-y-pagos`. No toca `main`: la página publicada sigue igual ha
 | Términos, privacidad y retracto | Borrador, **falta revisión legal y datos de la empresa** |
 | Cobro real | **Bloqueado**: requiere cuenta de Wompi |
 | Medios de pago anunciados | Listo (PSE primero) |
+| Central de despachos (/pedidos) | Listo — la dueña entra con el ADMIN_TOKEN |
 | PSE activo de verdad | **Bloqueado**: hay que habilitarlo con Bancolombia |
 | Aviso por WhatsApp al confirmarse un pago | Listo (**falta activar CallMeBot**, 2 minutos) |
 | Sofi, asistente de preguntas | Listo (respuestas fijas siempre; **IA de Gemini al poner la llave**) |
@@ -152,6 +153,15 @@ gratuito de Vercel solo permite uso personal. Toca Pro (20 USD/mes) o mover a Cl
 
 Completar en `web/legal.html` el NIT, la dirección fiscal y el correo de notificaciones, y hacerlo
 revisar por un abogado. Falta además la facturación electrónica DIAN.
+
+## Central de despachos
+
+`https://chocata.vercel.app/pedidos` — página privada para la administración. Se entra con el
+`ADMIN_TOKEN` (la misma clave de las variables de Vercel). Muestra cada pedido con su estado
+(pagado / pendiente / revisar), las líneas, el total, el cliente y la dirección lista para
+copiar a la guía de la transportadora, más botón de WhatsApp directo al cliente. La clave viaja
+en cada consulta y se compara en tiempo constante; solo se recuerda en la pestaña (sessionStorage)
+y la página lleva noindex.
 
 ## Decisiones que conviene conocer
 

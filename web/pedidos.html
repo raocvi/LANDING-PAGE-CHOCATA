@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedidos — CHOCATA</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0806">
+<link rel="icon" type="image/png" href="assets/img/brand/favicon.png?v=81">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=81">
+<link rel="stylesheet" href="assets/css/tienda.css?v=81">
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<main class="section" style="min-height:100svh">
+  <div class="wrap" style="max-width:860px">
+
+    <header style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.6rem">
+      <div>
+        <p class="eyebrow">Central de despachos</p>
+        <h1 class="h-section" style="font-size:clamp(1.8rem,4vw,2.6rem)">Pedidos</h1>
+      </div>
+      <div style="display:flex;gap:.5rem">
+        <button class="btn btn--ghost" id="refrescar" hidden>Actualizar</button>
+        <button class="btn btn--ghost" id="salir" hidden>Salir</button>
+      </div>
+    </header>
+
+    <!-- Puerta: solo con el token de administración -->
+    <form class="admin-puerta" id="puerta">
+      <p>Esta página muestra los pedidos con los datos de entrega de los clientes.
+        Escribe la clave de administración para entrar.</p>
+      <div class="admin-puerta__fila">
+        <input type="password" id="clave" placeholder="Clave de administración" autocomplete="current-password">
+        <button class="btn" type="submit">Entrar</button>
+      </div>
+      <p class="admin-puerta__error" id="puertaError" role="alert"></p>
+    </form>
+
+    <div id="tablero" hidden>
+      <div class="admin-filtros" id="filtros">
+        <button class="admin-filtro" data-f="todos" aria-pressed="true">Todos</button>
+        <button class="admin-filtro" data-f="APPROVED" aria-pressed="false">Pagados</button>
+        <button class="admin-filtro" data-f="PENDIENTE" aria-pressed="false">Pendientes</button>
+        <button class="admin-filtro" data-f="REVISAR_MONTO" aria-pressed="false">Revisar</button>
+      </div>
+      <div class="admin-lista" id="lista" aria-live="polite"></div>
+    </div>
+
+  </div>
+</main>
+
+<script defer src="assets/js/pedidos.js?v=81"></script>
+</body>
+</html>

@@ -12,19 +12,9 @@
  * Variable de entorno opcional:
  *   ADMIN_TOKEN   habilita la vista completa con la cabecera x-admin-token
  */
-const crypto = require('node:crypto');
 const almacen = require('./_almacen');
+const { tokenValido } = require('./_pedido');
 
-/* Comparación en tiempo constante: un `===` filtra por cronómetro cuántos
-   caracteres del token coinciden. Con longitudes distintas se compara contra
-   uno mismo para gastar el mismo tiempo y devolver false. */
-function tokenValido(recibido, esperado) {
-  if (!esperado || typeof recibido !== 'string') return false;
-  const a = Buffer.from(recibido, 'utf8');
-  const b = Buffer.from(esperado, 'utf8');
-  if (a.length !== b.length) return crypto.timingSafeEqual(b, b) && false;
-  return crypto.timingSafeEqual(a, b);
-}
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') {
