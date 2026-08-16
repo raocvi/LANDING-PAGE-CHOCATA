@@ -39,7 +39,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cloud.umami.is 'sha256-tluUMLoIMVYQxm/ay9daKt20phcBcNm8HJ4n4iNCFcQ=' 'sha256-ML1ZnwFy8yfxMNb372KbrpXW7Lci+njoZvR4dPukoqw=' 'sha256-Z20tmsuCPvbVaDEq991/TbDlMhfdwmjzt7yIMHG0tZc='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self' https://checkout.wompi.co"
+          "value": "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cloud.umami.is 'sha256-tluUMLoIMVYQxm/ay9daKt20phcBcNm8HJ4n4iNCFcQ=' 'sha256-rbTaSdDD+Sd+K8IZ66VS79bdI78bN8AwXXyN0/lD5fY=' 'sha256-EHUisu5e08/Ljz+TDd1duV65eCH2IyWvEZiaRAdYwRU='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self' https://checkout.wompi.co"
         },
         {
           "key": "Permissions-Policy",
