@@ -155,7 +155,11 @@ function calcular(items) {
     }
     const unitario = precioDe(it.slug, it.talla);
     if (unitario === null) {
-      return { ok: false, error: `«${it.slug} ${it.talla}» ya no está disponible.` };
+      /* El slug y la talla vienen del cliente: antes de devolverlos en un
+         mensaje se reducen a caracteres inofensivos y largo corto, para que
+         este texto jamás sirva de vehículo de inyección aguas abajo. */
+      const eco = (v) => String(v).replace(/[^\w áéíóúñ.-]/gi, '').slice(0, 40);
+      return { ok: false, error: `«${eco(it.slug)} ${eco(it.talla)}» ya no está disponible.` };
     }
     lineas.push({
       slug: it.slug,

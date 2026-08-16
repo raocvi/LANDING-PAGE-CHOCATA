@@ -176,6 +176,15 @@ comprobar('un pedido enorme paga su peso igual', pedido.envioDe(1000000, 7000) =
   comprobar('y nunca marca gratis', d.gratis === false && d.extras === 0, JSON.stringify(d));
 }
 
+/* ---------- Seguridad ---------- */
+{
+  /* Un slug malicioso no puede volver intacto en el mensaje de error. */
+  const r = pedido.calcular([{ slug: '<img src=x onerror=alert(1)>', talla: '200 g', cant: 1 }]);
+  comprobar('el error no refleja HTML del atacante', r.ok === false && !r.error.includes('<'), r.error);
+  const largo = pedido.calcular([{ slug: 'x'.repeat(5000), talla: '200 g', cant: 1 }]);
+  comprobar('el eco se recorta a un largo sano', largo.error.length < 120, `len=${largo.error.length}`);
+}
+
 /* ---------- Tipo de documento ---------- */
 comprobar('sin tipo de documento se asume cédula', pedido.tipoDocumentoDe({}) === 'CC');
 comprobar('la extranjería se respeta y se normaliza', pedido.tipoDocumentoDe({ tipoDocumento: ' ce ' }) === 'CE');

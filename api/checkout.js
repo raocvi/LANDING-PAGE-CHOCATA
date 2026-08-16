@@ -20,6 +20,22 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ mensaje: 'Método no permitido.' });
   }
 
+  /* Anti-CSRF barato: si el navegador declara desde qué origen dispara la
+     petición y no es el nuestro, se rechaza. Las peticiones sin Origin
+     (curl, integraciones, pruebas) pasan: esto corta el vector de un sitio
+     ajeno creando pedidos con la sesión del visitante, no todo abuso. */
+  const origen = req.headers.origin;
+  if (origen) {
+    const propios = new Set([
+      (process.env.SITIO_URL || '').replace(/\/$/, ''),
+      `https://${req.headers.host}`,
+      `http://${req.headers.host}`
+    ]);
+    if (!propios.has(origen)) {
+      return res.status(403).json({ mensaje: 'Origen no permitido.' });
+    }
+  }
+
   const publica = process.env.WOMPI_LLAVE_PUBLICA;
   const secreto = process.env.WOMPI_SECRETO_INTEGRIDAD;
   if (!publica || !secreto) {
@@ -78,15 +94,18 @@ module.exports = async function handler(req, res) {
       total: cuenta.total,
       unidades: cuenta.unidades,
       gramos: cuenta.gramos,
+      /* Topes de largo en todo lo que escribe el cliente: el formulario ya
+         valida mínimos, pero nada impedía mandar un campo de un megabyte
+         directo al API y engordar el almacenamiento. */
       cliente: {
-        nombre: c.nombre.trim(),
+        nombre: c.nombre.trim().slice(0, 120),
         tipoDocumento: tipoDocumentoDe(c),
-        documento: c.documento.replace(/\D/g, ''),
-        correo: c.correo.trim().toLowerCase(),
-        celular: c.celular.replace(/\D/g, ''),
-        departamento: c.departamento.trim(),
-        ciudad: c.ciudad.trim(),
-        direccion: c.direccion.trim(),
+        documento: c.documento.replace(/\D/g, '').slice(0, 11),
+        correo: c.correo.trim().toLowerCase().slice(0, 120),
+        celular: c.celular.replace(/\D/g, '').slice(0, 10),
+        departamento: c.departamento.trim().slice(0, 60),
+        ciudad: c.ciudad.trim().slice(0, 80),
+        direccion: c.direccion.trim().slice(0, 240),
         notas: String(c.notas || '').trim().slice(0, 500)
       }
     });
