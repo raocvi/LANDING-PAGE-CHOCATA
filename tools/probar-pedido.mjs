@@ -185,6 +185,28 @@ comprobar('un pedido enorme paga su peso igual', pedido.envioDe(1000000, 7000) =
   comprobar('el eco se recorta a un largo sano', largo.error.length < 120, `len=${largo.error.length}`);
 }
 
+/* ---------- Avisos por WhatsApp ---------- */
+{
+  const avisos = require(join(raiz, 'api/_avisos.js'));
+  const pedidoDemo = {
+    referencia: 'CHOCATA-TEST-AB12CD34', total: 66500, envio: 10500,
+    lineas: [{ cant: 1, nombre: 'Bienestar diario', talla: 'Combo' }],
+    cliente: { nombre: 'Ana María Rodríguez', celular: '3001234567',
+               direccion: 'Calle 5 # 38-25', ciudad: 'Cali', departamento: 'Valle del Cauca', notas: 'Portería' }
+  };
+  const m = avisos.mensajePedido(pedidoDemo, 'APPROVED');
+  comprobar('el aviso de pago lleva la referencia', m.includes('CHOCATA-TEST-AB12CD34'));
+  comprobar('lleva el total en pesos', m.includes('$66.500'));
+  comprobar('lleva las líneas del pedido', m.includes('1 × Bienestar diario'));
+  comprobar('lleva a quién y dónde entregar', m.includes('Ana María') && m.includes('Cali'));
+  comprobar('lleva las notas de entrega', m.includes('Portería'));
+  comprobar('el monto que no cuadra pide no despachar', /No despachar/.test(avisos.mensajePedido(pedidoDemo, 'REVISAR_MONTO')));
+  comprobar('el pago huérfano avisa distinto', /PAGO SIN PEDIDO/.test(avisos.mensajePedido(pedidoDemo, 'HUERFANO')));
+  comprobar('un estado sin aviso devuelve null', avisos.mensajePedido(pedidoDemo, 'DECLINED') === null);
+  const sinConfig = await avisos.avisarWhatsApp('hola');
+  comprobar('sin configurar no envía y no lanza', sinConfig === false);
+}
+
 /* ---------- Tipo de documento ---------- */
 comprobar('sin tipo de documento se asume cédula', pedido.tipoDocumentoDe({}) === 'CC');
 comprobar('la extranjería se respeta y se normaliza', pedido.tipoDocumentoDe({ tipoDocumento: ' ce ' }) === 'CE');
