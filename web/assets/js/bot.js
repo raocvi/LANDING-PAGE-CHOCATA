@@ -70,7 +70,7 @@
   /* ---------- Respuestas ---------- */
 
   var R = {
-    envios: '<b>Enviamos a toda Colombia</b>, a los 32 departamentos y Bogotá, con transportadora. El envío cuesta ' +
+    envios: '<b>Enviamos a toda Colombia</b>, a los 32 departamentos y Bogotá. Despachamos <b>desde Cali</b> con transportadora. El envío cuesta ' +
       '<b>$10.500 por cada kilo o fracción</b> del peso del pedido (mínimo un kilo): es la ' +
       'tarifa real de la transportadora, sin recargo. El costo exacto y el peso se muestran ' +
       'antes de pagar. Los tiempos dependen de la transportadora y de tu ciudad.',
@@ -117,6 +117,7 @@
     { claves: ['minimo', 'pedido minimo'], r: function () { return R.minimo; } },
     { claves: ['combo', 'kit', 'promocion', 'descuento', 'oferta'], r: respuestaCombos },
     { claves: ['sede', 'local', 'tienda fisica', 'direccion', 'donde estan', 'donde queda', 'terremoto', 'visitar'], r: function () { return R.sede; } },
+    { claves: ['desde donde', 'despachan', 'de donde envian', 'de donde salen', 'origen del envio'], r: function () { return 'Despachamos <b>desde Cali</b>, con transportadora a toda Colombia. Los tiempos de entrega dependen de tu ciudad y se confirman con el pedido.'; } },
     { claves: ['exterior', 'internacional', 'estados unidos', 'usa', 'espana', 'miami', 'madrid', 'otro pais', 'fuera de colombia', 'exportan'], r: function () { return R.exterior; } },
     { claves: ['devolucion', 'retracto', 'garantia', 'cambio', 'reembolso'], r: function () { return R.retracto; } },
     { claves: ['mi pedido', 'referencia', 'estado', 'confirmacion', 'factura'], r: function () { return R.pedido; } },
@@ -125,6 +126,13 @@
 
   function responder(pregunta) {
     var n = normalizar(pregunta);
+
+    /* Saludos y cortesía: con límites de palabra para que «chocolate» no
+       dispare el saludo por contener «ola». Van antes que todo lo demás,
+       pero si el saludo viene con pregunta («hola, ¿cuánto vale la
+       creatina?») gana la pregunta. */
+    var esSaludo = /\b(hola|holi|buenas|buenos dias|buenas tardes|buenas noches|saludos|hey|que tal|como estas|como esta)\b/.test(n);
+    var esGracias = /\b(gracias|muchas gracias|mil gracias|te agradezco|genial|perfecto|listo)\b/.test(n);
 
     /* Primero: ¿pregunta por un producto? */
     var prod = buscarProducto(n);
@@ -138,6 +146,18 @@
       }
       medirBot('producto: ' + prod.key);
       return { html: texto, ficha: prod.key };
+    }
+
+    if (esSaludo) {
+      medirBot('saludo');
+      return { html: '¡Hola! 😊 Qué gusto tenerte por aquí. Pregúntame por cualquier producto, ' +
+        'el costo del envío o las formas de pago — y recuerda que <b>enviamos a toda Colombia</b>.' };
+    }
+    if (esGracias) {
+      medirBot('gracias');
+      return { html: '¡Con mucho gusto! 💛 Si necesitas algo más, aquí estoy. ' +
+        'Y si prefieres hablar con una persona, escríbenos por ' +
+        '<a href="https://wa.me/573176685235" target="_blank" rel="noopener noreferrer">WhatsApp</a>.' };
     }
 
     for (var i = 0; i < INTENTOS.length; i++) {
