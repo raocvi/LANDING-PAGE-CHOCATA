@@ -308,3 +308,85 @@
   font-size: .74rem; line-height: 1.55; color: var(--gold-soft); opacity: .85;
   padding-top: .2rem; border-top: 1px dashed rgba(242, 176, 30, .25); margin-top: .2rem;
 }
+
+/* ---------- Cata, la asistente ---------- */
+.bot-btn {
+  position: fixed; left: clamp(1rem, 3vw, 2rem); bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 90; width: 56px; height: 56px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--gold); color: #17110D; border: 0;
+  box-shadow: 0 14px 34px -14px rgba(0, 0, 0, .9);
+  transition: transform var(--fast) var(--ease);
+  cursor: pointer;
+}
+.bot-btn:hover { transform: scale(1.07); }
+.bot-btn svg { width: 26px; height: 26px; }
+
+.bot {
+  position: fixed; left: clamp(.6rem, 2vw, 2rem); bottom: clamp(.6rem, 2vw, 2rem);
+  z-index: 205; width: min(390px, calc(100vw - 1.2rem));
+  display: flex; flex-direction: column; max-height: min(560px, 78svh);
+  background: var(--surface, #171310); border: 1px solid var(--line-strong);
+  border-radius: 18px; overflow: hidden;
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, .95);
+}
+.bot__cab {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .9rem 1.1rem; border-bottom: 1px solid var(--line);
+  background: rgba(242, 176, 30, .07);
+}
+.bot__cab b { display: block; font-family: var(--display); font-size: 1.15rem; color: var(--cream); }
+.bot__cab span { font-size: .72rem; color: var(--faint); }
+.bot__cerrar {
+  display: grid; place-items: center; width: 32px; height: 32px;
+  background: none; border: 0; border-radius: 8px; color: var(--muted); cursor: pointer;
+}
+.bot__cerrar:hover { background: rgba(248,243,235,.08); color: var(--cream); }
+.bot__cerrar svg { width: 15px; height: 15px; }
+
+.bot__hilo {
+  flex: 1; overflow-y: auto; overscroll-behavior: contain;
+  display: grid; gap: .6rem; align-content: start;
+  padding: 1rem; scrollbar-width: thin;
+}
+.bot__msg {
+  max-width: 88%; padding: .65rem .85rem; border-radius: 12px 12px 12px 4px;
+  background: rgba(248, 243, 235, .06); border: 1px solid var(--line);
+  font-size: .85rem; line-height: 1.6; color: var(--muted);
+}
+.bot__msg b { color: var(--cream); font-weight: 500; }
+.bot__msg a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+.bot__msg--mia {
+  justify-self: end; border-radius: 12px 12px 4px 12px;
+  background: rgba(242, 176, 30, .12); border-color: rgba(242, 176, 30, .25);
+  color: var(--cream);
+}
+.bot__accion {
+  display: block; margin-top: .6rem; padding: .5rem .8rem; border-radius: 9px;
+  background: var(--gold); border: 0; color: #17110D !important;
+  font: inherit; font-size: .8rem; font-weight: 600; text-align: center;
+  text-decoration: none !important; cursor: pointer;
+}
+
+.bot__chips {
+  display: flex; gap: .4rem; flex-wrap: wrap;
+  padding: .6rem 1rem; border-top: 1px solid var(--line);
+}
+.bot__chip {
+  padding: .4rem .7rem; border-radius: 999px; cursor: pointer;
+  background: none; border: 1px solid var(--line-strong);
+  color: var(--muted); font: inherit; font-size: .74rem;
+}
+.bot__chip:hover { border-color: var(--gold); color: var(--gold-soft); }
+
+.bot__form {
+  display: grid; grid-template-columns: 1fr auto; gap: .5rem;
+  padding: .7rem 1rem 1rem;
+}
+.bot__form input {
+  min-height: 44px; padding: 0 .9rem; border-radius: 10px;
+  background: rgba(248, 243, 235, .05); border: 1px solid var(--line-strong);
+  color: var(--cream); font: inherit; font-size: .88rem;
+}
+.bot__form input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+.bot__form .btn { min-height: 44px; padding: 0 1rem; }
