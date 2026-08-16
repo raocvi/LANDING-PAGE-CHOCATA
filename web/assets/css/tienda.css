@@ -341,11 +341,14 @@
 .bot__cab b { display: block; font-family: var(--display); font-size: 1.15rem; color: var(--cream); }
 .bot__cab span { font-size: .72rem; color: var(--faint); }
 .bot__cerrar {
-  display: grid; place-items: center; width: 32px; height: 32px;
-  background: none; border: 0; border-radius: 8px; color: var(--muted); cursor: pointer;
+  /* 44 px: el mínimo táctil real. A 32 px el dedo falla el botón y el panel
+     parece que "no se puede cerrar". */
+  display: grid; place-items: center; width: 44px; height: 44px;
+  background: rgba(248, 243, 235, .05); border: 1px solid var(--line);
+  border-radius: 10px; color: var(--cream); cursor: pointer; flex: 0 0 auto;
 }
 .bot__cerrar:hover { background: rgba(248,243,235,.08); color: var(--cream); }
-.bot__cerrar svg { width: 15px; height: 15px; }
+.bot__cerrar svg { width: 18px; height: 18px; }
 
 .bot__hilo {
   flex: 1; overflow-y: auto; overscroll-behavior: contain;
