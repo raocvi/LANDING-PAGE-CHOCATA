@@ -146,7 +146,7 @@
       '</button>' +
       '<div class="carrito" id="carrito" role="dialog" aria-modal="true" aria-label="Carrito de compra">' +
         '<div class="carrito__velo" data-cerrar-carrito></div>' +
-        '<aside class="carrito__panel">' +
+        '<aside class="carrito__panel" data-lenis-prevent>' +
           '<header class="carrito__cab">' +
             '<h2>Tu pedido</h2>' +
             '<button class="carrito__cerrar" data-cerrar-carrito aria-label="Cerrar el carrito">' +

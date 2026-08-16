@@ -139,7 +139,7 @@
     envoltura.setAttribute('aria-label', 'Datos del pedido');
     envoltura.innerHTML =
       '<div class="checkout__velo" data-cerrar-checkout></div>' +
-      '<div class="checkout__panel">' +
+      '<div class="checkout__panel" data-lenis-prevent>' +
         '<header class="checkout__cab">' +
           '<div><p class="eyebrow">Último paso</p><h2>¿A dónde lo enviamos?</h2></div>' +
           '<button class="carrito__cerrar" data-cerrar-checkout aria-label="Volver al carrito">' +
