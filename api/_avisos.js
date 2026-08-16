@@ -64,6 +64,9 @@ async function avisarWhatsApp(texto) {
     if (!telefono || !apikey) console.log('[aviso] WhatsApp sin configurar, no se envía');
     return false;
   }
+  /* CallMeBot se traga el signo $ seguido de números (lo trata como
+     variable): $115.500 llegaba como 15.500. Los montos viajan como COP. */
+  texto = String(texto).replace(/$/g, 'COP ');
   try {
     const url = 'https://api.callmebot.com/whatsapp.php' +
       `?phone=${encodeURIComponent(telefono)}` +
