@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tablero — CHOCATA</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0806">
+<link rel="icon" type="image/png" href="assets/img/brand/favicon.png?v=83">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=83">
+<link rel="stylesheet" href="assets/css/tienda.css?v=83">
+<link rel="stylesheet" href="assets/css/tablero.css?v=83">
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<main class="section" style="min-height:100svh">
+  <div class="wrap" style="max-width:1080px">
+
+    <header class="tb-cabecera">
+      <div>
+        <p class="eyebrow">Inteligencia del negocio</p>
+        <h1 class="h-section" style="font-size:clamp(1.8rem,4vw,2.6rem)">Tablero</h1>
+      </div>
+      <div class="tb-cabecera__acciones">
+        <a class="btn btn--ghost" href="pedidos.html">← Pedidos</a>
+        <button class="btn btn--ghost" id="refrescar" hidden>Actualizar</button>
+      </div>
+    </header>
+
+    <form class="admin-puerta" id="puerta">
+      <p>El tablero muestra las ventas y la operación del negocio.
+        Escribe la clave de administración para entrar.</p>
+      <div class="admin-puerta__fila">
+        <input type="password" id="clave" placeholder="Clave de administración" autocomplete="current-password">
+        <button class="btn" type="submit">Entrar</button>
+      </div>
+      <p class="admin-puerta__error" id="puertaError" role="alert"></p>
+    </form>
+
+    <div id="tablero" hidden>
+
+      <div class="tb-filtros" id="filtrosActivos" hidden>
+        <span class="tb-filtros__titulo">Filtrando por:</span>
+        <span id="chipsFiltros"></span>
+        <button class="tb-filtros__limpiar" id="limpiarFiltros" type="button">Quitar filtros ×</button>
+      </div>
+
+      <div class="tb-kpis" id="kpis"></div>
+
+      <div class="tb-retícula">
+        <section class="tb-carta tb-carta--ancha">
+          <h2>Ventas por día <span>últimos 30 días · toca un día para filtrar</span></h2>
+          <div id="graficaDias"></div>
+        </section>
+
+        <section class="tb-carta">
+          <h2>Estado de los pedidos <span>toca para filtrar</span></h2>
+          <div id="graficaEstados"></div>
+        </section>
+
+        <section class="tb-carta">
+          <h2>Productos más vendidos <span>unidades pagadas · toca para filtrar</span></h2>
+          <div id="graficaProductos"></div>
+        </section>
+
+        <section class="tb-carta">
+          <h2>Ciudades que más compran <span>por valor pagado · toca para filtrar</span></h2>
+          <div id="graficaCiudades"></div>
+        </section>
+
+        <section class="tb-carta tb-carta--ancha">
+          <h2>Detalle <span>los pedidos del filtro actual</span></h2>
+          <div class="tb-tabla-caja"><table class="tb-tabla" id="tabla"></table></div>
+        </section>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<div class="tb-tooltip" id="tooltip" hidden></div>
+
+<script defer src="assets/js/tablero.js?v=83"></script>
+</body>
+</html>

@@ -20,6 +20,7 @@ Rama `feat/pedidos-y-pagos`. No toca `main`: la página publicada sigue igual ha
 | Términos, privacidad y retracto | Borrador, **falta revisión legal y datos de la empresa** |
 | Cobro real | **Bloqueado**: requiere cuenta de Wompi |
 | Medios de pago anunciados | Listo (PSE primero) |
+| Tablero de inteligencia (/tablero) | Listo — filtro cruzado, misma clave |
 | Central de despachos (/pedidos) | Listo — la dueña entra con el ADMIN_TOKEN |
 | PSE activo de verdad | **Bloqueado**: hay que habilitarlo con Bancolombia |
 | Aviso por WhatsApp al confirmarse un pago | Listo (**falta activar CallMeBot**, 2 minutos) |
