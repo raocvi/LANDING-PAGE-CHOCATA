@@ -968,6 +968,7 @@ html.motion .reveal-fade { opacity: 0; }
   flex: 0 0 auto; display: grid; place-items: center; width: 30px; height: 30px;
   background: none; border: 0; border-radius: 8px; color: var(--faint); cursor: pointer;
 }
+.aviso-sede[hidden] { display: none; }
 .aviso-sede button:hover { color: var(--cream); background: rgba(248,243,235,.08); }
 .aviso-sede button svg { width: 14px; height: 14px; }
 /* Con el aviso visible, la barra de navegación baja para no taparlo. */
