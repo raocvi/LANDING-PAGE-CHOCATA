@@ -534,3 +534,36 @@
 .admin-guia { font-size: .84rem; color: #7fe0a0; padding-top: .3rem; }
 .admin-guia b { font-weight: 600; }
 @media (max-width: 480px) { .admin-despachar { grid-template-columns: 1fr; } }
+
+/* ---------- Rótulo de envío (solo existe al imprimir) ---------- */
+#rotulo { display: none; }
+
+@media print {
+  body.imprimiendo > :not(#rotulo) { display: none !important; }
+  body.imprimiendo { background: #fff !important; }
+  body.imprimiendo #rotulo { display: block; }
+
+  .rotulo__marco {
+    font-family: Arial, Helvetica, sans-serif; color: #000;
+    border: 3px solid #000; border-radius: 6px;
+    padding: 8mm; margin: 4mm auto 0; max-width: 130mm;
+  }
+  .rotulo__cabecera {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 6mm; margin: 0 0 4mm; padding-bottom: 3mm; border-bottom: 1px solid #000;
+  }
+  .rotulo__logo { height: 14mm; width: auto; }
+  .rotulo__ref { font-size: 10pt; letter-spacing: 1px; margin: 0; }
+  .rotulo__rol {
+    font-size: 9pt; letter-spacing: 3px; text-transform: uppercase;
+    margin: 0 0 1.5mm; font-weight: bold;
+  }
+  .rotulo__nombre { font-size: 20pt; font-weight: bold; margin: 0 0 1.5mm; }
+  .rotulo__linea { font-size: 11pt; margin: 0 0 1.5mm; }
+  .rotulo__direccion { font-size: 15pt; font-weight: bold; margin: 1mm 0; }
+  .rotulo__ciudad {
+    font-size: 17pt; font-weight: bold; text-transform: uppercase; margin: 0 0 2mm;
+  }
+  .rotulo__corte { border: 0; border-top: 1px dashed #000; margin: 4mm 0; }
+  .rotulo__contenido { font-size: 9pt; margin: 2mm 0 0; color: #333; }
+}
