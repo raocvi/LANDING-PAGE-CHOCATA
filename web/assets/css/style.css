@@ -953,26 +953,29 @@ html.motion .reveal-fade { opacity: 0; }
   .hero__benefits-track { animation: none; }
 }
 
-/* ---------- Aviso de la sede (terremoto) ---------- */
+/* ---------- Aviso de la sede (terremoto) ----------
+   Dorado sobre la página oscura: imposible de pasar por alto. */
 .aviso-sede {
   position: fixed; top: 0; left: 0; right: 0; z-index: 120;
   display: flex; align-items: center; justify-content: center; gap: .8rem;
-  padding: .55rem clamp(.9rem, 3vw, 1.5rem);
-  background: linear-gradient(90deg, #1a1208, #241505 55%, #1a1208);
-  border-bottom: 1px solid rgba(242, 176, 30, .35);
+  padding: .65rem clamp(.9rem, 3vw, 1.5rem);
+  background: linear-gradient(90deg, #E9A912, #F2B01E 45%, #D99C05);
+  border-bottom: 1px solid rgba(36, 21, 5, .35);
 }
-.aviso-sede p { font-size: .8rem; line-height: 1.45; color: var(--muted); text-align: center; }
-.aviso-sede b { color: var(--gold-soft); font-weight: 500; }
-.aviso-sede a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.aviso-sede p { font-size: .92rem; line-height: 1.5; color: #241505; text-align: center; font-weight: 500; }
+.aviso-sede b { color: #101010; font-weight: 700; }
+.aviso-sede a { color: #241505; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
 .aviso-sede button {
-  flex: 0 0 auto; display: grid; place-items: center; width: 30px; height: 30px;
-  background: none; border: 0; border-radius: 8px; color: var(--faint); cursor: pointer;
+  flex: 0 0 auto; display: grid; place-items: center; width: 34px; height: 34px;
+  background: none; border: 0; border-radius: 8px; color: #241505; cursor: pointer;
 }
 .aviso-sede[hidden] { display: none; }
-.aviso-sede button:hover { color: var(--cream); background: rgba(248,243,235,.08); }
-.aviso-sede button svg { width: 14px; height: 14px; }
-/* Con el aviso visible, la barra de navegación baja para no taparlo. */
+.aviso-sede button:hover { background: rgba(36, 21, 5, .12); }
+.aviso-sede button svg { width: 16px; height: 16px; }
+/* Con el aviso visible, la barra de navegación baja para no taparlo
+   y toda la página baja lo mismo: nada queda montado debajo. */
 body.con-aviso .nav { top: var(--aviso-h, 42px); }
+body.con-aviso { padding-top: var(--aviso-h, 42px); }
 
 /* ---------- Capítulo del terremoto en el manifiesto ---------- */
 .manifesto__capitulo {
