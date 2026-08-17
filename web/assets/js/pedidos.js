@@ -1,8 +1,10 @@
 /* =========================================================================
    CHOCATA — Central de despachos
 
-   Página privada de la administración: estadísticas del historial, lista de
-   pedidos con datos de entrega, y control de despacho con número de guía.
+   Módulo de control logístico: panel con la antigüedad de los pedidos
+   pendientes (semáforo de 24/48 horas), tabla compacta ordenable con una
+   fila por pedido, y detalle expandible con los datos de entrega y las
+   acciones (despachar, WhatsApp, reenviar correo, imprimir rótulo).
    La clave viaja en cada consulta y el servidor la compara en tiempo
    constante; solo se recuerda en la pestaña (sessionStorage).
    ========================================================================= */
@@ -17,6 +19,10 @@
   var errorCaja = document.getElementById('puertaError');
   var filtroActivo = 'todos';
   var pedidos = [];
+  var expandidas = {};                    /* referencias abiertas, sobreviven al repintado */
+  var orden = { campo: 'fecha', dir: -1 }; /* recientes primero */
+
+  var HORA = 3600 * 1000;
 
   function pesos(n) { return typeof n === 'number' ? '$' + n.toLocaleString('es-CO') : '—'; }
 
@@ -34,6 +40,15 @@
     });
   }
 
+  function horasDesde(iso) {
+    var t = Date.parse(iso);
+    return isNaN(t) ? 0 : (Date.now() - t) / HORA;
+  }
+
+  function unidades(p) {
+    return (p.lineas || []).reduce(function (n, l) { return n + (l.cant || 0); }, 0);
+  }
+
   /* El estado que se muestra: el despacho manda sobre el estado del pago. */
   function estadoVisual(p) {
     if (p.despacho) return 'DESPACHADO';
@@ -42,39 +57,120 @@
 
   var ESTADOS = {
     DESPACHADO: ['Despachado', 'ok'],
-    APPROVED: ['Pagado · por despachar', 'atencion'],
+    APPROVED: ['Por despachar', 'atencion'],
     PENDIENTE: ['Pendiente de pago', 'gris'],
-    REVISAR_MONTO: ['⚠ Revisar monto — no despachar', 'alerta'],
+    REVISAR_MONTO: ['⚠ Revisar monto', 'alerta'],
     DECLINED: ['Rechazado', 'gris'],
     VOIDED: ['Anulado', 'gris'],
-    ERROR: ['Error en la pasarela', 'gris']
+    ERROR: ['Error pasarela', 'gris']
   };
 
-  /* ---------- Estadísticas del historial ---------- */
+  /* ---------- Panel logístico ---------- */
 
-  function pintarEstadisticas() {
-    var pagados = pedidos.filter(function (p) { return p.estado === 'APPROVED'; });
-    var vendido = pagados.reduce(function (n, p) { return n + (p.total || 0); }, 0);
-    var porDespachar = pagados.filter(function (p) { return !p.despacho; }).length;
-    var despachados = pagados.length - porDespachar;
-
-    var unidades = {};
-    pagados.forEach(function (p) {
-      (p.lineas || []).forEach(function (l) {
-        unidades[l.nombre] = (unidades[l.nombre] || 0) + l.cant;
-      });
+  function pendientesPorEdad() {
+    var r = { ok: [], media: [], alta: [] };
+    pedidos.forEach(function (p) {
+      if (p.estado !== 'APPROVED' || p.despacho) return;
+      var h = horasDesde(p.creado);
+      if (h < 24) r.ok.push(p);
+      else if (h < 48) r.media.push(p);
+      else r.alta.push(p);
     });
-    var top = Object.keys(unidades).sort(function (a, b) { return unidades[b] - unidades[a]; })[0];
-
-    stats.innerHTML =
-      '<div class="admin-stat"><b>' + pesos(vendido) + '</b><span>Vendido (pagado)</span></div>' +
-      '<div class="admin-stat"><b>' + pagados.length + '</b><span>Pedidos pagados</span></div>' +
-      '<div class="admin-stat' + (porDespachar ? ' admin-stat--pendiente' : '') + '"><b>' + porDespachar + '</b><span>Por despachar</span></div>' +
-      '<div class="admin-stat"><b>' + despachados + '</b><span>Despachados</span></div>' +
-      (top ? '<div class="admin-stat admin-stat--ancho"><b>' + esc(top) + '</b><span>Más vendido (' + unidades[top] + ' und)</span></div>' : '');
+    return r;
   }
 
-  /* ---------- Tarjetas ---------- */
+  function pintarPanel() {
+    var edad = pendientesPorEdad();
+    var pendientes = edad.ok.length + edad.media.length + edad.alta.length;
+
+    var despachados = pedidos.filter(function (p) { return p.despacho; });
+    var hoyTxt = new Date().toDateString();
+    var despHoy = 0, desp7 = 0, sumaHoras = 0, conTiempos = 0;
+    despachados.forEach(function (p) {
+      var f = Date.parse(p.despacho.fecha);
+      if (!isNaN(f)) {
+        if (new Date(f).toDateString() === hoyTxt) despHoy++;
+        if (Date.now() - f < 7 * 24 * HORA) desp7++;
+        var c = Date.parse(p.creado);
+        if (!isNaN(c) && f > c) { sumaHoras += (f - c) / HORA; conTiempos++; }
+      }
+    });
+    var promedio = conTiempos
+      ? (sumaHoras / conTiempos < 48
+          ? Math.round(sumaHoras / conTiempos) + ' h'
+          : (sumaHoras / conTiempos / 24).toLocaleString('es-CO', { maximumFractionDigits: 1 }) + ' d')
+      : '—';
+
+    var vendido = pedidos
+      .filter(function (p) { return p.estado === 'APPROVED'; })
+      .reduce(function (n, p) { return n + (p.total || 0); }, 0);
+
+    function ficha(clase, filtro, n, titulo, detalle) {
+      return '<button type="button" class="log-ficha log-ficha--' + clase +
+        (n ? '' : ' log-ficha--vacia') + '" data-fb="' + filtro + '"' +
+        ' aria-pressed="' + String(filtroActivo === filtro) + '">' +
+        '<b>' + n + '</b><span>' + titulo + '</span><small>' + detalle + '</small></button>';
+    }
+
+    stats.innerHTML =
+      '<section class="log-grupo" aria-label="Pedidos por despachar">' +
+        '<header><h2>Por despachar</h2><b>' + pendientes + '</b></header>' +
+        '<div class="log-fichas">' +
+          ficha('verde', 'EDAD_OK', edad.ok.length, 'Recientes', 'menos de 24 h') +
+          ficha('ambar', 'EDAD_MEDIA', edad.media.length, 'En plazo', 'entre 24 y 48 h') +
+          ficha('roja', 'EDAD_ALTA', edad.alta.length, 'Urgentes', 'más de 48 h') +
+        '</div>' +
+      '</section>' +
+      '<section class="log-grupo" aria-label="Pedidos despachados">' +
+        '<header><h2>Despachados</h2><b>' + despachados.length + '</b></header>' +
+        '<div class="log-fichas">' +
+          ficha('neutra', 'DESP_HOY', despHoy, 'Hoy', 'salieron hoy') +
+          ficha('neutra', 'DESP_7', desp7, 'Semana', 'últimos 7 días') +
+          '<div class="log-ficha log-ficha--dato"><b>' + promedio + '</b>' +
+            '<span>T. de despacho</span><small>promedio pago → envío</small></div>' +
+        '</div>' +
+      '</section>' +
+      '<section class="log-grupo log-grupo--dinero" aria-label="Ventas">' +
+        '<header><h2>Vendido</h2></header>' +
+        '<p class="log-dinero">' + pesos(vendido) + '</p>' +
+        '<a class="log-enlace" href="tablero.html">Ver tablero completo →</a>' +
+      '</section>';
+
+    stats.querySelectorAll('[data-fb]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var f = b.getAttribute('data-fb');
+        filtroActivo = (filtroActivo === f) ? 'todos' : f;
+        sincronizarChips();
+        pintar();
+      });
+    });
+  }
+
+  function sincronizarChips() {
+    document.querySelectorAll('.admin-filtro').forEach(function (x) {
+      x.setAttribute('aria-pressed', String(x.getAttribute('data-f') === filtroActivo));
+    });
+  }
+
+  /* ---------- Filtros ---------- */
+
+  function coincide(p) {
+    var h = horasDesde(p.creado);
+    var pendiente = p.estado === 'APPROVED' && !p.despacho;
+    switch (filtroActivo) {
+      case 'todos': return true;
+      case 'POR_DESPACHAR': return pendiente;
+      case 'DESPACHADO': return !!p.despacho;
+      case 'EDAD_OK': return pendiente && h < 24;
+      case 'EDAD_MEDIA': return pendiente && h >= 24 && h < 48;
+      case 'EDAD_ALTA': return pendiente && h >= 48;
+      case 'DESP_HOY': return !!p.despacho && new Date(Date.parse(p.despacho.fecha)).toDateString() === new Date().toDateString();
+      case 'DESP_7': return !!p.despacho && Date.now() - Date.parse(p.despacho.fecha) < 7 * 24 * HORA;
+      default: return p.estado === filtroActivo;
+    }
+  }
+
+  /* ---------- Detalle del pedido (la tarjeta de siempre) ---------- */
 
   function tarjeta(p) {
     var ev = estadoVisual(p);
@@ -138,20 +234,112 @@
     '</article>';
   }
 
-  function coincide(p) {
-    if (filtroActivo === 'todos') return true;
-    if (filtroActivo === 'POR_DESPACHAR') return p.estado === 'APPROVED' && !p.despacho;
-    if (filtroActivo === 'DESPACHADO') return !!p.despacho;
-    return p.estado === filtroActivo;
+  /* ---------- Tabla ---------- */
+
+  var COLUMNAS = [
+    { campo: 'fecha', titulo: 'Fecha' },
+    { campo: 'cliente', titulo: 'Cliente' },
+    { campo: 'ciudad', titulo: 'Ciudad', clase: 'log-oc' },
+    { campo: 'items', titulo: 'Ítems', clase: 'log-oc log-num' },
+    { campo: 'total', titulo: 'Total', clase: 'log-num' },
+    { campo: 'estado', titulo: 'Estado' }
+  ];
+
+  function valorDe(p, campo) {
+    switch (campo) {
+      case 'fecha': return Date.parse(p.creado) || 0;
+      case 'cliente': return ((p.cliente || {}).nombre || '').toLowerCase();
+      case 'ciudad': return ((p.cliente || {}).ciudad || '').toLowerCase();
+      case 'items': return unidades(p);
+      case 'total': return p.total || 0;
+      case 'estado': return (ESTADOS[estadoVisual(p)] || ['—'])[0];
+      default: return 0;
+    }
+  }
+
+  function filaTabla(p) {
+    var ev = estadoVisual(p);
+    var e = ESTADOS[ev] || [ev, 'gris'];
+    var c = p.cliente || {};
+    var abierta = !!expandidas[p.referencia];
+    var pendiente = p.estado === 'APPROVED' && !p.despacho;
+    var edadClase = '';
+    if (pendiente) {
+      var h = horasDesde(p.creado);
+      edadClase = h >= 48 ? ' log-fila--urgente' : (h >= 24 ? ' log-fila--enplazo' : '');
+    }
+
+    return '<tr class="log-fila' + edadClase + '" data-ref="' + esc(p.referencia) + '" tabindex="0"' +
+        ' aria-expanded="' + String(abierta) + '" title="Ver el detalle del pedido">' +
+        '<td>' + fecha(p.creado) + '</td>' +
+        '<td class="log-nombre">' + esc(c.nombre || '— huérfano —') + '</td>' +
+        '<td class="log-oc">' + esc(c.ciudad || '—') + '</td>' +
+        '<td class="log-oc log-num">' + unidades(p) + '</td>' +
+        '<td class="log-num log-plata">' + pesos(p.total) + '</td>' +
+        '<td><span class="admin-estado admin-estado--' + e[1] + '">' + e[0] + '</span></td>' +
+        '<td class="log-mas" aria-hidden="true">' + (abierta ? '−' : '+') + '</td>' +
+      '</tr>' +
+      '<tr class="log-detalle"' + (abierta ? '' : ' hidden') + '><td colspan="7">' + tarjeta(p) + '</td></tr>';
   }
 
   function pintar() {
-    pintarEstadisticas();
-    var visibles = pedidos.filter(coincide);
-    lista.innerHTML = visibles.length
-      ? visibles.map(tarjeta).join('')
-      : '<p class="admin-vacio">No hay pedidos ' +
-        (filtroActivo === 'todos' ? 'todavía.' : 'en este estado.') + '</p>';
+    pintarPanel();
+
+    var visibles = pedidos.filter(coincide).sort(function (a, b) {
+      var va = valorDe(a, orden.campo), vb = valorDe(b, orden.campo);
+      if (va < vb) return -orden.dir;
+      if (va > vb) return orden.dir;
+      return 0;
+    });
+
+    if (!visibles.length) {
+      lista.innerHTML = '<p class="admin-vacio">No hay pedidos ' +
+        (filtroActivo === 'todos' ? 'todavía.' : 'en este grupo.') + '</p>';
+      return;
+    }
+
+    var cabecera = COLUMNAS.map(function (col) {
+      var activa = orden.campo === col.campo;
+      return '<th' + (col.clase ? ' class="' + col.clase + '"' : '') +
+        ' data-orden="' + col.campo + '"' +
+        ' aria-sort="' + (activa ? (orden.dir > 0 ? 'ascending' : 'descending') : 'none') + '">' +
+        '<button type="button">' + col.titulo + (activa ? (orden.dir > 0 ? ' ↑' : ' ↓') : '') + '</button></th>';
+    }).join('') + '<th></th>';
+
+    lista.innerHTML =
+      '<div class="log-caja"><table class="log-tabla">' +
+        '<thead><tr>' + cabecera + '</tr></thead>' +
+        '<tbody>' + visibles.map(filaTabla).join('') + '</tbody>' +
+      '</table></div>';
+
+    /* Orden por columna */
+    lista.querySelectorAll('th[data-orden] button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var campo = b.parentElement.getAttribute('data-orden');
+        if (orden.campo === campo) orden.dir = -orden.dir;
+        else orden = { campo: campo, dir: campo === 'fecha' ? -1 : 1 };
+        pintar();
+      });
+    });
+
+    /* Expandir y colapsar el detalle */
+    lista.querySelectorAll('.log-fila').forEach(function (fila) {
+      function alternar() {
+        var ref = fila.getAttribute('data-ref');
+        expandidas[ref] = !expandidas[ref];
+        var detalle = fila.nextElementSibling;
+        if (detalle) detalle.hidden = !expandidas[ref];
+        fila.setAttribute('aria-expanded', String(!!expandidas[ref]));
+        var mas = fila.querySelector('.log-mas');
+        if (mas) mas.textContent = expandidas[ref] ? '−' : '+';
+      }
+      fila.addEventListener('click', alternar);
+      fila.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alternar(); }
+      });
+    });
+
+    /* Acciones dentro del detalle (los clics no colapsan la fila: viven en otra <tr>) */
 
     lista.querySelectorAll('[data-copiar]').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -291,9 +479,7 @@
     var b = e.target.closest('.admin-filtro');
     if (!b) return;
     filtroActivo = b.getAttribute('data-f');
-    document.querySelectorAll('.admin-filtro').forEach(function (x) {
-      x.setAttribute('aria-pressed', String(x === b));
-    });
+    sincronizarChips();
     pintar();
   });
 

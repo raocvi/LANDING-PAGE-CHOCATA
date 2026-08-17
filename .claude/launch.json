@@ -6,6 +6,15 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "5173", "--directory", "web"],
       "port": 5173
+    },
+    {
+      "name": "chocata-api",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "-e",
+        "process.env.ADMIN_TOKEN='demo-local-abcdefghijklmnopqrstuvwxyz123456';import('./tools/servidor-local.mjs')"
+      ],
+      "port": 5174
     }
   ]
 }
