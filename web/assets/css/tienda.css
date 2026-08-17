@@ -625,8 +625,29 @@
 .log-fila:hover td { background: rgba(248,243,235,.04); }
 .log-fila:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
 .log-fila[aria-expanded="true"] td { background: rgba(242,176,30,.05); border-bottom-style: dashed; }
-.log-fila--enplazo td:first-child { box-shadow: inset 3px 0 0 var(--gold); }
-.log-fila--urgente td:first-child { box-shadow: inset 3px 0 0 #d6236b; }
+/* Pendiente = titila; el color dice la urgencia (verde, ámbar, rojo). */
+.log-fila--pendiente { --pulso: rgba(66, 180, 99, .95); }
+.log-fila--enplazo { --pulso: rgba(242, 176, 30, .95); }
+.log-fila--urgente { --pulso: rgba(214, 35, 107, .95); }
+.log-fila--pendiente td:first-child { animation: logTitilarBarra 1.6s ease-in-out infinite; }
+@keyframes logTitilarBarra {
+  0%, 100% { box-shadow: inset 3px 0 0 var(--pulso); }
+  50% { box-shadow: inset 3px 0 0 transparent; }
+}
+/* La tarjeta desplegada de un pedido por despachar titila en verde
+   hasta que cambia de estado (al despacharlo se repinta y queda quieta). */
+.log-detalle .admin-pedido[data-estado="APPROVED"] {
+  border-style: solid;
+  animation: logTitilarMarco 1.6s ease-in-out infinite;
+}
+@keyframes logTitilarMarco {
+  0%, 100% { border-color: rgba(66, 180, 99, .75); }
+  50% { border-color: rgba(66, 180, 99, .15); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .log-fila--pendiente td:first-child { animation: none; box-shadow: inset 3px 0 0 var(--pulso); }
+  .log-detalle .admin-pedido[data-estado="APPROVED"] { animation: none; border-color: rgba(66, 180, 99, .6); }
+}
 .log-nombre { color: var(--cream); font-weight: 500; }
 .log-num { text-align: right; font-variant-numeric: tabular-nums; }
 .log-plata { color: var(--gold-soft); font-weight: 600; white-space: nowrap; }

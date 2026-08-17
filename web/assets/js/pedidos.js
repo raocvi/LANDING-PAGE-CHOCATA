@@ -266,7 +266,8 @@
     var edadClase = '';
     if (pendiente) {
       var h = horasDesde(p.creado);
-      edadClase = h >= 48 ? ' log-fila--urgente' : (h >= 24 ? ' log-fila--enplazo' : '');
+      edadClase = ' log-fila--pendiente' +
+        (h >= 48 ? ' log-fila--urgente' : (h >= 24 ? ' log-fila--enplazo' : ''));
     }
 
     return '<tr class="log-fila' + edadClase + '" data-ref="' + esc(p.referencia) + '" tabindex="0"' +
