@@ -130,6 +130,8 @@
               ? '<button class="btn btn--ghost" type="button" data-reenviar="' + esc(p.referencia) +
                 '">Reenviar correo</button>'
               : '') +
+            '<button class="btn btn--ghost" type="button" data-rotulo="' + esc(p.referencia) +
+              '">Imprimir rótulo</button>' +
           '</div>'
         : '<p class="admin-cliente"><em>Pago huérfano: sin datos de pedido. Buscar en el panel de Wompi.</em></p>') +
       bloqueDespacho +
@@ -158,6 +160,13 @@
           b.textContent = '¡Copiado!';
           setTimeout(function () { b.textContent = t; }, 1400);
         });
+      });
+    });
+
+    lista.querySelectorAll('[data-rotulo]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var p = pedidos.filter(function (x) { return x.referencia === b.getAttribute('data-rotulo'); })[0];
+        if (p) imprimirRotulo(p);
       });
     });
 
@@ -211,6 +220,42 @@
           });
       });
     });
+  }
+
+  /* ---------- Rótulo de envío ---------- */
+
+  /* Arma la etiqueta en el nodo #rotulo y abre el diálogo de impresión.
+     El CSS de impresión oculta todo lo demás: sale solo la etiqueta. */
+  function imprimirRotulo(p) {
+    var c = p.cliente || {};
+    var celular = String(c.celular || '').replace(/\D/g, '');
+    var contenido = (p.lineas || []).map(function (l) {
+      return l.cant + ' × ' + l.nombre + ' ' + l.talla;
+    }).join(' · ');
+
+    document.getElementById('rotulo').innerHTML =
+      '<div class="rotulo__marco">' +
+        '<div class="rotulo__cabecera">' +
+          '<img class="rotulo__logo" src="assets/img/brand/chocata-logo.png" alt="CHOCATA">' +
+          '<p class="rotulo__ref">' + esc(p.referencia) + '</p>' +
+        '</div>' +
+        '<p class="rotulo__rol">Destinatario</p>' +
+        '<p class="rotulo__nombre">' + esc(c.nombre || '') + '</p>' +
+        '<p class="rotulo__linea">' + esc(c.tipoDocumento || 'CC') + ' ' + esc(c.documento || '') +
+          (celular ? ' · Cel. ' + esc(celular) : '') + '</p>' +
+        '<p class="rotulo__direccion">' + esc(c.direccion || '') + '</p>' +
+        '<p class="rotulo__ciudad">' + esc([c.ciudad, c.departamento].filter(Boolean).join(', ')) + '</p>' +
+        (c.notas ? '<p class="rotulo__linea">Indicaciones: ' + esc(c.notas) + '</p>' : '') +
+        '<hr class="rotulo__corte">' +
+        '<p class="rotulo__rol">Remitente</p>' +
+        '<p class="rotulo__linea"><b>CHOCATA Colombia</b> · Cali, Valle del Cauca</p>' +
+        '<p class="rotulo__linea">WhatsApp +57 317 668 5235 · pedidos@chocata.com.co</p>' +
+        (contenido ? '<p class="rotulo__contenido">Contenido: ' + esc(contenido) + '</p>' : '') +
+      '</div>';
+
+    document.body.classList.add('imprimiendo');
+    window.print();
+    document.body.classList.remove('imprimiendo');
   }
 
   /* ---------- Sesión ---------- */
