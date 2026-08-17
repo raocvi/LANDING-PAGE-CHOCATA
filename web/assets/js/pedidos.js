@@ -123,6 +123,10 @@
             '<button class="btn btn--ghost" type="button" data-copiar="' +
               esc(c.nombre + ' — ' + celular + ' — ' + direccion + (c.notas ? ' — ' + c.notas : '')) +
             '">Copiar datos de envío</button>' +
+            (p.estado === 'APPROVED' && c.correo
+              ? '<button class="btn btn--ghost" type="button" data-reenviar="' + esc(p.referencia) +
+                '">Reenviar correo</button>'
+              : '') +
           '</div>'
         : '<p class="admin-cliente"><em>Pago huérfano: sin datos de pedido. Buscar en el panel de Wompi.</em></p>') +
       bloqueDespacho +
@@ -151,6 +155,26 @@
           b.textContent = '¡Copiado!';
           setTimeout(function () { b.textContent = t; }, 1400);
         });
+      });
+    });
+
+    lista.querySelectorAll('[data-reenviar]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.disabled = true;
+        var t = b.textContent;
+        b.textContent = 'Enviando…';
+        fetch('/api/reenviar-correo', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-token': sessionStorage.getItem(LLAVE) || ''
+          },
+          body: JSON.stringify({ referencia: b.getAttribute('data-reenviar') })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (d) { alert(d.detalle || d.mensaje || 'Sin respuesta.'); })
+          .catch(function () { alert('No se pudo reenviar. Intenta de nuevo.'); })
+          .then(function () { b.disabled = false; b.textContent = t; });
       });
     });
 
