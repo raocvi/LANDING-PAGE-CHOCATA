@@ -110,6 +110,9 @@
       (c.nombre
         ? '<div class="admin-cliente">' +
             '<b>' + esc(c.nombre) + '</b> · ' + esc(c.tipoDocumento || 'CC') + ' ' + esc(c.documento || '') + '<br>' +
+            (celular ? '📱 ' + esc(celular) : '') +
+            (c.correo ? (celular ? ' · ' : '') + '✉️ ' + esc(c.correo) : '') +
+            ((celular || c.correo) ? '<br>' : '') +
             esc(direccion) +
             (c.notas ? '<br><em>Notas: ' + esc(c.notas) + '</em>' : '') +
           '</div>' +
