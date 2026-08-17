@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /pedidos
+Disallow: /tablero
+Disallow: /gracias
+
+Sitemap: https://www.chocata.com.co/sitemap.xml
