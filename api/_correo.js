@@ -64,7 +64,7 @@ function armarCorreo(pedido) {
         '" style="display:inline-block;background:#F2B01E;color:#241d15;text-decoration:none;' +
         'padding:11px 20px;border-radius:9px;font-size:14px;font-weight:bold">Escribir por WhatsApp</a>' +
       '<p style="margin:16px 0 0;color:#a89e92;font-size:11px;line-height:1.6">Tienes derecho de retracto dentro de los 5 días ' +
-        'hábiles siguientes a la entrega (producto sin abrir). Detalles en chocata.vercel.app/legal</p>' +
+        'hábiles siguientes a la entrega (producto sin abrir). Detalles en www.chocata.com.co/legal</p>' +
     '</td></tr>' +
   '</table>' +
 '</div>';
@@ -104,6 +104,9 @@ async function enviarConfirmacion(pedido) {
       signal: AbortSignal.timeout(8000),
       body: JSON.stringify({
         sender: { name: process.env.CORREO_NOMBRE || 'CHOCATA Colombia', email: remitente },
+        /* Las respuestas del cliente van a la bandeja real del negocio,
+           aunque el remitente sea una dirección sin buzón (pedidos@...). */
+        replyTo: { email: process.env.CORREO_COPIA || remitente },
         to: [{ email: destinatario, name: pedido.cliente.nombre || '' }],
         /* Copia oculta al correo del negocio: la confirmación queda también
            en la bandeja de CHOCATA, sin exponerle al cliente esa dirección
