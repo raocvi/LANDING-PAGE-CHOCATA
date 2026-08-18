@@ -1,33 +1,25 @@
-# LANDING-PAGE-CHOCATA
+# CHOCATA Colombia — www.chocata.com.co
 
-Landing page de CHOCATA S.A.S. — marca caleña de bebidas de malta y cacao y línea de
-nutrición funcional, creada por una emprendedora con el respaldo del Fondo Emprender del SENA.
+Tienda en línea y página de marca de CHOCATA S.A.S. (Cali, Colombia):
+nutrición con sabor — bebidas de malta y cacao, proteína, creatina,
+colágeno, magnesio, vitamina C y más. Emprendimiento caleño fundado por una
+mujer, con respaldo del Fondo Emprender del SENA.
 
-## Cómo verla
+**Toda la documentación empieza en la wiki: [docs/wiki/index.md](docs/wiki/index.md)**
+
+| Atajo | |
+|---|---|
+| Diseño del sistema (SDD) | [docs/SDD.md](docs/SDD.md) |
+| Runbook de operación | [docs/OPERACION.md](docs/OPERACION.md) |
+| Especificación «Estudio» | [docs/PROMPT-MAESTRO-ESTUDIO.md](docs/PROMPT-MAESTRO-ESTUDIO.md) |
+
+## Arranque rápido (desarrollo)
 
 ```bash
-python -m http.server 5173 --directory web
+node tools/servidor-local.mjs   # tienda completa en http://localhost:5174
+node tools/sembrar-demo.mjs     # datos de demostración
+node tools/probar-flujo.mjs     # suite E2E
 ```
 
-Luego abrir `http://localhost:5173`.
-
-## Estructura
-
-| Ruta | Qué es |
-|---|---|
-| `web/` | El sitio completo: HTML, CSS, JS e imágenes optimizadas |
-| `web/README.md` | Documentación técnica: secciones, decisiones de diseño y pendientes |
-| `LOGO2.png` | Logotipo oficial con canal alfa (fuente del logo del sitio) |
-
-HTML, CSS y JavaScript sin build step. Animación con GSAP + ScrollTrigger y scroll suave con
-Lenis, los tres desde CDN.
-
-## Material fuente
-
-Los PNG originales de `composiciones/` y `productos_sin_fondo/` (~80 MB) están excluidos por
-`.gitignore`: el sitio solo consume los `.webp` ya optimizados de `web/assets/img/`, que pesan
-~5 MB en total. Para versionarlos también, comenta esas dos líneas del `.gitignore`.
-
-## Detalle técnico
-
-Ver [web/README.md](web/README.md).
+Stack: HTML/CSS/JS puro · Vercel Functions · Vercel Blob · Wompi · Brevo ·
+Gemini (Sofi) · dominio en Hostinger. Costo fijo: $0 + dominio anual.
