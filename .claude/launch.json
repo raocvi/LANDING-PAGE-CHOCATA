@@ -12,7 +12,7 @@
       "runtimeExecutable": "node",
       "runtimeArgs": [
         "-e",
-        "process.env.ADMIN_TOKEN='demo-local-abcdefghijklmnopqrstuvwxyz123456';import('./tools/servidor-local.mjs')"
+        "process.env.ADMIN_TOKEN='demo-local-abcdefghijklmnopqrstuvwxyz123456';process.env.ANULACIONES_TTL_MS='0';import('./tools/servidor-local.mjs')"
       ],
       "port": 5174
     }

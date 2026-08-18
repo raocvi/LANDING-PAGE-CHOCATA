@@ -16,6 +16,14 @@ const CARPETA_LOCAL = process.env.CONTENIDO_DIR || path.join(__dirname, '..', '.
 const RUTA_BLOB = 'contenido/sitio.json';
 const RUTA_BLOB_ANTERIOR = 'contenido/sitio.anterior.json';
 
+/* El catálogo de fábrica: define qué slugs y tallas existen. Las ediciones
+   de productos solo pueden tocar lo que ya está aquí (crear es otra fase). */
+const RAIZ_DATOS = path.join(__dirname, '..', 'web', 'assets', 'data');
+const CATALOGO_BASE = JSON.parse(fs.readFileSync(path.join(RAIZ_DATOS, 'precios.json'), 'utf8'));
+
+const PRECIO_MINIMO = 500;
+const PRECIO_MAXIMO = 2000000;
+
 /** Los textos de fábrica: idénticos a los que la página trae en el HTML. */
 const PREDETERMINADO = {
   aviso: {
@@ -80,8 +88,39 @@ function escribirLocal(nombre, objeto) {
  * Valida y poda lo recibido: solo pasan las llaves conocidas, recortadas a su
  * límite. Un booleano fuera de sitio o un objeto extraño simplemente se ignora.
  */
+/**
+ * Ediciones de productos: solo slugs del catálogo de fábrica, solo tallas que
+ * el producto ya tiene, precios enteros dentro del rango sano. Todo lo demás
+ * se descarta en silencio: la muralla contra catálogos fantasma.
+ */
+function depurarProductos(entrada) {
+  if (!entrada || typeof entrada !== 'object') return null;
+  const limpio = {};
+  for (const slug of Object.keys(CATALOGO_BASE)) {
+    const p = entrada[slug];
+    if (!p || typeof p !== 'object') continue;
+    const destino = {};
+    if (typeof p.oculto === 'boolean') destino.oculto = p.oculto;
+    if (Number.isInteger(p.orden) && p.orden >= 0 && p.orden < 99) destino.orden = p.orden;
+    if (p.precios && typeof p.precios === 'object') {
+      const precios = {};
+      for (const fila of CATALOGO_BASE[slug].presentaciones || []) {
+        const v = p.precios[fila.talla];
+        if (Number.isInteger(v) && v >= PRECIO_MINIMO && v <= PRECIO_MAXIMO && v !== fila.cop) {
+          precios[fila.talla] = v;
+        }
+      }
+      if (Object.keys(precios).length) destino.precios = precios;
+    }
+    if (Object.keys(destino).length) limpio[slug] = destino;
+  }
+  return Object.keys(limpio).length ? limpio : null;
+}
+
 function depurar(entrada) {
   const limpio = {};
+  const productos = depurarProductos(entrada && entrada.productos);
+  if (productos) limpio.productos = productos;
   for (const seccion of Object.keys(PREDETERMINADO)) {
     const fuente = entrada && typeof entrada === 'object' ? entrada[seccion] : null;
     if (!fuente || typeof fuente !== 'object') continue;
@@ -108,6 +147,8 @@ async function leerContenido() {
   for (const seccion of Object.keys(PREDETERMINADO)) {
     resultado[seccion] = { ...PREDETERMINADO[seccion], ...(depurado[seccion] || {}) };
   }
+  /* Las ediciones de productos no tienen «fábrica» que mezclar: van tal cual. */
+  resultado.productos = depurado.productos || {};
   return resultado;
 }
 

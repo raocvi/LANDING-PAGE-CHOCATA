@@ -46,6 +46,27 @@
         }
       }
 
+      /* ---- Productos: orden, ocultos y precios ---- */
+      window.__CONTENIDO = c;
+      document.dispatchEvent(new CustomEvent('chocata:contenido-listo', { detail: c }));
+      if (c.productos && Object.keys(c.productos).length) {
+        var grid = document.getElementById('grid');
+        Object.keys(c.productos).forEach(function (slug) {
+          if (!c.productos[slug].oculto) return;
+          /* Fuera de la vitrina, del carrusel de beneficios y del recomendador. */
+          document.querySelectorAll('[data-product="' + slug + '"]').forEach(function (n) { n.hidden = true; });
+        });
+        if (grid) {
+          Object.keys(c.productos)
+            .filter(function (s) { return typeof c.productos[s].orden === 'number'; })
+            .sort(function (a, b) { return c.productos[a].orden - c.productos[b].orden; })
+            .forEach(function (slug) {
+              var carta = grid.querySelector('.card[data-product="' + slug + '"]');
+              if (carta) grid.appendChild(carta);
+            });
+        }
+      }
+
       /* ---- Hero ---- */
       if (c.hero) {
         var eyebrow = document.querySelector('.hero__copy .eyebrow');
