@@ -46,6 +46,37 @@
         }
       }
 
+      /* ---- Imágenes: logo, fondos y fotos de producto ----
+         Cada foto llega ya recortada a la proporción de su marco, así que
+         basta cambiar el src: la maqueta no se mueve ni un píxel. */
+      if (c.imagenes && Object.keys(c.imagenes).length) {
+        var im = c.imagenes;
+
+        if (im.logo) {
+          document.querySelectorAll('img[src*="chocata-logo"]').forEach(function (n) { n.src = im.logo; });
+        }
+        if (im.heroFondo) {
+          var fondo = document.querySelector('.hero__bg img');
+          if (fondo) { fondo.src = im.heroFondo; fondo.removeAttribute('srcset'); }
+        }
+        if (im.historiaFondo) {
+          var historia = document.querySelector('img[src*="mama-hija"]');
+          if (historia) historia.src = im.historiaFondo;
+        }
+
+        Object.keys(im).forEach(function (ranura) {
+          if (ranura.indexOf('producto.') !== 0) return;
+          var slug = ranura.slice('producto.'.length);
+          var carta = document.querySelector('.card[data-product="' + slug + '"] img');
+          if (carta) carta.src = im[ranura];
+          /* El detalle del producto lee su foto de la ficha: se actualiza
+             también, para que abrir la tarjeta muestre la nueva. */
+          if (window.CHOCATA_PRODUCTS && window.CHOCATA_PRODUCTS[slug]) {
+            window.CHOCATA_PRODUCTS[slug].life = im[ranura];
+          }
+        });
+      }
+
       /* ---- Productos: orden, ocultos y precios ---- */
       window.__CONTENIDO = c;
       document.dispatchEvent(new CustomEvent('chocata:contenido-listo', { detail: c }));

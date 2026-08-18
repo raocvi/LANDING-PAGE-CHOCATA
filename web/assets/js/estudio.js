@@ -228,6 +228,199 @@
     return salida;
   }
 
+  /* ---------- Imágenes y marca ---------- */
+
+  var ranuras = null;
+  var imagenesActuales = {};
+
+  /**
+   * Recorta y escala la foto elegida a la medida EXACTA del marco: se toma el
+   * trozo central más grande que respete la proporción y se dibuja en un
+   * lienzo de ese tamaño. La foto nunca se estira ni desborda su espacio,
+   * pase lo que pase con el original.
+   */
+  function recortarAlMarco(archivo, ranura) {
+    return new Promise(function (resolver, rechazar) {
+      if (!/^image\//.test(archivo.type)) return rechazar(new Error('Ese archivo no es una imagen.'));
+      if (archivo.size > 25 * 1024 * 1024) return rechazar(new Error('La imagen es demasiado grande (máximo 25 MB).'));
+
+      var lector = new FileReader();
+      lector.onerror = function () { rechazar(new Error('No pudimos leer el archivo.')); };
+      lector.onload = function () {
+        var img = new Image();
+        img.onerror = function () { rechazar(new Error('No pudimos abrir esa imagen.')); };
+        img.onload = function () {
+          var proporcion = ranura.w / ranura.h;
+          /* Lado del recorte: el rectángulo central más grande con la
+             proporción del marco que quepa en el original. */
+          var anchoCorte = img.width;
+          var altoCorte = Math.round(img.width / proporcion);
+          if (altoCorte > img.height) {
+            altoCorte = img.height;
+            anchoCorte = Math.round(img.height * proporcion);
+          }
+          var x = Math.round((img.width - anchoCorte) / 2);
+          var y = Math.round((img.height - altoCorte) / 2);
+
+          /* No agrandar más allá del original ni del marco: subir una foto
+             pequeña no debe inventar píxeles ni pesar de más. */
+          var anchoFinal = Math.min(ranura.w, anchoCorte);
+          var altoFinal = Math.round(anchoFinal / proporcion);
+
+          var lienzo = document.createElement('canvas');
+          lienzo.width = anchoFinal;
+          lienzo.height = altoFinal;
+          var ctx = lienzo.getContext('2d');
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, x, y, anchoCorte, altoCorte, 0, 0, anchoFinal, altoFinal);
+
+          var datos = lienzo.toDataURL('image/webp', 0.85);
+          if (datos.indexOf('data:image/webp') !== 0) {
+            return rechazar(new Error('Este navegador no puede optimizar la imagen. Prueba con Chrome o Edge.'));
+          }
+          var pesoKb = Math.round((datos.length * 3 / 4) / 1024);
+          resolver({ datos: datos, ancho: anchoFinal, alto: altoFinal, pesoKb: pesoKb });
+        };
+        img.src = lector.result;
+      };
+      lector.readAsDataURL(archivo);
+    });
+  }
+
+  function enviarImagen(nombreRanura, cuerpo, aviso, tarjeta) {
+    aviso.textContent = 'Publicando…';
+    aviso.className = 'est-ranura__aviso';
+    return fetch('/api/subir-imagen', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-token': sessionStorage.getItem(LLAVE) || ''
+      },
+      body: JSON.stringify(Object.assign({ ranura: nombreRanura }, cuerpo))
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (!res.ok) throw new Error(res.d.mensaje || 'No se pudo publicar.');
+        imagenesActuales = (res.d.contenido && res.d.contenido.imagenes) || {};
+        aviso.textContent = '✓ ' + res.d.mensaje;
+        pintarImagenes();
+      })
+      .catch(function (err) {
+        aviso.textContent = err.message;
+        aviso.className = 'est-ranura__aviso est-ranura__aviso--error';
+        if (tarjeta) tarjeta.classList.remove('est-ranura--trabajando');
+      });
+  }
+
+  function tarjetaRanura(nombre, ranura) {
+    var tarjeta = document.createElement('article');
+    tarjeta.className = 'est-ranura';
+    var urlActual = imagenesActuales[nombre];
+
+    var marco = document.createElement('div');
+    marco.className = 'est-ranura__marco';
+    marco.style.aspectRatio = ranura.w + ' / ' + ranura.h;
+    var img = document.createElement('img');
+    img.alt = '';
+    img.loading = 'lazy';
+    if (urlActual) img.src = urlActual;
+    else img.classList.add('est-ranura__img--vacia');
+    marco.appendChild(img);
+
+    var cuerpo = document.createElement('div');
+    cuerpo.className = 'est-ranura__cuerpo';
+
+    var titulo = document.createElement('p');
+    titulo.className = 'est-ranura__titulo';
+    titulo.textContent = ranura.titulo;
+    var nota = document.createElement('p');
+    nota.className = 'est-ranura__nota';
+    nota.textContent = urlActual ? 'Imagen propia · ' + ranura.nota : ranura.nota;
+
+    var acciones = document.createElement('div');
+    acciones.className = 'est-ranura__acciones';
+
+    var etiqueta = document.createElement('label');
+    etiqueta.className = 'btn btn--ghost est-ranura__elegir';
+    etiqueta.textContent = urlActual ? 'Cambiar' : 'Subir imagen';
+    var entrada = document.createElement('input');
+    entrada.type = 'file';
+    entrada.accept = 'image/*';
+    entrada.className = 'est-ranura__archivo';
+    etiqueta.appendChild(entrada);
+    acciones.appendChild(etiqueta);
+
+    if (urlActual) {
+      var quitar = document.createElement('button');
+      quitar.type = 'button';
+      quitar.className = 'btn btn--ghost';
+      quitar.textContent = 'Volver a la original';
+      quitar.addEventListener('click', function () {
+        if (!confirm('¿Volver a la imagen original de la página?')) return;
+        tarjeta.classList.add('est-ranura--trabajando');
+        enviarImagen(nombre, { quitar: true }, aviso, tarjeta);
+      });
+      acciones.appendChild(quitar);
+    }
+
+    var aviso = document.createElement('p');
+    aviso.className = 'est-ranura__aviso';
+
+    entrada.addEventListener('change', function () {
+      var archivo = entrada.files && entrada.files[0];
+      entrada.value = '';
+      if (!archivo) return;
+      tarjeta.classList.add('est-ranura--trabajando');
+      aviso.textContent = 'Recortando…';
+      aviso.className = 'est-ranura__aviso';
+      recortarAlMarco(archivo, ranura)
+        .then(function (r) {
+          /* Vista previa inmediata: se ve el recorte antes de que suba. */
+          img.src = r.datos;
+          img.classList.remove('est-ranura__img--vacia');
+          aviso.textContent = 'Recortada a ' + r.ancho + '×' + r.alto + ' (' + r.pesoKb + ' KB). Publicando…';
+          return enviarImagen(nombre, { datos: r.datos }, aviso, tarjeta);
+        })
+        .catch(function (err) {
+          aviso.textContent = err.message;
+          aviso.className = 'est-ranura__aviso est-ranura__aviso--error';
+          tarjeta.classList.remove('est-ranura--trabajando');
+        });
+    });
+
+    cuerpo.appendChild(titulo);
+    cuerpo.appendChild(nota);
+    cuerpo.appendChild(acciones);
+    cuerpo.appendChild(aviso);
+    tarjeta.appendChild(marco);
+    tarjeta.appendChild(cuerpo);
+    return tarjeta;
+  }
+
+  function pintarImagenes() {
+    var caja = el('listaImagenes');
+    caja.textContent = '';
+    var nombres = Object.keys(ranuras);
+    /* Primero marca y fondos; después la retahíla de productos. */
+    nombres.filter(function (n) { return !ranuras[n].grupo; })
+      .forEach(function (n) { caja.appendChild(tarjetaRanura(n, ranuras[n])); });
+
+    var titulo = document.createElement('p');
+    titulo.className = 'est-ranuras__titulo';
+    titulo.textContent = 'Fotos de los productos';
+    caja.appendChild(titulo);
+
+    nombres.filter(function (n) { return ranuras[n].grupo === 'productos'; })
+      .forEach(function (n) { caja.appendChild(tarjetaRanura(n, ranuras[n])); });
+  }
+
+  function cargarImagenes(contenido) {
+    imagenesActuales = (contenido && contenido.imagenes) || {};
+    return fetch('/api/subir-imagen')
+      .then(function (r) { return r.json(); })
+      .then(function (d) { ranuras = d.ranuras || {}; pintarImagenes(); });
+  }
+
   /* ---------- Cargar y publicar ---------- */
 
   function volcar(contenido) {
@@ -317,7 +510,7 @@
         el('salir').hidden = false;
         conectarCampos();
         volcar(d.contenido);
-        return cargarProductos(d.contenido);
+        return cargarProductos(d.contenido).then(function () { return cargarImagenes(d.contenido); });
       });
   }
 

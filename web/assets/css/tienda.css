@@ -784,3 +784,38 @@
 @media (max-width: 640px) {
   .est-producto__resumen { display: none; }
 }
+
+/* ---------- Estudio: imágenes y marca ---------- */
+.est-ranuras {
+  display: grid; gap: .8rem;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+.est-ranuras__titulo {
+  grid-column: 1 / -1; margin-top: .6rem;
+  font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--faint);
+  padding-top: .8rem; border-top: 1px dashed var(--line);
+}
+.est-ranura {
+  display: grid; gap: .6rem; padding: .7rem;
+  border: 1px solid var(--line); border-radius: 13px;
+  background: rgba(248,243,235,.03);
+  transition: opacity var(--fast) var(--ease), border-color var(--fast) var(--ease);
+}
+.est-ranura--trabajando { opacity: .6; pointer-events: none; }
+.est-ranura__marco {
+  width: 100%; overflow: hidden; border-radius: 9px;
+  background: repeating-conic-gradient(rgba(248,243,235,.05) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px;
+  border: 1px solid var(--line);
+}
+/* La foto llena su marco sin deformarse: el recorte ya viene exacto. */
+.est-ranura__marco img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.est-ranura__img--vacia { visibility: hidden; }
+.est-ranura__cuerpo { display: grid; gap: .35rem; }
+.est-ranura__titulo { font-size: .88rem; color: var(--cream); font-weight: 500; }
+.est-ranura__nota { font-size: .68rem; color: var(--faint); line-height: 1.45; }
+.est-ranura__acciones { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .2rem; }
+.est-ranura__acciones .btn { min-height: 44px; padding: .5rem .9rem; font-size: .68rem; }
+.est-ranura__elegir { position: relative; overflow: hidden; cursor: pointer; }
+.est-ranura__archivo { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.est-ranura__aviso { font-size: .68rem; color: #7fe0a0; line-height: 1.4; min-height: 1em; }
+.est-ranura__aviso--error { color: #ff86b6; }

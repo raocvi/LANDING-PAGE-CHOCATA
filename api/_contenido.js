@@ -117,10 +117,32 @@ function depurarProductos(entrada) {
   return Object.keys(limpio).length ? limpio : null;
 }
 
+/**
+ * Imágenes: solo ranuras conocidas apuntando a URLs que nosotros generamos
+ * (el Blob público del proyecto o la carpeta local de desarrollo). Así una
+ * URL ajena no puede colarse en la página como si fuera nuestra.
+ */
+function depurarImagenes(entrada) {
+  if (!entrada || typeof entrada !== 'object') return null;
+  const { esRanura } = require('./_imagenes');
+  const limpio = {};
+  for (const ranura of Object.keys(entrada)) {
+    if (!esRanura(ranura)) continue;
+    const url = entrada[ranura];
+    if (typeof url !== 'string' || url.length > 500) continue;
+    const propia = /^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\//i.test(url) ||
+                   url.startsWith('/subidas/');
+    if (propia) limpio[ranura] = url;
+  }
+  return Object.keys(limpio).length ? limpio : null;
+}
+
 function depurar(entrada) {
   const limpio = {};
   const productos = depurarProductos(entrada && entrada.productos);
   if (productos) limpio.productos = productos;
+  const imagenes = depurarImagenes(entrada && entrada.imagenes);
+  if (imagenes) limpio.imagenes = imagenes;
   for (const seccion of Object.keys(PREDETERMINADO)) {
     const fuente = entrada && typeof entrada === 'object' ? entrada[seccion] : null;
     if (!fuente || typeof fuente !== 'object') continue;
@@ -147,8 +169,9 @@ async function leerContenido() {
   for (const seccion of Object.keys(PREDETERMINADO)) {
     resultado[seccion] = { ...PREDETERMINADO[seccion], ...(depurado[seccion] || {}) };
   }
-  /* Las ediciones de productos no tienen «fábrica» que mezclar: van tal cual. */
+  /* Productos e imágenes no tienen «fábrica» que mezclar: van tal cual. */
   resultado.productos = depurado.productos || {};
+  resultado.imagenes = depurado.imagenes || {};
   return resultado;
 }
 
