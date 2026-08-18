@@ -46,6 +46,8 @@ chat o este documento.
 | `CORREO_COPIA` | chocatacolombia@gmail.com (copia + respuestas) | — |
 | `CORREO_NOMBRE` | «CHOCATA Colombia» | — |
 | `SITIO_URL` | `https://www.chocata.com.co` | Cambia si cambia el dominio |
+| `ANULACIONES_TTL_MS` | (Opcional) segundos de caché de los precios editados en el Estudio; por defecto 15 s | — |
+| `CONTENIDO_DIR` | (Opcional, solo desarrollo) carpeta del contenido editable | — |
 
 **Regla tras cambiar variables:** guardar (verificando que el ámbito quede
 en «Production») y hacer un push nuevo a `main` para desplegar. **No usar el
@@ -113,6 +115,7 @@ node tools/verificar-precios.mjs     # coherencia de catálogos
 | Frecuencia | Tarea |
 |---|---|
 | Cada venta | /pedidos → marcar despachado con guía (el semáforo avisa la urgencia) |
+| Cuando cambien precios o fotos | La dueña lo hace sola en /estudio — ver [MANUAL-ESTUDIO.md](MANUAL-ESTUDIO.md); no requiere despliegue |
 | Semanal | Ojear Search Console (Rendimiento) y el tablero |
 | Mensual | Revisar límite Brevo (300 correos/día es holgado) y Blob |
 | Anual (ago) | Verificar renovación del dominio (automática, tarjeta vigente) |
@@ -134,6 +137,8 @@ listar `pedidos/` con el token y descargar (script de 10 líneas con
 | Estado `REVISAR_MONTO` | El monto pagado no cuadra con el pedido: NO despachar; revisar en Wompi |
 | CSP bloquea un script | Hash desactualizado: recalcular sobre bytes servidos |
 | Aviso/panel no cierra | El clásico `display` vs `hidden`: falta `[hidden]{display:none}` |
+| Un cambio del Estudio no se ve | Recargar la página (el contenido se lee al cargar); los precios tardan hasta 15 s en el cobro por su caché (`ANULACIONES_TTL_MS`) |
+| Una imagen subida no aparece | Revisar que el Blob tenga token de escritura; en desarrollo, que exista `.contenido/imagenes/` |
 
 ## 8. Migraciones
 

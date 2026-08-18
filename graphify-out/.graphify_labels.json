@@ -1,1 +1,27 @@
-{"0": "Documentacion y negocio", "1": "Motor de cobro (checkout)", "2": "Tablero analitico", "3": "Almacen de pedidos (Blob)", "4": "Avisos: WhatsApp y correo", "5": "Animaciones y pagina principal", "6": "Carrito de compras", "7": "Central de despachos", "8": "Sofi (bot del sitio)", "9": "Pruebas E2E del flujo", "10": "Conocimiento e IA (Sofi/Gemini)", "11": "Formulario de checkout", "12": "Pruebas del motor de pedido", "13": "Configuracion de Vercel", "14": "Datos de demostracion", "15": "Servidor local de desarrollo", "16": "Paquete y dependencias", "17": "Verificador de precios", "18": "Combos de la vitrina", "19": "Catalogo de productos"}
+{
+  "0": "SDD — Documento de Diseño de Software",
+  "1": "_pedido.js",
+  "2": "tablero.js",
+  "3": "_almacen.js",
+  "4": "wompi-webhook.js",
+  "5": "main.js",
+  "6": "carrito.js",
+  "7": "js/pedidos.js",
+  "8": "bot.js",
+  "9": "probar-flujo.mjs",
+  "10": "_conocimiento.js",
+  "11": "js/checkout.js",
+  "12": "probar-pedido.mjs",
+  "13": "vercel.json",
+  "14": "sembrar-demo.mjs",
+  "15": "servidor-local.mjs",
+  "16": "package.json",
+  "17": "verificar-precios.mjs",
+  "18": "combos.js",
+  "19": "products.js",
+  "20": "_contenido.js",
+  "21": "estudio.js",
+  "22": "Manual del Estudio",
+  "23": "Replicar el modelo",
+  "24": "js/contenido.js"
+}

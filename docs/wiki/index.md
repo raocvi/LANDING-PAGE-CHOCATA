@@ -23,7 +23,9 @@ la documentación.
 |---|---|
 | [SDD.md](../SDD.md) | Diseño de software: stack, arquitectura, mapa del repo, flujos del dinero, seguridad, SEO, hoja de ruta |
 | [OPERACION.md](../OPERACION.md) | Runbook: cuentas, variables de entorno, DNS, despliegue, mantenimiento, migraciones, diagnóstico |
-| [PROMPT-MAESTRO-ESTUDIO.md](../PROMPT-MAESTRO-ESTUDIO.md) | La especificación del «Estudio» (panel para que la dueña edite todo el contenido) y del modelo replicable |
+| [MANUAL-ESTUDIO.md](../MANUAL-ESTUDIO.md) | **Para la dueña**: cómo editar textos, precios, productos e imágenes desde `/estudio` |
+| [REPLICAR-MODELO.md](../REPLICAR-MODELO.md) | **Para el desarrollador**: cómo levantar otra tienda como esta desde Claude Code, con las trampas ya pagadas |
+| [PROMPT-MAESTRO-ESTUDIO.md](../PROMPT-MAESTRO-ESTUDIO.md) | La especificación del «Estudio» que guio su construcción |
 | [../web/README.md](../../web/README.md) | Notas del frontend |
 | Grafo de conocimiento | `graphify-out/` — consultas: `graphify query "..."`, `graphify explain "..."` |
 
@@ -48,9 +50,16 @@ compra → webhook → despacho.
 Siempre el servidor (`api/_pedido.js`) desde `web/assets/data/*.json`.
 El navegador solo manda slugs y cantidades.
 
-**¿Qué es /pedidos y /tablero?**
-Las páginas de administración (clave `ADMIN_TOKEN`): central de despachos
-con módulo logístico, y tablero analítico. Ambas `noindex` + `no-store`.
+**¿Qué es /pedidos, /tablero y /estudio?**
+Las tres páginas de administración (clave `ADMIN_TOKEN`): central de despachos
+con módulo logístico, tablero analítico, y el Estudio donde la dueña edita el
+contenido. Todas `noindex` + `no-store` y fuera de `robots.txt`.
+
+**¿Cómo se edita el contenido sin desplegar?**
+Desde `/estudio`. Los textos, precios, orden, visibilidad e imágenes viven en
+el Blob (o `.contenido/` en desarrollo) y la página los lee al cargar; si eso
+falla, se muestra el contenido de fábrica del HTML. Ver
+[SDD §5.4](../SDD.md) y el [manual de la dueña](../MANUAL-ESTUDIO.md).
 
 ## Convenciones del proyecto
 

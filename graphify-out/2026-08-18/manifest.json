@@ -1,8 +1,8 @@
 {
   ".claude/launch.json": {
-    "mtime": 1787069187.5891488,
-    "ast_hash": "db48343f0bd75b300a46ef1e86b459c3",
-    "semantic_hash": ""
+    "mtime": 1786970523.6134818,
+    "ast_hash": "d26755c2b90b37a6b4e6a4f0ba6e5294",
+    "semantic_hash": "d26755c2b90b37a6b4e6a4f0ba6e5294"
   },
   ".claude/settings.local.json": {
     "mtime": 1786588820.4314947,
@@ -30,14 +30,14 @@
     "semantic_hash": "783860804ceb55e172dd531738cf49bb"
   },
   "api/_pedido.js": {
-    "mtime": 1787069067.0435576,
-    "ast_hash": "2f3c8babc611479699045ed6515c06eb",
-    "semantic_hash": ""
+    "mtime": 1786911910.9712782,
+    "ast_hash": "7079e654161cb7afc0380886a2773986",
+    "semantic_hash": "7079e654161cb7afc0380886a2773986"
   },
   "api/checkout.js": {
-    "mtime": 1787069078.6639209,
-    "ast_hash": "b5357c9e647c8fa3bdad6896921f4b27",
-    "semantic_hash": ""
+    "mtime": 1786883668.104461,
+    "ast_hash": "2b8db04e077b389f41990483a0cc13f7",
+    "semantic_hash": "2b8db04e077b389f41990483a0cc13f7"
   },
   "api/despachar.js": {
     "mtime": 1786912429.6083417,
@@ -95,9 +95,9 @@
     "semantic_hash": "16f6a15cd506e33578e4fd895244a68c"
   },
   "tools/servidor-local.mjs": {
-    "mtime": 1787072648.707742,
-    "ast_hash": "1371660cc9f78c1a78edca4e3cfdce7b",
-    "semantic_hash": ""
+    "mtime": 1786883668.106605,
+    "ast_hash": "ac1c9f3d10db7bc4e6c5448476b9030c",
+    "semantic_hash": "ac1c9f3d10db7bc4e6c5448476b9030c"
   },
   "tools/verificar-precios.mjs": {
     "mtime": 1786838206.4330041,
@@ -105,9 +105,9 @@
     "semantic_hash": "1aba850a289856d8832e3f66f03e2dee"
   },
   "vercel.json": {
-    "mtime": 1787065876.1975608,
-    "ast_hash": "446d1f97b59f20ac2c4760c82d29107b",
-    "semantic_hash": ""
+    "mtime": 1786972001.4254475,
+    "ast_hash": "ad149b437b125d49c7bc5880551e3b17",
+    "semantic_hash": "ad149b437b125d49c7bc5880551e3b17"
   },
   "web/assets/data/combos.json": {
     "mtime": 1786838206.4355278,
@@ -135,9 +135,9 @@
     "semantic_hash": "5e11df3a7830a92e8606b7be655ee3a4"
   },
   "web/assets/js/carrito.js": {
-    "mtime": 1787069096.966316,
-    "ast_hash": "16d2a1a5b881af1aee3031e05fbbc3dd",
-    "semantic_hash": ""
+    "mtime": 1786911910.975279,
+    "ast_hash": "a51a6a62e3e2ed61173a035fd61bf9b4",
+    "semantic_hash": "a51a6a62e3e2ed61173a035fd61bf9b4"
   },
   "web/assets/js/checkout.js": {
     "mtime": 1786883668.1075144,
@@ -170,9 +170,9 @@
     "semantic_hash": "b99a42e08c5cc4e53ae00655d3e0ad1e"
   },
   "README.md": {
-    "mtime": 1787073203.767366,
-    "ast_hash": "a486980ede0b9785a6251e103da878cb",
-    "semantic_hash": ""
+    "mtime": 1787063521.9543667,
+    "ast_hash": "2d0c0a158e4cd32649cf4979fda3954d",
+    "semantic_hash": "2d0c0a158e4cd32649cf4979fda3954d"
   },
   "TIENDA.md": {
     "mtime": 1786915373.6110244,
@@ -180,9 +180,9 @@
     "semantic_hash": "f60477b61f538398b2e7a5a0da7cef5e"
   },
   "docs/OPERACION.md": {
-    "mtime": 1787073193.7654095,
-    "ast_hash": "b4a3baf1f8661c17eaf519dd281a89f7",
-    "semantic_hash": ""
+    "mtime": 1787063488.2336102,
+    "ast_hash": "897d14281cd690ebe0afd8c98f6c1058",
+    "semantic_hash": "897d14281cd690ebe0afd8c98f6c1058"
   },
   "docs/PROMPT-MAESTRO-ESTUDIO.md": {
     "mtime": 1786974727.6749606,
@@ -190,14 +190,14 @@
     "semantic_hash": "8c59a4c0800e86f43a411fbf5ce564cd"
   },
   "docs/SDD.md": {
-    "mtime": 1787073175.7908344,
-    "ast_hash": "f6de58cd6d1c5fc8e1b544f18a5e7cb4",
-    "semantic_hash": ""
+    "mtime": 1787063491.3365488,
+    "ast_hash": "56aa8a0a58890a9fc983aca812b338b3",
+    "semantic_hash": "56aa8a0a58890a9fc983aca812b338b3"
   },
   "docs/wiki/index.md": {
-    "mtime": 1787073131.5427227,
-    "ast_hash": "a420e2043e51d3d56ded97c6c163fd67",
-    "semantic_hash": ""
+    "mtime": 1787063515.9395852,
+    "ast_hash": "2d03613e60fe7ef07a29f832e7588c80",
+    "semantic_hash": "2d03613e60fe7ef07a29f832e7588c80"
   },
   "web/README.md": {
     "mtime": 1786639908.7565749,
@@ -210,9 +210,9 @@
     "semantic_hash": "19908b55cb9e970428500babfc03a545"
   },
   "web/index.html": {
-    "mtime": 1787065876.1945586,
-    "ast_hash": "66ff159ad8936ed49bf957b73085e954",
-    "semantic_hash": ""
+    "mtime": 1786972001.4274309,
+    "ast_hash": "9ecf0ec580d7233cdc931cd82f03f830",
+    "semantic_hash": "9ecf0ec580d7233cdc931cd82f03f830"
   },
   "web/legal.html": {
     "mtime": 1786972001.4274309,
@@ -220,14 +220,14 @@
     "semantic_hash": "7f6584be95504f93155dc646c2d402c0"
   },
   "web/pedidos.html": {
-    "mtime": 1787065876.1955767,
-    "ast_hash": "e3a7f002f0c2a29edd85b1c917347776",
-    "semantic_hash": ""
+    "mtime": 1786972001.4284332,
+    "ast_hash": "95b1b06a1e516233810a4795d523af7a",
+    "semantic_hash": "95b1b06a1e516233810a4795d523af7a"
   },
   "web/robots.txt": {
-    "mtime": 1787065876.1965609,
-    "ast_hash": "76dc790131abb7a3f344f4d9c44c787b",
-    "semantic_hash": ""
+    "mtime": 1786972001.4294329,
+    "ast_hash": "1ea69988d0f79d63933394e7ed1b37f5",
+    "semantic_hash": "1ea69988d0f79d63933394e7ed1b37f5"
   },
   "web/tablero.html": {
     "mtime": 1786972001.4309413,
@@ -433,50 +433,5 @@
     "mtime": 1786580122.0939784,
     "ast_hash": "428397a4c5e5a172adc0b737fe93e2cd",
     "semantic_hash": "428397a4c5e5a172adc0b737fe93e2cd"
-  },
-  "api/_contenido.js": {
-    "mtime": 1787072595.9880245,
-    "ast_hash": "df7f814c6b279af3d060122f482c3177",
-    "semantic_hash": ""
-  },
-  "api/_imagenes.js": {
-    "mtime": 1787072561.2790744,
-    "ast_hash": "172dd164e208dd9ffeedd351f50122ca",
-    "semantic_hash": ""
-  },
-  "api/contenido.js": {
-    "mtime": 1787065772.8834763,
-    "ast_hash": "95940ed8ce6c18f4012781fbfd3bd6d4",
-    "semantic_hash": ""
-  },
-  "api/subir-imagen.js": {
-    "mtime": 1787072578.561907,
-    "ast_hash": "132726f2b753030d5f15bac7f8488080",
-    "semantic_hash": ""
-  },
-  "web/assets/js/contenido.js": {
-    "mtime": 1787072632.2987425,
-    "ast_hash": "d1ed1ca2d1f44c69f87782cb7105a94f",
-    "semantic_hash": ""
-  },
-  "web/assets/js/estudio.js": {
-    "mtime": 1787072703.747887,
-    "ast_hash": "8440cf5dbcb82bf6a36bd920ea086a2f",
-    "semantic_hash": ""
-  },
-  "docs/MANUAL-ESTUDIO.md": {
-    "mtime": 1787073059.6107316,
-    "ast_hash": "17374e7f15d9d333e0e5aeea550beccb",
-    "semantic_hash": ""
-  },
-  "docs/REPLICAR-MODELO.md": {
-    "mtime": 1787073116.1166232,
-    "ast_hash": "08d3a922f415a6544be8cb55fca60234",
-    "semantic_hash": ""
-  },
-  "web/estudio.html": {
-    "mtime": 1787072652.502706,
-    "ast_hash": "724d4e990d4f5560f52bd7aca6829eed",
-    "semantic_hash": ""
   }
 }

@@ -59,7 +59,8 @@ web/                    La página (estático puro)
   legal.html            Términos, retracto, datos de la empresa
   pedidos.html          ADMIN · Central de despachos (módulo logístico)
   tablero.html          ADMIN · Tablero analítico interactivo
-  robots.txt            Bloquea /pedidos /tablero /gracias
+  estudio.html          ADMIN · Estudio: contenido editable por la dueña
+  robots.txt            Bloquea /pedidos /tablero /gracias /estudio
   sitemap.xml           / y /legal
   assets/css/           style.css (marca) · tienda.css (tienda+admin) · tablero.css
   assets/js/
@@ -71,6 +72,8 @@ web/                    La página (estático puro)
     bot.js              Sofi: respuestas instantáneas + puente a la IA
     pedidos.js          Central de despachos (tabla, semáforo, rótulo)
     tablero.js          Tablero: SVG a mano, filtro cruzado
+    contenido.js        Hidrata la página con lo editado en el Estudio
+    estudio.js          El Estudio: textos, productos, precios e imágenes
   assets/data/
     precios.json        Precios por producto/talla (fuente del servidor)
     combos.json         Combos (precio derivado, nunca escrito a mano)
@@ -84,6 +87,11 @@ api/                    Funciones serverless (CommonJS)
   _avisos.js            WhatsApp CallMeBot (reemplaza $ por «COP »)
   _correo.js            Correo Brevo: armarCorreo() + enviarConfirmacion()
   _conocimiento.js      Corpus para Sofi desde products.js + reglas vivas
+  _contenido.js         Contenido editable: valores de fábrica, lista blanca,
+                        guardado con versión anterior (Blob o .contenido/)
+  _imagenes.js          Ranuras de imagen con la proporción de cada marco
+  contenido.js          GET público / PUT admin del contenido editable
+  subir-imagen.js       POST admin: recibe la foto ya recortada y la publica
   checkout.js           POST: valida, guarda PENDIENTE, firma URL de Wompi
   wompi-webhook.js      POST: verifica firma, cruza monto, dispara avisos
   pedido.js             GET público por referencia (para gracias.html)
@@ -128,7 +136,26 @@ vercel.json             Rutas limpias, cabeceras (CSP con hashes), no-store
 transportadora → `POST /api/despachar` → `despacho:{guia,fecha}` en el Blob
 (campo separado del estado: un reintento tardío de Wompi no puede borrarlo).
 
-### 5.3 Sofi (asistente)
+### 5.3 Contenido editable (el Estudio)
+`/estudio` (clave admin) edita textos, precios, orden, visibilidad de
+productos e imágenes. `GET /api/contenido` es público y la página lo consulta
+al cargar (`web/assets/js/contenido.js`) para reemplazar **solo texto plano** y
+`src` de imágenes: nada de lo guardado puede inyectar HTML. `PUT` exige token,
+pasa por lista blanca de campos con recortes de longitud y rangos de precio, y
+conserva la versión anterior para deshacer en un clic.
+
+Tres garantías de diseño:
+- **Imposible romper**: si el Blob falta o está corrupto, `leerContenido()`
+  devuelve los valores de fábrica — los mismos textos que el HTML ya trae.
+- **Un solo punto de la verdad para el dinero**: `precioSuelto()` consulta las
+  anulaciones antes del precio de fábrica, y el checkout las refresca antes de
+  cada cálculo (`refrescarAnulaciones()`, TTL corto). Vitrina, carrito y cobro
+  no pueden desalinearse; un producto oculto también se rechaza en el servidor.
+- **Imágenes que no descuadran**: cada ranura declara la proporción de su marco
+  (`api/_imagenes.js`) y el navegador recorta al centro y escala a esa medida
+  antes de subir (WebP, ≤3 MB, firma del archivo verificada en el servidor).
+
+### 5.4 Sofi (asistente)
 Preguntas escritas van SIEMPRE primero a la IA (`POST /api/sofi`): Gemini con
 instrucciones de 3 niveles — (A) datos de CHOCATA solo del corpus,
 (B) nutrición general con ciencia establecida y honestidad sobre lo no
@@ -178,15 +205,14 @@ en el DNS **no se borra nunca**.
 - Dos proyectos Vercel apuntan al repo; el bueno es `chocata` (tiene las
   llaves y el dominio). `landing-page-chocata` está pendiente de borrar.
 - IVA no configurado (a la espera del contador). `legal.html` sin NIT.
-- El contenido de la página vive en el código (fase «Estudio» lo moverá a
-  Blob para que la dueña edite sin desarrollador — ver
-  [PROMPT-MAESTRO-ESTUDIO.md](PROMPT-MAESTRO-ESTUDIO.md)).
+- El Estudio edita lo existente: crear o eliminar productos, y editar sus
+  nombres y descripciones, sigue siendo trabajo de desarrollo.
 
 ## 10. Hoja de ruta
 
-1. **Estudio** (rama `feat/estudio`): panel de contenido editable por la
-   dueña — 4 fases (textos/aviso → productos/precios → imágenes → manual de
-   replicación). Principio: «edita el QUÉ, el diseño decide el CÓMO».
-2. Perfil de Negocio de Google (Maps / búsquedas locales).
-3. Consolidación Vercel (borrar proyecto duplicado).
-4. Migración opcional a Cloudflare si el cupo de deploys vuelve a doler.
+1. Fusionar el Estudio (rama `feat/estudio`) a producción y entregar el
+   [manual de la dueña](MANUAL-ESTUDIO.md).
+2. Estudio: crear/eliminar productos y editar sus textos y beneficios.
+3. Perfil de Negocio de Google (Maps / búsquedas locales).
+4. Consolidación Vercel (borrar proyecto duplicado).
+5. Migración opcional a Cloudflare si el cupo de deploys vuelve a doler.

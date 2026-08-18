@@ -11,7 +11,8 @@ mujer, con respaldo del Fondo Emprender del SENA.
 |---|---|
 | Diseño del sistema (SDD) | [docs/SDD.md](docs/SDD.md) |
 | Runbook de operación | [docs/OPERACION.md](docs/OPERACION.md) |
-| Especificación «Estudio» | [docs/PROMPT-MAESTRO-ESTUDIO.md](docs/PROMPT-MAESTRO-ESTUDIO.md) |
+| Manual del Estudio (para la dueña) | [docs/MANUAL-ESTUDIO.md](docs/MANUAL-ESTUDIO.md) |
+| Replicar el modelo (para el desarrollador) | [docs/REPLICAR-MODELO.md](docs/REPLICAR-MODELO.md) |
 
 ## Arranque rápido (desarrollo)
 
