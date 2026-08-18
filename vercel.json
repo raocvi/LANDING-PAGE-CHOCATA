@@ -57,7 +57,7 @@
       ]
     },
     {
-      "source": "/(gracias|legal|pedidos|tablero)",
+      "source": "/(gracias|legal|pedidos|tablero|estudio)",
       "headers": [
         {
           "key": "Cache-Control",

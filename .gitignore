@@ -13,3 +13,6 @@ Desktop.ini
 
 # Pedidos guardados en desarrollo: contienen datos personales de prueba
 /.pedidos/
+
+# Contenido editable local (desarrollo)
+/.contenido/
