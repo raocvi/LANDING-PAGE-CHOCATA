@@ -9,7 +9,7 @@
  *   WOMPI_SECRETO_INTEGRIDAD  secreto para firmar    (jamás sale del servidor)
  *   SITIO_URL               https://tu-dominio       (para el retorno del pago)
  */
-const { calcular, referencia, firmaIntegridad, validarCliente, tipoDocumentoDe } = require('./_pedido');
+const { calcular, refrescarAnulaciones, referencia, firmaIntegridad, validarCliente, tipoDocumentoDe } = require('./_pedido');
 const almacen = require('./_almacen');
 
 const MONEDA = 'COP';
@@ -55,6 +55,8 @@ module.exports = async function handler(req, res) {
   const errorCliente = validarCliente(cuerpo.cliente);
   if (errorCliente) return res.status(400).json({ mensaje: errorCliente });
 
+  /* Las ediciones de precios de la dueña entran al cálculo antes de cobrar. */
+  await refrescarAnulaciones();
   const cuenta = calcular(cuerpo.items);
   if (!cuenta.ok) return res.status(400).json({ mensaje: cuenta.error });
 

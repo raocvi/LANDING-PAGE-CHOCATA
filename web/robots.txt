@@ -3,5 +3,6 @@ Allow: /
 Disallow: /pedidos
 Disallow: /tablero
 Disallow: /gracias
+Disallow: /estudio
 
 Sitemap: https://www.chocata.com.co/sitemap.xml

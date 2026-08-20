@@ -334,11 +334,32 @@
       catalogo = datos[0];
       combos = datos[1];
       reglas = datos[2];
+      aplicarEdiciones(window.__CONTENIDO && window.__CONTENIDO.productos);
       depurar();
       pintar();
       document.dispatchEvent(new CustomEvent('chocata:catalogo-listo'));
     })
     .catch(function () { /* sin catálogo no se puede comprar; la página sigue funcionando */ });
+
+  /* Las ediciones de la dueña (el Estudio): mismos precios que cobrará el
+     servidor. Un producto oculto pierde sus precios y deja de ser comprable. */
+  function aplicarEdiciones(productos) {
+    if (!catalogo || !productos) return;
+    Object.keys(productos).forEach(function (slug) {
+      var p = catalogo[slug];
+      var e = productos[slug];
+      if (!p || !e) return;
+      p.presentaciones.forEach(function (fila) {
+        if (e.oculto) { fila.cop = null; return; }
+        if (e.precios && typeof e.precios[fila.talla] === 'number') fila.cop = e.precios[fila.talla];
+      });
+    });
+    depurar();
+    pintar();
+  }
+  document.addEventListener('chocata:contenido-listo', function (ev) {
+    aplicarEdiciones(ev.detail && ev.detail.productos);
+  });
 
   /* Superficie pública mínima para el resto de la página. */
   window.CHOCATA_CARRITO = {

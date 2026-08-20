@@ -63,6 +63,21 @@ const servidor = createServer(async (req, res) => {
     return;
   }
 
+  /* Imágenes subidas desde el Estudio: en producción viven en el Blob
+     público; aquí se sirven de .contenido/imagenes/ para poder verlas. */
+  if (url.pathname.startsWith('/subidas/')) {
+    const nombre = url.pathname.slice('/subidas/'.length).replace(/[^a-z0-9._-]/gi, '');
+    try {
+      const contenido = await readFile(join(raiz, '.contenido', 'imagenes', nombre));
+      res.setHeader('Content-Type', 'image/webp');
+      res.setHeader('Cache-Control', 'no-store');
+      res.end(contenido);
+    } catch {
+      res.status(404).json({ mensaje: 'No encontrada.' });
+    }
+    return;
+  }
+
   /* Estáticos, con normalización para no salir de web/. */
   const relativa = url.pathname === '/' ? '/index.html' : url.pathname;
   const destino = join(raiz, 'web', normalize(relativa).replace(/^(\.\.[/\\])+/, ''));

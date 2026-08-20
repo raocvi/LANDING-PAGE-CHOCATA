@@ -1,0 +1,482 @@
+{
+  ".claude/launch.json": {
+    "mtime": 1787069187.5891488,
+    "ast_hash": "db48343f0bd75b300a46ef1e86b459c3",
+    "semantic_hash": ""
+  },
+  ".claude/settings.local.json": {
+    "mtime": 1786588820.4314947,
+    "ast_hash": "c5b4d0b3254a27cdb0b1d304d0b8a4ce",
+    "semantic_hash": "c5b4d0b3254a27cdb0b1d304d0b8a4ce"
+  },
+  "api/_almacen.js": {
+    "mtime": 1786912429.607339,
+    "ast_hash": "fd84f7b5fdd775c7de9c17c378d2202d",
+    "semantic_hash": "fd84f7b5fdd775c7de9c17c378d2202d"
+  },
+  "api/_avisos.js": {
+    "mtime": 1786921858.9352489,
+    "ast_hash": "d0682b8cbdd07040c393a72f9c96d07e",
+    "semantic_hash": "d0682b8cbdd07040c393a72f9c96d07e"
+  },
+  "api/_conocimiento.js": {
+    "mtime": 1786893766.9708629,
+    "ast_hash": "d5e6b727a244f248d71e2906ea977f5a",
+    "semantic_hash": "d5e6b727a244f248d71e2906ea977f5a"
+  },
+  "api/_correo.js": {
+    "mtime": 1786939476.4553847,
+    "ast_hash": "783860804ceb55e172dd531738cf49bb",
+    "semantic_hash": "783860804ceb55e172dd531738cf49bb"
+  },
+  "api/_pedido.js": {
+    "mtime": 1787069067.0435576,
+    "ast_hash": "2f3c8babc611479699045ed6515c06eb",
+    "semantic_hash": ""
+  },
+  "api/checkout.js": {
+    "mtime": 1787069078.6639209,
+    "ast_hash": "b5357c9e647c8fa3bdad6896921f4b27",
+    "semantic_hash": ""
+  },
+  "api/despachar.js": {
+    "mtime": 1786912429.6083417,
+    "ast_hash": "2bd28c5ae3d4d127c92f530e0d4acd69",
+    "semantic_hash": "2bd28c5ae3d4d127c92f530e0d4acd69"
+  },
+  "api/pedido.js": {
+    "mtime": 1786911910.9722795,
+    "ast_hash": "db5bd37253adce1b99524e86e97d11cd",
+    "semantic_hash": "db5bd37253adce1b99524e86e97d11cd"
+  },
+  "api/pedidos.js": {
+    "mtime": 1786911910.9722795,
+    "ast_hash": "dd12cef5a407686a9ea8b109e3ce4367",
+    "semantic_hash": "dd12cef5a407686a9ea8b109e3ce4367"
+  },
+  "api/probar-correo.js": {
+    "mtime": 1786922399.0036242,
+    "ast_hash": "63afd03b14c1170c507f7a118cf2e527",
+    "semantic_hash": "63afd03b14c1170c507f7a118cf2e527"
+  },
+  "api/reenviar-correo.js": {
+    "mtime": 1786930190.3426855,
+    "ast_hash": "2c6f5e8005778027b617a490676e7ba4",
+    "semantic_hash": "2c6f5e8005778027b617a490676e7ba4"
+  },
+  "api/sofi.js": {
+    "mtime": 1786893766.9718711,
+    "ast_hash": "8fa7901c49ba6321122b06170f7bd296",
+    "semantic_hash": "8fa7901c49ba6321122b06170f7bd296"
+  },
+  "api/wompi-webhook.js": {
+    "mtime": 1786915373.612023,
+    "ast_hash": "91841c6dfe8dd6b305facce9bdf420e1",
+    "semantic_hash": "91841c6dfe8dd6b305facce9bdf420e1"
+  },
+  "package.json": {
+    "mtime": 1786883668.1055627,
+    "ast_hash": "f35bb61e7bb5a58bc464d57c849d0e11",
+    "semantic_hash": "f35bb61e7bb5a58bc464d57c849d0e11"
+  },
+  "tools/probar-flujo.mjs": {
+    "mtime": 1786912429.6083417,
+    "ast_hash": "a8f910cd825d4814167a1bddbd2380c1",
+    "semantic_hash": "a8f910cd825d4814167a1bddbd2380c1"
+  },
+  "tools/probar-pedido.mjs": {
+    "mtime": 1786888101.1632273,
+    "ast_hash": "a91365c63db6f5b98668c8639c5b2159",
+    "semantic_hash": "a91365c63db6f5b98668c8639c5b2159"
+  },
+  "tools/sembrar-demo.mjs": {
+    "mtime": 1786912788.8472786,
+    "ast_hash": "16f6a15cd506e33578e4fd895244a68c",
+    "semantic_hash": "16f6a15cd506e33578e4fd895244a68c"
+  },
+  "tools/servidor-local.mjs": {
+    "mtime": 1787072648.707742,
+    "ast_hash": "1371660cc9f78c1a78edca4e3cfdce7b",
+    "semantic_hash": ""
+  },
+  "tools/verificar-precios.mjs": {
+    "mtime": 1786838206.4330041,
+    "ast_hash": "1aba850a289856d8832e3f66f03e2dee",
+    "semantic_hash": "1aba850a289856d8832e3f66f03e2dee"
+  },
+  "vercel.json": {
+    "mtime": 1787065876.1975608,
+    "ast_hash": "446d1f97b59f20ac2c4760c82d29107b",
+    "semantic_hash": ""
+  },
+  "web/assets/data/combos.json": {
+    "mtime": 1786838206.4355278,
+    "ast_hash": "d5d53d8ba7526a02db63565c8ddfd96e",
+    "semantic_hash": "d5d53d8ba7526a02db63565c8ddfd96e"
+  },
+  "web/assets/data/envios.json": {
+    "mtime": 1786838206.4355278,
+    "ast_hash": "04c9d78cd3256e8e82e3f52a230fc94b",
+    "semantic_hash": "04c9d78cd3256e8e82e3f52a230fc94b"
+  },
+  "web/assets/data/pagos.json": {
+    "mtime": 1786838206.4355278,
+    "ast_hash": "d35f4971847d0a648f7f4ee49610b344",
+    "semantic_hash": "d35f4971847d0a648f7f4ee49610b344"
+  },
+  "web/assets/data/precios.json": {
+    "mtime": 1786885124.241544,
+    "ast_hash": "9c6e63f077684368643383fde090aed1",
+    "semantic_hash": "9c6e63f077684368643383fde090aed1"
+  },
+  "web/assets/js/bot.js": {
+    "mtime": 1786893766.972849,
+    "ast_hash": "5e11df3a7830a92e8606b7be655ee3a4",
+    "semantic_hash": "5e11df3a7830a92e8606b7be655ee3a4"
+  },
+  "web/assets/js/carrito.js": {
+    "mtime": 1787069096.966316,
+    "ast_hash": "16d2a1a5b881af1aee3031e05fbbc3dd",
+    "semantic_hash": ""
+  },
+  "web/assets/js/checkout.js": {
+    "mtime": 1786883668.1075144,
+    "ast_hash": "0d8564332d52859c0df3a036ca2c6f69",
+    "semantic_hash": "0d8564332d52859c0df3a036ca2c6f69"
+  },
+  "web/assets/js/combos.js": {
+    "mtime": 1786838206.4355278,
+    "ast_hash": "61449a409371053846c18a02d6e28994",
+    "semantic_hash": "61449a409371053846c18a02d6e28994"
+  },
+  "web/assets/js/main.js": {
+    "mtime": 1786887090.31496,
+    "ast_hash": "fc65b5f1a67e2ac834683498dabbc53d",
+    "semantic_hash": "fc65b5f1a67e2ac834683498dabbc53d"
+  },
+  "web/assets/js/pedidos.js": {
+    "mtime": 1786971424.2933962,
+    "ast_hash": "20157f66506b474c03fc748c444f2218",
+    "semantic_hash": "20157f66506b474c03fc748c444f2218"
+  },
+  "web/assets/js/products.js": {
+    "mtime": 1786886297.2531097,
+    "ast_hash": "6d782de73539f3ec578e675ecfe0a3f1",
+    "semantic_hash": "6d782de73539f3ec578e675ecfe0a3f1"
+  },
+  "web/assets/js/tablero.js": {
+    "mtime": 1786913698.0221193,
+    "ast_hash": "b99a42e08c5cc4e53ae00655d3e0ad1e",
+    "semantic_hash": "b99a42e08c5cc4e53ae00655d3e0ad1e"
+  },
+  "README.md": {
+    "mtime": 1787073203.767366,
+    "ast_hash": "a486980ede0b9785a6251e103da878cb",
+    "semantic_hash": ""
+  },
+  "TIENDA.md": {
+    "mtime": 1786915373.6110244,
+    "ast_hash": "f60477b61f538398b2e7a5a0da7cef5e",
+    "semantic_hash": "f60477b61f538398b2e7a5a0da7cef5e"
+  },
+  "docs/OPERACION.md": {
+    "mtime": 1787073193.7654095,
+    "ast_hash": "b4a3baf1f8661c17eaf519dd281a89f7",
+    "semantic_hash": ""
+  },
+  "docs/PROMPT-MAESTRO-ESTUDIO.md": {
+    "mtime": 1786974727.6749606,
+    "ast_hash": "8c59a4c0800e86f43a411fbf5ce564cd",
+    "semantic_hash": "8c59a4c0800e86f43a411fbf5ce564cd"
+  },
+  "docs/SDD.md": {
+    "mtime": 1787073175.7908344,
+    "ast_hash": "f6de58cd6d1c5fc8e1b544f18a5e7cb4",
+    "semantic_hash": ""
+  },
+  "docs/wiki/index.md": {
+    "mtime": 1787073131.5427227,
+    "ast_hash": "a420e2043e51d3d56ded97c6c163fd67",
+    "semantic_hash": ""
+  },
+  "web/README.md": {
+    "mtime": 1786639908.7565749,
+    "ast_hash": "557d87ae1cba7197de277fe30933d99b",
+    "semantic_hash": "557d87ae1cba7197de277fe30933d99b"
+  },
+  "web/gracias.html": {
+    "mtime": 1786972001.4254475,
+    "ast_hash": "19908b55cb9e970428500babfc03a545",
+    "semantic_hash": "19908b55cb9e970428500babfc03a545"
+  },
+  "web/index.html": {
+    "mtime": 1787065876.1945586,
+    "ast_hash": "66ff159ad8936ed49bf957b73085e954",
+    "semantic_hash": ""
+  },
+  "web/legal.html": {
+    "mtime": 1786972001.4274309,
+    "ast_hash": "7f6584be95504f93155dc646c2d402c0",
+    "semantic_hash": "7f6584be95504f93155dc646c2d402c0"
+  },
+  "web/pedidos.html": {
+    "mtime": 1787065876.1955767,
+    "ast_hash": "e3a7f002f0c2a29edd85b1c917347776",
+    "semantic_hash": ""
+  },
+  "web/robots.txt": {
+    "mtime": 1787065876.1965609,
+    "ast_hash": "76dc790131abb7a3f344f4d9c44c787b",
+    "semantic_hash": ""
+  },
+  "web/tablero.html": {
+    "mtime": 1786972001.4309413,
+    "ast_hash": "611b1d7b9294760d1cda8a4144380886",
+    "semantic_hash": "611b1d7b9294760d1cda8a4144380886"
+  },
+  "LOGO.jpeg": {
+    "mtime": 1786532950.6770227,
+    "ast_hash": "060b8a71461cf7787c6f1feebe3c715c",
+    "semantic_hash": "060b8a71461cf7787c6f1feebe3c715c"
+  },
+  "LOGO2.png": {
+    "mtime": 1786581306.3175986,
+    "ast_hash": "22812a517cf82a6834eb5c6e54877831",
+    "semantic_hash": "22812a517cf82a6834eb5c6e54877831"
+  },
+  "web/assets/img/brand/chocata-logo.png": {
+    "mtime": 1786581459.4401124,
+    "ast_hash": "56b65cbbc8496004a6d6759d42470166",
+    "semantic_hash": "56b65cbbc8496004a6d6759d42470166"
+  },
+  "web/assets/img/brand/chocata-logo.webp": {
+    "mtime": 1786581458.9066846,
+    "ast_hash": "b4737b596ce3bd4449f866b98736b5b0",
+    "semantic_hash": "b4737b596ce3bd4449f866b98736b5b0"
+  },
+  "web/assets/img/brand/favicon.png": {
+    "mtime": 1786581459.5127466,
+    "ast_hash": "880a458d1bbe0c85a3245949532e0bc1",
+    "semantic_hash": "880a458d1bbe0c85a3245949532e0bc1"
+  },
+  "web/assets/img/brand/og.jpg": {
+    "mtime": 1786640255.0598557,
+    "ast_hash": "26e7427c7d712879be51d5e6619b942c",
+    "semantic_hash": "26e7427c7d712879be51d5e6619b942c"
+  },
+  "web/assets/img/life/colageno-2.webp": {
+    "mtime": 1786578348.759477,
+    "ast_hash": "84b8cd6507a00d9780bcd24b6b7ae76b",
+    "semantic_hash": "84b8cd6507a00d9780bcd24b6b7ae76b"
+  },
+  "web/assets/img/life/colageno.webp": {
+    "mtime": 1786578348.059654,
+    "ast_hash": "52dd88fc8d5fe05d15ba7e4324f5223e",
+    "semantic_hash": "52dd88fc8d5fe05d15ba7e4324f5223e"
+  },
+  "web/assets/img/life/creatina-2.webp": {
+    "mtime": 1786578347.3784034,
+    "ast_hash": "5c373221d0c5e75f335a2e5a53acc25a",
+    "semantic_hash": "5c373221d0c5e75f335a2e5a53acc25a"
+  },
+  "web/assets/img/life/creatina.webp": {
+    "mtime": 1786578346.609968,
+    "ast_hash": "8a856527e98a9982c296511b3b3a568c",
+    "semantic_hash": "8a856527e98a9982c296511b3b3a568c"
+  },
+  "web/assets/img/life/desayuno.webp": {
+    "mtime": 1786578341.597512,
+    "ast_hash": "4a64ee0fa90384044c6aea3971e0b587",
+    "semantic_hash": "4a64ee0fa90384044c6aea3971e0b587"
+  },
+  "web/assets/img/life/familia.webp": {
+    "mtime": 1786578340.8107836,
+    "ast_hash": "a3d76031c2a146458ed5ce793a7ba57a",
+    "semantic_hash": "a3d76031c2a146458ed5ce793a7ba57a"
+  },
+  "web/assets/img/life/granel.webp": {
+    "mtime": 1786578344.2075198,
+    "ast_hash": "f8b93c3d731332a78d6e820a6c306ecb",
+    "semantic_hash": "f8b93c3d731332a78d6e820a6c306ecb"
+  },
+  "web/assets/img/life/hidratante-2.webp": {
+    "mtime": 1786578355.9613783,
+    "ast_hash": "9bb2761853e31b5139733ee62e1754b1",
+    "semantic_hash": "9bb2761853e31b5139733ee62e1754b1"
+  },
+  "web/assets/img/life/hidratante.webp": {
+    "mtime": 1786578355.2987835,
+    "ast_hash": "b0e013aac302e9dbf7cac1da4d64de69",
+    "semantic_hash": "b0e013aac302e9dbf7cac1da4d64de69"
+  },
+  "web/assets/img/life/latte-2.webp": {
+    "mtime": 1786578354.4933562,
+    "ast_hash": "490ca536b25c2f44dd38f273d76b2327",
+    "semantic_hash": "490ca536b25c2f44dd38f273d76b2327"
+  },
+  "web/assets/img/life/latte.webp": {
+    "mtime": 1786578353.5884836,
+    "ast_hash": "62d1e04fe8793816bcaa6c4fb8f8f299",
+    "semantic_hash": "62d1e04fe8793816bcaa6c4fb8f8f299"
+  },
+  "web/assets/img/life/magnesio-2.webp": {
+    "mtime": 1786578350.2634425,
+    "ast_hash": "b2c071e6c8ca4829dba9edfb2f1936ee",
+    "semantic_hash": "b2c071e6c8ca4829dba9edfb2f1936ee"
+  },
+  "web/assets/img/life/magnesio.webp": {
+    "mtime": 1786578349.5687904,
+    "ast_hash": "2c164c8a65ec026437f1b41e20337f2f",
+    "semantic_hash": "2c164c8a65ec026437f1b41e20337f2f"
+  },
+  "web/assets/img/life/mama-hija.webp": {
+    "mtime": 1786587886.9608047,
+    "ast_hash": "d9a379476f7755182d42d2299a8074f2",
+    "semantic_hash": "d9a379476f7755182d42d2299a8074f2"
+  },
+  "web/assets/img/life/pre-workout.webp": {
+    "mtime": 1786578356.7978375,
+    "ast_hash": "ac3b840f277ba9c38b2bad745757144a",
+    "semantic_hash": "ac3b840f277ba9c38b2bad745757144a"
+  },
+  "web/assets/img/life/premium.webp": {
+    "mtime": 1786578339.2508037,
+    "ast_hash": "a62b1916ce25ef8c61911fb7ff8ec934",
+    "semantic_hash": "a62b1916ce25ef8c61911fb7ff8ec934"
+  },
+  "web/assets/img/life/principal.webp": {
+    "mtime": 1786586896.8983107,
+    "ast_hash": "1959915aff705fcfefc8376cd6ddba1c",
+    "semantic_hash": "1959915aff705fcfefc8376cd6ddba1c"
+  },
+  "web/assets/img/life/proteina-2.webp": {
+    "mtime": 1786578345.842997,
+    "ast_hash": "b18d4e28c5cae2ad1f5bd01b16d7729a",
+    "semantic_hash": "b18d4e28c5cae2ad1f5bd01b16d7729a"
+  },
+  "web/assets/img/life/proteina.webp": {
+    "mtime": 1786578345.0141766,
+    "ast_hash": "2b79b7951c187aeaa9128b73c6859beb",
+    "semantic_hash": "2b79b7951c187aeaa9128b73c6859beb"
+  },
+  "web/assets/img/life/remolacha.webp": {
+    "mtime": 1786578352.7270987,
+    "ast_hash": "e7480c9c580a6bcc39bf3f7ba649238c",
+    "semantic_hash": "e7480c9c580a6bcc39bf3f7ba649238c"
+  },
+  "web/assets/img/life/reposteria-2.webp": {
+    "mtime": 1786578343.1705086,
+    "ast_hash": "b19f59c0ef5cad8647b31cf6cc343451",
+    "semantic_hash": "b19f59c0ef5cad8647b31cf6cc343451"
+  },
+  "web/assets/img/life/reposteria.webp": {
+    "mtime": 1786578342.3678126,
+    "ast_hash": "af252065772352a7638f1b2168dfe897",
+    "semantic_hash": "af252065772352a7638f1b2168dfe897"
+  },
+  "web/assets/img/life/tradicional.webp": {
+    "mtime": 1786578339.9766507,
+    "ast_hash": "c985d63a86be0943a34851355b9524fa",
+    "semantic_hash": "c985d63a86be0943a34851355b9524fa"
+  },
+  "web/assets/img/life/vitamina-c-2.webp": {
+    "mtime": 1786578351.7498133,
+    "ast_hash": "3eca8438f37b71a29ac93f6e5d12e325",
+    "semantic_hash": "3eca8438f37b71a29ac93f6e5d12e325"
+  },
+  "web/assets/img/life/vitamina-c.webp": {
+    "mtime": 1786578351.0635781,
+    "ast_hash": "ab23b65731ae45fa5fe2191bbb5fb0ef",
+    "semantic_hash": "ab23b65731ae45fa5fe2191bbb5fb0ef"
+  },
+  "web/assets/img/packs/chocata-3-5kg.webp": {
+    "mtime": 1786580082.0318592,
+    "ast_hash": "34a61636253250c27267edfb9eb9e271",
+    "semantic_hash": "34a61636253250c27267edfb9eb9e271"
+  },
+  "web/assets/img/packs/chocata-premium.webp": {
+    "mtime": 1786580066.7018983,
+    "ast_hash": "dbba537226ab21b44452fa1f0c3f91c1",
+    "semantic_hash": "dbba537226ab21b44452fa1f0c3f91c1"
+  },
+  "web/assets/img/packs/colageno.webp": {
+    "mtime": 1786580149.201237,
+    "ast_hash": "0571c410a0d17a7c745e9d1648cd2489",
+    "semantic_hash": "0571c410a0d17a7c745e9d1648cd2489"
+  },
+  "web/assets/img/packs/creatina.webp": {
+    "mtime": 1786580111.396427,
+    "ast_hash": "8be4d02092dc29d01a4c2eda543bae8c",
+    "semantic_hash": "8be4d02092dc29d01a4c2eda543bae8c"
+  },
+  "web/assets/img/packs/latte-dorato.webp": {
+    "mtime": 1786580137.4443061,
+    "ast_hash": "147f395e4fa73f29350ff5820fec837a",
+    "semantic_hash": "147f395e4fa73f29350ff5820fec837a"
+  },
+  "web/assets/img/packs/pre-workout.webp": {
+    "mtime": 1786580144.3402998,
+    "ast_hash": "c2d96fc918a09252b1eb497785c38eb5",
+    "semantic_hash": "c2d96fc918a09252b1eb497785c38eb5"
+  },
+  "web/assets/img/packs/proteina.webp": {
+    "mtime": 1786580553.720286,
+    "ast_hash": "444b6cbf70cf2aa8ec4ff50fb8041674",
+    "semantic_hash": "444b6cbf70cf2aa8ec4ff50fb8041674"
+  },
+  "web/assets/img/packs/remolacha.webp": {
+    "mtime": 1786580128.2735593,
+    "ast_hash": "1c6250f16c0f58d5f3bb3f7c4033f717",
+    "semantic_hash": "1c6250f16c0f58d5f3bb3f7c4033f717"
+  },
+  "web/assets/img/packs/vitamina-c.webp": {
+    "mtime": 1786580122.0939784,
+    "ast_hash": "428397a4c5e5a172adc0b737fe93e2cd",
+    "semantic_hash": "428397a4c5e5a172adc0b737fe93e2cd"
+  },
+  "api/_contenido.js": {
+    "mtime": 1787072595.9880245,
+    "ast_hash": "df7f814c6b279af3d060122f482c3177",
+    "semantic_hash": ""
+  },
+  "api/_imagenes.js": {
+    "mtime": 1787072561.2790744,
+    "ast_hash": "172dd164e208dd9ffeedd351f50122ca",
+    "semantic_hash": ""
+  },
+  "api/contenido.js": {
+    "mtime": 1787065772.8834763,
+    "ast_hash": "95940ed8ce6c18f4012781fbfd3bd6d4",
+    "semantic_hash": ""
+  },
+  "api/subir-imagen.js": {
+    "mtime": 1787072578.561907,
+    "ast_hash": "132726f2b753030d5f15bac7f8488080",
+    "semantic_hash": ""
+  },
+  "web/assets/js/contenido.js": {
+    "mtime": 1787072632.2987425,
+    "ast_hash": "d1ed1ca2d1f44c69f87782cb7105a94f",
+    "semantic_hash": ""
+  },
+  "web/assets/js/estudio.js": {
+    "mtime": 1787072703.747887,
+    "ast_hash": "8440cf5dbcb82bf6a36bd920ea086a2f",
+    "semantic_hash": ""
+  },
+  "docs/MANUAL-ESTUDIO.md": {
+    "mtime": 1787073059.6107316,
+    "ast_hash": "17374e7f15d9d333e0e5aeea550beccb",
+    "semantic_hash": ""
+  },
+  "docs/REPLICAR-MODELO.md": {
+    "mtime": 1787073116.1166232,
+    "ast_hash": "08d3a922f415a6544be8cb55fca60234",
+    "semantic_hash": ""
+  },
+  "web/estudio.html": {
+    "mtime": 1787072652.502706,
+    "ast_hash": "724d4e990d4f5560f52bd7aca6829eed",
+    "semantic_hash": ""
+  }
+}

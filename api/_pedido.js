@@ -20,10 +20,37 @@ const MAX_LINEAS = 30;
 /** Un combo no tiene presentaciones: ocupa esta talla única en el carrito. */
 const TALLA_COMBO = 'Combo';
 
+/* ---------- Ediciones de la dueña (el Estudio) ----------
+   Los precios de fábrica viven en precios.json; la dueña puede anularlos o
+   esconder un producto desde /estudio. Las anulaciones se refrescan desde el
+   almacén ANTES de calcular un pedido: la vitrina, el carrito y el cobro
+   leen siempre la misma verdad. Si el almacén falla, se cobra a precio de
+   fábrica (fallar hacia lo conocido, nunca hacia el error). */
+let anulaciones = { productos: {} };
+let anulacionesFrescasHasta = 0;
+const ANULACIONES_TTL = Number.isInteger(Number(process.env.ANULACIONES_TTL_MS))
+  ? Number(process.env.ANULACIONES_TTL_MS)
+  : 15000;
+
+async function refrescarAnulaciones() {
+  if (Date.now() < anulacionesFrescasHasta) return;
+  try {
+    const { leerContenido } = require('./_contenido');
+    const c = await leerContenido();
+    anulaciones.productos = c.productos || {};
+    anulacionesFrescasHasta = Date.now() + ANULACIONES_TTL;
+  } catch (e) {
+    console.error('[pedido] sin anulaciones, se usa fábrica:', e && e.message);
+  }
+}
+
 /** Precio suelto de una presentación, o null si no está a la venta. */
 function precioSuelto(slug, talla) {
   const p = catalogo[slug];
   if (!p) return null;
+  const a = anulaciones.productos[slug];
+  if (a && a.oculto) return null;
+  if (a && a.precios && Number.isInteger(a.precios[talla])) return a.precios[talla];
   const fila = p.presentaciones.find((x) => x.talla === talla);
   return fila && typeof fila.cop === 'number' ? fila.cop : null;
 }
@@ -282,7 +309,7 @@ function validarCliente(c) {
 
 module.exports = {
   catalogo, envios, combos, TALLA_COMBO, TIPOS_DOCUMENTO,
-  calcular, referencia, envioDe, desgloseEnvio, gramosDe,
+  calcular, refrescarAnulaciones, referencia, envioDe, desgloseEnvio, gramosDe,
   precioDe, detalleCombo, combosVigentes,
   firmaIntegridad, firmaEventoValida, validarCliente, tipoDocumentoDe, tokenValido
 };

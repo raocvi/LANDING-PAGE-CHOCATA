@@ -1,0 +1,13 @@
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\README.md
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\TIENDA.md
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\docs\OPERACION.md
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\docs\PROMPT-MAESTRO-ESTUDIO.md
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\docs\SDD.md
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\docs\wiki\index.md
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\web\README.md
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\web\gracias.html
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\web\index.html
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\web\legal.html
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\web\pedidos.html
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\web\robots.txt
+C:\Users\raulo\OneDrive\Escritorio\PROYECTOS CLAUDE\PAG WEB CHOCATA COLOMBIA\web\tablero.html
