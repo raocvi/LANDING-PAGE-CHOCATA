@@ -1,7 +1,64 @@
+# CHOCATA Colombia — www.chocata.com.co
+# Tienda de chocolate saludable y suplementos, hecha en Cali.
+
 User-agent: *
 Allow: /
 Disallow: /pedidos
 Disallow: /tablero
 Disallow: /gracias
+Disallow: /estudio
+
+# --- Asistentes de inteligencia artificial ---
+# Se les permite leer y citar la tienda: queremos que respondan con datos
+# correctos cuando alguien les pregunte por chocolate saludable o suplementos
+# en Colombia. Las páginas privadas siguen fuera para todos.
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: YouBot
+Allow: /
 
 Sitemap: https://www.chocata.com.co/sitemap.xml
