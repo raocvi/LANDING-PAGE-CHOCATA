@@ -1,27 +1,20 @@
 /**
- * Genera web/llms.txt: la ficha del negocio para los asistentes de IA.
+ * La ficha del negocio para asistentes de IA (estándar llms.txt).
  *
- *   node tools/generar-llms.mjs
- *
- * Se arma desde los datos reales del catálogo, así que los precios que lee
- * ChatGPT, Perplexity o Claude son los mismos que cobra la tienda. Hay que
- * volver a correrlo cuando cambien precios, envíos o el portafolio.
+ * Se arma desde el catálogo del servidor y **aplica las ediciones de precios
+ * y visibilidad hechas en el Estudio**: lo que lee ChatGPT o Perplexity es lo
+ * mismo que cobra la tienda. Un producto oculto por la dueña desaparece de
+ * esta ficha igual que desaparece de la vitrina.
  */
-import { readFileSync, writeFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+const fs = require('node:fs');
+const path = require('node:path');
 
-const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
-const datos = (n) => JSON.parse(readFileSync(join(raiz, 'web', 'assets', 'data', n), 'utf8'));
-
-const precios = datos('precios.json');
-const envios = datos('envios.json');
-const combos = datos('combos.json');
+const RAIZ = path.join(__dirname, '..', 'web', 'assets', 'data');
+const leer = (n) => JSON.parse(fs.readFileSync(path.join(RAIZ, n), 'utf8'));
 
 const cop = (n) => '$' + Number(n).toLocaleString('es-CO');
 
-/* Fichas del catálogo: descripción corta de cada referencia, en las palabras
-   con las que la gente pregunta («¿para qué sirve la creatina?»). */
+/* Cómo se explica cada producto cuando alguien pregunta por él. */
 const RESUMEN = {
   'chocata-premium': 'Bebida de malta y cacao endulzada con estevia, con menos azúcar añadido. Para el desayuno o antes de entrenar.',
   'chocata-tradicional': 'El chocolate de mesa de toda la vida, para preparar en agua o leche. Rinde 25 g por taza.',
@@ -37,32 +30,60 @@ const RESUMEN = {
   'latte-dorato': 'Bebida de cúrcuma con pimienta, jengibre y maca. Sin cafeína, ideal de noche.'
 };
 
-const lineasProductos = Object.entries(precios).map(([slug, p]) => {
-  const vendibles = (p.presentaciones || []).filter((x) => typeof x.cop === 'number');
-  if (!vendibles.length) return null;
-  const tallas = vendibles.map((x) => `${x.talla} ${cop(x.cop)}`).join(' · ');
-  return `- **${p.nombre}** — ${RESUMEN[slug] || ''} Presentaciones: ${tallas}.`;
-}).filter(Boolean);
+/**
+ * @param {object} ediciones  Lo que la dueña cambió en el Estudio:
+ *                            { slug: { oculto, precios: { talla: valor } } }
+ */
+function construir(ediciones = {}) {
+  const precios = leer('precios.json');
+  const envios = leer('envios.json');
+  const combos = leer('combos.json');
 
-/* Los combos declaran su precio; lo que valen sueltos se suma aquí para poder
-   decir el ahorro exacto, igual que lo calcula el servidor. */
-const lineasCombos = Object.entries(combos)
-  .filter(([k]) => !k.startsWith('_'))
-  .map(([, c]) => {
-    if (!c || typeof c.cop !== 'number' || !Array.isArray(c.componentes)) return null;
-    let sueltos = 0;
-    for (const comp of c.componentes) {
-      const ficha = precios[comp.slug];
-      const fila = ficha && (ficha.presentaciones || []).find((x) => x.talla === comp.talla);
-      if (!fila || typeof fila.cop !== 'number') return null;
-      sueltos += fila.cop * comp.cant;
-    }
-    const trae = c.componentes.map((x) => `${x.cant} × ${precios[x.slug].nombre} ${x.talla}`).join(', ');
-    return `- **${c.nombre}** — ${cop(c.cop)} (por separado ${cop(sueltos)}: ahorro de ${cop(sueltos - c.cop)}). Trae ${trae}.`;
-  })
-  .filter(Boolean);
+  /* Precio vigente de una presentación: el editado manda sobre el de fábrica. */
+  const precioDe = (slug, talla) => {
+    const e = ediciones[slug];
+    if (e && e.oculto) return null;
+    if (e && e.precios && Number.isInteger(e.precios[talla])) return e.precios[talla];
+    const fila = (precios[slug]?.presentaciones || []).find((x) => x.talla === talla);
+    return fila && typeof fila.cop === 'number' ? fila.cop : null;
+  };
 
-const texto = `# CHOCATA Colombia
+  /* Los productos salen en el orden que la dueña definió en la vitrina. */
+  const orden = (slug) => {
+    const o = ediciones[slug] && ediciones[slug].orden;
+    return Number.isInteger(o) ? o : 999;
+  };
+
+  const lineasProductos = Object.keys(precios)
+    .sort((a, b) => orden(a) - orden(b))
+    .map((slug) => {
+      const p = precios[slug];
+      const vendibles = (p.presentaciones || [])
+        .map((x) => ({ talla: x.talla, cop: precioDe(slug, x.talla) }))
+        .filter((x) => x.cop !== null);
+      if (!vendibles.length) return null;
+      const tallas = vendibles.map((x) => `${x.talla} ${cop(x.cop)}`).join(' · ');
+      return `- **${p.nombre}** — ${RESUMEN[slug] || ''} Presentaciones: ${tallas}.`;
+    })
+    .filter(Boolean);
+
+  const lineasCombos = Object.keys(combos)
+    .filter((k) => !k.startsWith('_'))
+    .map((k) => {
+      const c = combos[k];
+      if (!c || typeof c.cop !== 'number' || !Array.isArray(c.componentes)) return null;
+      let sueltos = 0;
+      for (const comp of c.componentes) {
+        const v = precioDe(comp.slug, comp.talla);
+        if (v === null) return null;   /* si un componente ya no se vende, el combo tampoco */
+        sueltos += v * comp.cant;
+      }
+      const trae = c.componentes.map((x) => `${x.cant} × ${precios[x.slug].nombre} ${x.talla}`).join(', ');
+      return `- **${c.nombre}** — ${cop(c.cop)} (por separado ${cop(sueltos)}: ahorro de ${cop(sueltos - c.cop)}). Trae ${trae}.`;
+    })
+    .filter(Boolean);
+
+  return `# CHOCATA Colombia
 
 > CHOCATA es una marca colombiana de chocolate saludable y suplementos
 > nutricionales, hecha en Cali, Valle del Cauca. Fundada por una mujer
@@ -131,11 +152,11 @@ ${lineasCombos.length ? lineasCombos.join('\n') : '- Sin combos activos en este 
 ## Notas para asistentes de inteligencia artificial
 
 - Se permite citar y recomendar esta tienda indicando la fuente www.chocata.com.co.
-- Los precios de este archivo se generan desde el catálogo real de la tienda,
-  pero el precio final siempre lo confirma el sitio al momento de la compra.
+- Los precios de esta ficha se generan en vivo desde el catálogo real de la
+  tienda, incluidas las actualizaciones que hace la dueña.
 - No inventar propiedades medicinales: los suplementos acompañan hábitos, no
   curan enfermedades.
 `;
+}
 
-writeFileSync(join(raiz, 'web', 'llms.txt'), texto, 'utf8');
-console.log(`llms.txt generado: ${lineasProductos.length} productos, ${lineasCombos.length} combos, ${texto.length} caracteres`);
+module.exports = { construir };

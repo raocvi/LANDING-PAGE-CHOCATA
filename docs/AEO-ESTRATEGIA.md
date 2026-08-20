@@ -26,7 +26,7 @@ Los puntos 1 y 2 ya están resueltos. El 3 es trabajo de la marca, no del códig
 | Pieza | Qué hace | Dónde |
 |---|---|---|
 | **Permiso explícito a 16 rastreadores de IA** | GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended y demás pueden leer y citar la tienda | `web/robots.txt` |
-| **`llms.txt`** | Ficha del negocio en el formato que los asistentes prefieren: productos con precios reales, combos, envíos, pagos y contacto | `web/llms.txt`, generado por `tools/generar-llms.mjs` |
+| **`llms.txt` en vivo** | Ficha del negocio en el formato que los asistentes prefieren. Se genera al vuelo con los precios y la visibilidad que la dueña tenga puestos en el Estudio | `api/llms.js` + `api/_llms.js` |
 | **10 preguntas frecuentes visibles** | El texto que los asistentes citan. Respuestas autocontenidas que nombran marca, ciudad y dato concreto | Sección «Preguntas frecuentes» de la portada |
 | **12 fichas `Product`** | Cada referencia con precio, presentaciones, disponibilidad, marca y país. Es lo que permite salir con precio en los resúmenes de Google | JSON-LD de `index.html` |
 | **`Organization`** | Quién es CHOCATA: Cali, fundada por una mujer, respaldo del Fondo Emprender del SENA, contacto y temas que domina | JSON-LD |

@@ -98,6 +98,13 @@
         }
       }
 
+
+      /* ---- Datos estructurados: los precios editados también se publican ----
+         Google renderiza la página antes de indexarla, así que el precio que
+         acaba en el buscador es el que la dueña tiene puesto, no el de fábrica.
+         Un producto oculto se retira del listado por completo. */
+      actualizarDatosEstructurados(c.productos);
+
       /* ---- Hero ---- */
       if (c.hero) {
         var eyebrow = document.querySelector('.hero__copy .eyebrow');
@@ -117,4 +124,46 @@
       }
     })
     .catch(function () { /* sin red o sin API: la página de fábrica ya está pintada */ });
+
+  /** Reescribe precios y disponibilidad del JSON-LD con lo editado. */
+  function actualizarDatosEstructurados(productos) {
+    if (!productos || !Object.keys(productos).length) return;
+    var etiqueta = document.querySelector('script[type="application/ld+json"]');
+    if (!etiqueta) return;
+    try {
+      var grafo = JSON.parse(etiqueta.textContent);
+      var lista = grafo['@graph'] || [];
+      var vivos = [];
+      lista.forEach(function (nodo) {
+        if (nodo['@type'] !== 'Product') { vivos.push(nodo); return; }
+        var slug = String(nodo['@id'] || '').split('#producto-')[1];
+        var e = slug && productos[slug];
+        if (e && e.oculto) return;              /* fuera del catálogo publicado */
+        if (e && e.precios) aplicarPrecios(nodo, e.precios);
+        vivos.push(nodo);
+      });
+      grafo['@graph'] = vivos;
+      etiqueta.textContent = JSON.stringify(grafo);
+    } catch (err) { /* el dato de fábrica ya está publicado: no se toca */ }
+  }
+
+  /** Cambia el precio de cada presentación y recalcula el rango del producto. */
+  function aplicarPrecios(nodo, precios) {
+    var ofertas = nodo.offers && nodo.offers['@type'] === 'AggregateOffer'
+      ? nodo.offers.offers : [nodo.offers];
+    var montos = [];
+    (ofertas || []).forEach(function (oferta) {
+      if (!oferta || !oferta.name) return;
+      Object.keys(precios).forEach(function (talla) {
+        if (oferta.name.indexOf(talla) !== -1) oferta.price = String(precios[talla]);
+      });
+      var n = Number(oferta.price);
+      if (n) montos.push(n);
+    });
+    if (nodo.offers && nodo.offers['@type'] === 'AggregateOffer' && montos.length) {
+      nodo.offers.lowPrice = String(Math.min.apply(null, montos));
+      nodo.offers.highPrice = String(Math.max.apply(null, montos));
+    }
+  }
+
 })();

@@ -92,6 +92,8 @@ api/                    Funciones serverless (CommonJS)
   _imagenes.js          Ranuras de imagen con la proporción de cada marco
   contenido.js          GET público / PUT admin del contenido editable
   subir-imagen.js       POST admin: recibe la foto ya recortada y la publica
+  _llms.js              Ficha del negocio para asistentes de IA, con precios vivos
+  llms.js               GET /llms.txt (via rewrite): la sirve en texto plano
   checkout.js           POST: valida, guarda PENDIENTE, firma URL de Wompi
   wompi-webhook.js      POST: verifica firma, cruza monto, dispara avisos
   pedido.js             GET público por referencia (para gracias.html)

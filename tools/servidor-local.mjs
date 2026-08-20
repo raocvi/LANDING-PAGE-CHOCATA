@@ -47,8 +47,12 @@ const servidor = createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PUERTO}`);
   adaptar(res);
 
-  if (url.pathname.startsWith('/api/')) {
-    const nombre = url.pathname.replace('/api/', '').replace(/[^a-z0-9-]/gi, '');
+  /* Igual que el rewrite de vercel.json: /llms.txt lo atiende la función,
+     para que la ficha de IA lleve los precios que la dueña tenga puestos. */
+  const rutaApi = url.pathname === '/llms.txt' ? '/api/llms' : url.pathname;
+
+  if (rutaApi.startsWith('/api/')) {
+    const nombre = rutaApi.replace('/api/', '').replace(/[^a-z0-9-]/gi, '');
     try {
       /* Sin caché: así los cambios se recogen sin reiniciar. */
       const ruta = join(raiz, 'api', `${nombre}.js`);
